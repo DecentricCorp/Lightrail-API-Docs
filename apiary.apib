@@ -7,6 +7,8 @@ Building into Giftbit's RESTful Currency API gives you a complete and powerful e
 
 ## Reporting Errors or Suggestions
 
+This interactive documentation will let you try out all functionality and provide full code samples in many popular languages.
+
 The API Blueprint file that produces this documentation is in Github at https://github.com/Giftbit/currencyapi.  If you find a mistake or have a suggestion for improvement, please submit it directly via a pull request.
 
 ## API Base URLs
@@ -16,6 +18,19 @@ Along with Giftbit's production environment we also have a test environment.  Th
   <li><em>https://currencyapi.giftbit.com/v1/services/</em></li>
   <li><em>https://currencyapi-test.giftbit.com/v1/services/</em></li>
 </ul>
+
+## Account creation and Authorization
+
+You'll need your `access_token` from your Giftbit merchant account details page to use the API.
+If you don't already have a Testbed merchant account you can <em><a href="https://testbed.giftbit.com/v1/secure/register" target="_blank">sign up here</a></em>.
+
+Once you are comfortable with your integration in your test environment you can <em><a href="https://www.giftbit.com/v1/secure/register" target="_blank">sign up for a production account here</a></em>.
+
+Be sure to store your production API token extremely securely in your production configurations.
+
+You authenticate with your `access_token` by including your token prefixed by the word ‘Bearer’ (case sensitive) and a space in the “Authorization” HTTP header, as per all the 
+examples in the documentation.
+
 
 ## Understanding the API: the relationship between Cards and Codes
 
@@ -59,13 +74,7 @@ Where currency type (eg. USD, CDN, AUD) is required or returned, the API expects
 The Giftbit Currency API provides flexibility to implement multiple currency solutions (gift cards, unique promo codes, credit refunds, etc). It is the responsibility of the API user and their organization to understand and follow the jurisdictions and laws the govern all aspects of their implementation.
 
 ## Ping and credentials check [/ping]
-The test calls that can be made from this document are against our Testbed environment. You'll need your `access_token` from your Testbed Giftbit merchant account. 
-If you don't already have a Testbed merchant account you can sign up <em><a href="https://testbed.giftbit.com/v1/secure/register" target="_blank">here</a></em>.
-
-You will need to contact Giftbit directly for your production `access_token`.  Be sure to store it extremely securely in your production configurations.
-
-You must authenticate with your `access_token` by including your token prefixed by the word ‘Bearer’ (case sensitive) and a space in the “Authorization” HTTP header.
-You can make a GET request to /ping to check your credentials
+Use the /ping endpoint to check that your authorization is working correctly or the healthcheck the API. 
 
 
 ### Ping [GET]
