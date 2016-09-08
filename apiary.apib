@@ -54,6 +54,19 @@ Given the above, it is important you think about how to structure your UserSuppl
 
 Note that UserSuppliedIds do not need to be unique across different endpoints.
 
+## Handling error responses
+
+Clients should always check the HTTP status code of the response and act accordingly if the response is not a 200.
+
+Error response JSON will be in the following format:
+
+        
+        {
+            status: (number) - will match the HTTP response code.    
+            message: (string, optional) - a descriptive error message if one is available
+            code: (string, optional) - a code that can be provided to Giftbit support if troubleshooting help is needed
+        }
+
 ## A note on security and full codes
 
 Full codes represent real value in your checkout. We have some recommended best practices around creating and accessing them:
@@ -413,14 +426,6 @@ Use some or all of the remaining value of the code.  Attempting to use value for
                 }
             }
 
-
-        
-+ Response 422
-        
-        {
-            "status":"error",
-            "message":"Could not retrieve code."
-        }
 
 ### Retrieve all transactions for a Code [GET /code/{fullcode}/transactions/{?limit}{?offset}]
 
