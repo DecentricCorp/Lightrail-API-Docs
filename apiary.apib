@@ -33,7 +33,7 @@ There is a 1-1 relationship between a Card and a Code.  You specificy the detail
 
 The API is fully idempotent on the 'UserSuppliedId' field, which is a required parameter for all endpoint operations that result in a change of state on the Giftbit side (POST, PUT, DELETE).  Therefore in the case of a non recieved response from the API or other unknown condition, it is safe and recommended to retry the request with the same UserSuppliedId.
 
-For example, your customer is using a code in your checkout.  You POST to the /codes/{fullcode}/transactions endpoint to mark the use, but get a network timeout and are unable to process the response and therefore your system doesn't know if Giftbit successfully recieved your POST and recorded the transaction or not.  With idempotency you do not need to do any lookups or other complicated error handling to see if the original API call succeeded; you can simply retry the same call (as many times as needed) with the same UserSuppliedId, and get the same 200 response upon success whether or a previous request went through, knowing our server will do the operation once and only once for that UserSuppliedId.
+For example, your customer is using a code in your checkout.  You POST to the /codes/{fullcode}/transactions endpoint to mark the use, but get a network timeout and are unable to process the response and therefore your system doesn't know if Giftbit successfully recieved your POST and recorded the transaction or not.  With idempotency you do not need to do any lookups or other complicated error handling to see if the original API call succeeded; you can simply retry the same call (as many times as needed) with the same UserSuppliedId, and get the same 200 response upon success whether or not a previous request went through, knowing our server will do the operation once and only once for that UserSuppliedId.
 
 Given the above, it is important you think about how to structure your UserSuppliedIds and error handling so that you are always sending a unique value for different logical requests, but the same one for any retries.  
 
@@ -42,8 +42,8 @@ Note that UserSuppliedIds do not need to be unique across different endpoints.
 ## A note on security and full codes
 
 Full codes represent real value in your checkout. We have some recommended best practices around creating and accessing them:
- - Only retrieve the full code, as returned by /cards/{cardUUID}/code/fullCode endpoint when you absolutely need it, such as when you will distribute it to your recipient.  No other API calls will return the full code.
- - There is no need to ever store full codes in your system and we strongly recommend against doing so.  You should store the corresponding CardUUID upon creation for future reference and API calls.  All functionality only requires you to pass the full code through your system in a transient manner.
+ - Only retrieve the full code, as returned by /cards/{CardId}/code/fullCode endpoint when you absolutely need it, such as when you will distribute it to your recipient.  No other API calls will return the full code.
+ - There is no need to ever store full codes in your system and we strongly recommend against doing so.  You should store the corresponding CardId upon creation for future reference and API calls.  All functionality only requires you to pass the full code through your system in a transient manner.
 
 Note that Giftbit is a PCI compliant platform and we use all modern best practices around cryptography and access control to keep your codes safe.
 
@@ -58,17 +58,17 @@ Where currency type (eg. USD, CDN, AUD) is required or returned, the API expects
 ## Legal responsibilities
 The Giftbit Currency API provides flexibility to implement multiple currency solutions (gift cards, unique promo codes, credit refunds, etc). It is the responsibility of the API user and their organization to understand and follow the jurisdictions and laws the govern all aspects of their implementation.
 
-## Authentication and credentials check [/]
+## Ping and credentials check [/ping]
 The test calls that can be made from this document are against our Testbed environment. You'll need your `access_token` from your Testbed Giftbit merchant account. 
 If you don't already have a Testbed merchant account you can sign up <em><a href="https://testbed.giftbit.com/v1/secure/register" target="_blank">here</a></em>.
 
 You will need to contact Giftbit directly for your production `access_token`.  Be sure to store it extremely securely in your production configurations.
 
 You must authenticate with your `access_token` by including your token prefixed by the word ‘Bearer’ (case sensitive) and a space in the “Authorization” HTTP header.
-You can make a GET request to the API root to check your credentials
+You can make a GET request to /ping to check your credentials
 
 
-### Credentials check [GET /]
+### Ping [GET]
 + Request (application/json)
     + Headers
 
@@ -76,18 +76,21 @@ You can make a GET request to the API root to check your credentials
 
 + Response 200
     + Attributes
-        + username (string) - The username associated with the credentials provided.
+        + username (string) - The email address associated with the credentials provided.
+        + servertime (string) - The current time on the server (ISO 8601 format)
 
     + Body
         {
             "username":"example_merchant_account@yourdomain.com",
+            "servertime": "2016-09-08T18:44:02.124+0000"
         }
         
 + Response 401
 
         {
-            "status":401,
-            "message":"Unauthorized"
+            "status": 401,
+            "message": "Unauthorized",
+            "code": "CREDENTIALS_INVALID"
         }
 # Group Endpoints that power the code creation experience
 
@@ -95,34 +98,30 @@ Endpoints in the group are for use by your internal team to create and manage yo
 
 ## Card [/cards/]
 
-Cards represent a gift card, promotional offer, credit, or other means of eCommerce currency relevant to your business.  Every Card is created with a corresponding Code automatically.  You access details on your both your Cards and your Codes through the CardUUID, which eliminates the need to ever store a full code.
+Cards represent a gift card, promotional offer, credit, or other means of eCommerce currency relevant to your business.  Every Card is created with a corresponding Code automatically.  You access details on your both your Cards and your Codes through the CardId, which eliminates the need to ever store a full code.
 
 ### Create a Card and its Code [POST]
 
-Create a Card and its corresponding Code.  Note that CardUUID on response should be persisted to lookup or interact with the Code.  The Code is not returned as part of the response.  If you provide an expiry, please ensure you have confirmed the legality of expiring value for your implementation.
+Create a Card and its corresponding Code.  Note that CardId on response should be persisted to lookup or interact with the Code.  The Code is not returned as part of the response.  If you provide an expiry, please ensure you have confirmed the legality of expiring value for your implementation.
 
 + Request (application/json)
     + Headers
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
     + Attributes
-        + Card
-            + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
-            + Code
-                + initialValueInCents (number) - the starting value of the code, in cents
-                + currency (string) - The 3 character ISO-4217 currency.
-                + expires (string) - The code's optional expiry date and time.  ISO-8601 format.  
+        + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
+        + Code
+            + initialValueInCents (number) - the starting value of the code, in cents
+            + currency (string) - The 3 character ISO-4217 currency.
+            + expires (string) - The code's optional expiry date and time.  ISO-8601 format.  
 
     + Body
     {
-        "card":
+        userSuppliedId:"12345678",
+        "code":
         {
-            userSuppliedId:"12345678",
-            "code":
-            {
-                "valueInCents":5000,
-                "currency":"CAD",
-                "expires":"2017-03-03T08:00:00.000+0000",
-            }
+            "valueInCents":5000,
+            "currency":"CAD",
+            "expires":"2017-03-03T08:00:00.000+0000",
         }
     }
     
@@ -130,12 +129,12 @@ Create a Card and its corresponding Code.  Note that CardUUID on response should
     + Attributes
         + Card
             + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
-            + cardUUID (string) - Giftbit's unique identifier for this Card.  Be sure to persist this value for future operations
+            + CardId (string) - Giftbit's unique identifier for this Card.  Be sure to persist this value for future operations
             + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format
 
     + Body
         {
-            "cardUUID":"5c1c1760-b185-4861-a4fc-47eca84bf52b",
+            "CardId":"5c1c1760-b185-4861-a4fc-47eca84bf52b",
             "userSuppliedId":"12345678",
             "dateCreated":"2016-08-10T08:00:00.000+0000"
         }
@@ -157,27 +156,27 @@ Retrieve your created cards.  Results are returned in descending order of creati
     {
         "cards":[
             {
-            "cardUUID": "8f893901-c143-4def-9124-bd0c25a0c3a8",
+            "CardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
             "dateCreated": "2016-09-01T23:47:02.000+0000",
             "userSuppliedId":"1234"
             },
             {
-            "cardUUID": "4e61aba2-5d5a-4e99-8574-6479cecce0dd",
+            "CardId": "4e61aba2-5d5a-4e99-8574-6479cecce0dd",
             "dateCreated": "2016-09-01T23:42:35.000+0000",
             "userSuppliedId":"1235"
             },
             {
-            "cardUUID": "3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
+            "CardId": "3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
             "dateCreated": "2016-09-01T23:42:23.000+0000",
             "userSuppliedId":"1236"
             },
             {
-            "cardUUID": "c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
+            "CardId": "c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
             "dateCreated": "2016-09-01T23:42:17.000+0000",
             "userSuppliedId":"1237"
             },
             {
-            "cardUUID": "56d23f04-64a8-452b-b3a1-3e758ebb6adc",
+            "CardId": "56d23f04-64a8-452b-b3a1-3e758ebb6adc",
             "dateCreated": "2016-09-01T23:41:32.000+0000",
             "userSuppliedId":"1238"
             }
@@ -191,9 +190,9 @@ Retrieve your created cards.  Results are returned in descending order of creati
         }
     }
     
-### Retrieve Card [GET /cards/{cardUUIDorUserSuppliedId}]
+### Retrieve Card [GET /cards/{CardIdorUserSuppliedId}]
 
-Look up a single card by your UserSuppliedId or by the Giftbit assigned cardUUID
+Look up a single card by your UserSuppliedId or by the Giftbit assigned CardId
 
 + Request (application/json)
     + Headers
@@ -205,14 +204,14 @@ Look up a single card by your UserSuppliedId or by the Giftbit assigned cardUUID
     {
         "card":{
             "userSuppliedId" : 
-            "cardUUID": "8f893901-c143-4def-9124-bd0c25a0c3a8",
+            "CardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
             "dateCreated": "2016-09-01T23:47:02.000+0000"
         }
     }
     
-### Retrieve a full code by CardUUID [GET /cards/{cardUUID}/code/fullcode]
+### Retrieve a full code by CardId [GET /cards/{CardId}/code/fullcode]
 
-After creating a Card, use this endpoint to retrieve the code to give to your recipient.  This is the code worth value to your organization; Do not store this code in your database or other parts of your system.  If you are tracking recipients, associate your recipient with the CardUUID.
+After creating a Card, use this endpoint to retrieve the code to give to your recipient.  This is the code worth value to your organization; Do not store this code in your database or other parts of your system.  If you are tracking recipients, associate your recipient with the CardId.
 
 + Request (application/json)
     + Headers
@@ -227,7 +226,7 @@ After creating a Card, use this endpoint to retrieve the code to give to your re
         }
     }
 
-### Retrieve a Code by CardUUID [GET /cards/{cardUUID}/code]
+### Retrieve a Code by CardId [GET /cards/{CardId}/code]
 
 Use this endpoint if your system or internal staff need to retrieve basic information about a Code.  See the Code endpoint documentation for response format
 
@@ -236,9 +235,9 @@ Use this endpoint if your system or internal staff need to retrieve basic inform
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + cardUUID: (string) - The identifier returned when the Card and Code were created.
+    + CardId: (string) - The identifier returned when the Card and Code were created.
 
-### Retrieve a Code balance by CardUUID [GET /cards/{cardUUID}/code/balance]
+### Retrieve a Code balance by CardId [GET /cards/{CardId}/code/balance]
 
 Use this endpoint if your system or internal staff need to retrieve up to date balance information about a Code.  See the Code endpoint documentation for response format.
 
@@ -247,9 +246,9 @@ Use this endpoint if your system or internal staff need to retrieve up to date b
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + cardUUID: (string) - The identifier returned when the Card and Code were created.
+    + CardId: (string) - The identifier returned when the Card and Code were created.
 
-### Retrieve transactions for a code by CardUUID [GET /cards/{cardUUID}/code/transactions]
+### Retrieve transactions for a code by CardId [GET /cards/{CardId}/code/transactions]
 
 Use this endpoint if your system or internal staff need to retrieve all the transactions for a Code.  See the Code endpoint documentation for response format.
 
@@ -258,9 +257,9 @@ Use this endpoint if your system or internal staff need to retrieve all the tran
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + cardUUID: (string) - The identifier returned when the Card and Code were created.
+    + CardId: (string) - The identifier returned when the Card and Code were created.
     
-### Create a transaction for a code given the CardUUID [POST /cards/{cardUUID}/code/transactions]
+### Create a transaction for a code given the CardId [POST /cards/{CardId}/code/transactions]
 
 Use this endpoint if your system or internal staff need to create a transaction for a Code, such as to mark all or part of it as used.  See the Code endpoint documentation for request and response format.
 
@@ -269,14 +268,14 @@ Use this endpoint if your system or internal staff need to create a transaction 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + cardUUID: (string) - The identifier returned when the Card and Code were created.
+    + CardId: (string) - The identifier returned when the Card and Code were created.
 
 
 # Group Endpoints that power the code recipient experience
 
 Code represents the financial device that is worth value to you and your store.  The fullcode is what is distributed to your recipients. Your externally facing experience (balance checks, transaction history, and checkout/use of value) should interact with the Code and Code Transaction endpoints described here.  Only these endpoints accept full codes.
 
-You are never required to store the full code internally in your system, and we recommend for security that you do not.  You may interact internally (for customer support) with a Code through its corresponding CardUUID as described in the 'Card' reference.
+You are never required to store the full code internally in your system, and we recommend for security that you do not.  You may interact internally (for customer support) with a Code through its corresponding CardId as described in the 'Card' reference.
 
 ## Code [/codes/{fullcode}]
 
@@ -367,7 +366,7 @@ Use some or all of the remaining value of the code.  Attempting to use value for
 
     + Attributes
         + valueInCents (number) - The amount of the transaction (should equal valueInCents in the request)
-        + transactionUUID (string) - The unique Id for this transaction assigned by Giftbit at creation time
+        + transactionId (string) - The unique Id for this transaction assigned by Giftbit at creation time
         + userSuppliedId (string) - Identifier of the transaction (should equal transactionId in the request).
         + valueAvailableAfterTransactionInCents (number) - The current value of the code (after this use).
         + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format
@@ -376,7 +375,7 @@ Use some or all of the remaining value of the code.  Attempting to use value for
         {
             "transaction":{
                 "userSuppliedId": "12345678",
-                "transactionUUID":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
                 "valueInCents": 165,
                 "dateCreated": "2016-08-10T08:00:00.000+0000",
                 "valueAvailableAfterTransactionInCents": 4835
@@ -411,14 +410,14 @@ Retrieve transactions for a Code given the full code.  Useful if you'd like to s
         "transactions":[
             {
                 "userSuppliedId": "12345",
-                "transactionUUID":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
                 "valueInCents": 500,
                 "dateCreated": "2016-08-11T08:32:00.000+0000",
                 "valueAvailableAfterTransactionInCents": 800
             },
             {
                 "userSuppliedId": "12344",
-                "transactionUUID":"avji1b55-6gu7-4ke5-82s5-fd37edb5ju9a",
+                "transactionId":"avji1b55-6gu7-4ke5-82s5-fd37edb5ju9a",
                 "valueInCents": 700,
                 "dateCreated": "2016-08-10T08:00:00.000+0000",
                 "valueAvailableAfterTransactionInCents": 1300
@@ -433,7 +432,7 @@ Retrieve transactions for a Code given the full code.  Useful if you'd like to s
         }
     }
     
-### Retrieve a single transaction for a Code [GET /code/{fullcode}/transactions/{transactionUUIDOruserSuppliedId}]
+### Retrieve a single transaction for a Code [GET /code/{fullcode}/transactions/{transactionIdOruserSuppliedId}]
 
 + Request (application/json)
     + Headers
@@ -444,7 +443,7 @@ Retrieve transactions for a Code given the full code.  Useful if you'd like to s
         {
             "transaction":{
                 "userSuppliedId": "12345678",
-                "transactionUUID":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
                 "valueInCents": 165,
                 "dateCreated": "2016-08-10T08:00:00.000+0000",
                 "valueAvailableAfterTransactionInCents": 4835
