@@ -89,10 +89,11 @@ Use the /ping endpoint to check that your authorization is working correctly or 
         + servertime (string) - The current time on the server (ISO 8601 format)
 
     + Body
-        {
-            "username":"example_merchant_account@yourdomain.com",
-            "servertime": "2016-09-08T18:44:02.124+0000"
-        }
+    
+            {
+                "username":"example_merchant_account@yourdomain.com",
+                "servertime": "2016-09-08T18:44:02.124+0000"
+            }
         
 + Response 401
 
@@ -115,6 +116,7 @@ Create a Card and its corresponding Code.  Note that CardId on response should b
 
 + Request (application/json)
     + Headers
+    
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
     + Attributes
         + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
@@ -124,16 +126,17 @@ Create a Card and its corresponding Code.  Note that CardId on response should b
             + expires (string) - The code's optional expiry date and time.  ISO-8601 format.  
 
     + Body
-    {
-        userSuppliedId:"12345678",
-        "code":
-        {
-            "valueInCents":5000,
-            "currency":"CAD",
-            "expires":"2017-03-03T08:00:00.000+0000",
-        }
-    }
     
+            {
+                userSuppliedId:"12345678",
+                "code":
+                {
+                    "valueInCents":5000,
+                    "currency":"CAD",
+                    "expires":"2017-03-03T08:00:00.000+0000",
+                }
+            }
+        
 + Response 200
     + Attributes
         + Card
@@ -142,18 +145,20 @@ Create a Card and its corresponding Code.  Note that CardId on response should b
             + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format
 
     + Body
-        {
-            "CardId":"5c1c1760-b185-4861-a4fc-47eca84bf52b",
-            "userSuppliedId":"12345678",
-            "dateCreated":"2016-08-10T08:00:00.000+0000"
-        }
+    
+            {
+                "CardId":"5c1c1760-b185-4861-a4fc-47eca84bf52b",
+                "userSuppliedId":"12345678",
+                "dateCreated":"2016-08-10T08:00:00.000+0000"
+            }
     
 ### List Cards [GET /cards/{?limit}{?offset}]
 
 Retrieve your created cards.  Results are returned in descending order of creation (newest first).
 + Request (application/json)
     + Headers
-        Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
+             Authorization: Bearer <YOUR_ACCESS_TOKEN>
    
 + Parameter
     + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
@@ -162,42 +167,43 @@ Retrieve your created cards.  Results are returned in descending order of creati
 + Response 200
 
     + Body
-    {
-        "cards":[
+    
             {
-            "CardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
-            "dateCreated": "2016-09-01T23:47:02.000+0000",
-            "userSuppliedId":"1234"
-            },
-            {
-            "CardId": "4e61aba2-5d5a-4e99-8574-6479cecce0dd",
-            "dateCreated": "2016-09-01T23:42:35.000+0000",
-            "userSuppliedId":"1235"
-            },
-            {
-            "CardId": "3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
-            "dateCreated": "2016-09-01T23:42:23.000+0000",
-            "userSuppliedId":"1236"
-            },
-            {
-            "CardId": "c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
-            "dateCreated": "2016-09-01T23:42:17.000+0000",
-            "userSuppliedId":"1237"
-            },
-            {
-            "CardId": "56d23f04-64a8-452b-b3a1-3e758ebb6adc",
-            "dateCreated": "2016-09-01T23:41:32.000+0000",
-            "userSuppliedId":"1238"
+                "cards":[
+                    {
+                    "CardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
+                    "dateCreated": "2016-09-01T23:47:02.000+0000",
+                    "userSuppliedId":"1234"
+                    },
+                    {
+                    "CardId": "4e61aba2-5d5a-4e99-8574-6479cecce0dd",
+                    "dateCreated": "2016-09-01T23:42:35.000+0000",
+                    "userSuppliedId":"1235"
+                    },
+                    {
+                    "CardId": "3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
+                    "dateCreated": "2016-09-01T23:42:23.000+0000",
+                    "userSuppliedId":"1236"
+                    },
+                    {
+                    "CardId": "c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
+                    "dateCreated": "2016-09-01T23:42:17.000+0000",
+                    "userSuppliedId":"1237"
+                    },
+                    {
+                    "CardId": "56d23f04-64a8-452b-b3a1-3e758ebb6adc",
+                    "dateCreated": "2016-09-01T23:41:32.000+0000",
+                    "userSuppliedId":"1238"
+                    }
+                ],
+                "pagination":{
+                    "count": 5,
+                    "limit": 100,
+                    "maxLimit": 1000,
+                    "offset": 0,
+                    "totalCount": 5
+                }
             }
-        ],
-        "pagination":{
-            "count": 5,
-            "limit": 100,
-            "maxLimit": 1000,
-            "offset": 0,
-            "totalCount": 5
-        }
-    }
     
 ### Retrieve Card [GET /cards/{CardIdorUserSuppliedId}]
 
@@ -205,18 +211,20 @@ Look up a single card by your UserSuppliedId or by the Giftbit assigned CardId
 
 + Request (application/json)
     + Headers
+    
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Response 200
 
     + Body
-    {
-        "card":{
-            "userSuppliedId" : 
-            "CardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
-            "dateCreated": "2016-09-01T23:47:02.000+0000"
-        }
-    }
+        
+            {
+                "card":{
+                    "userSuppliedId" : 
+                    "CardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
+                    "dateCreated": "2016-09-01T23:47:02.000+0000"
+                }
+            }
     
 ### Retrieve a full code by CardId [GET /cards/{CardId}/code/fullcode]
 
@@ -224,16 +232,18 @@ After creating a Card, use this endpoint to retrieve the code to give to your re
 
 + Request (application/json)
     + Headers
+    
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Response 200
 
     + Body
-    {
-        "fullcode":{
-            "code" : "GFBT-ABCDE-FGHIJK-LMNOP-12345"
-        }
-    }
+    
+            {
+                "fullcode":{
+                    "code" : "GFBT-ABCDE-FGHIJK-LMNOP-12345"
+                }
+            }
 
 ### Retrieve a Code by CardId [GET /cards/{CardId}/code]
 
@@ -241,10 +251,11 @@ Use this endpoint if your system or internal staff need to retrieve basic inform
 
 + Request (application/json)
     + Headers
+    
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + CardId: (string) - The identifier returned when the Card and Code were created.
+    + CardId (string) - The identifier returned when the Card and Code were created.
 
 ### Retrieve a Code balance by CardId [GET /cards/{CardId}/code/balance]
 
@@ -252,10 +263,11 @@ Use this endpoint if your system or internal staff need to retrieve up to date b
 
 + Request (application/json)
     + Headers
+    
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + CardId: (string) - The identifier returned when the Card and Code were created.
+    + CardId (string) - The identifier returned when the Card and Code were created.
 
 ### Retrieve transactions for a code by CardId [GET /cards/{CardId}/code/transactions]
 
@@ -263,10 +275,11 @@ Use this endpoint if your system or internal staff need to retrieve all the tran
 
 + Request (application/json)
     + Headers
+    
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + CardId: (string) - The identifier returned when the Card and Code were created.
+    + CardId (string) - The identifier returned when the Card and Code were created.
     
 ### Create a transaction for a code given the CardId [POST /cards/{CardId}/code/transactions]
 
@@ -274,10 +287,11 @@ Use this endpoint if your system or internal staff need to create a transaction 
 
 + Request (application/json)
     + Headers
+    
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + CardId: (string) - The identifier returned when the Card and Code were created.
+    + CardId (string) - The identifier returned when the Card and Code were created.
 
 
 # Group Endpoints that power the code recipient experience
@@ -294,9 +308,10 @@ Look up information about a code given the fullcode.
 
 + Request (application/json)
     + Headers
+    
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 + Parameters 
-    + fullcode: (string) - The code given to the customer.
+    + fullcode (string) - The code given to the customer.
     
 + Response 200
     + Attributes
@@ -308,16 +323,17 @@ Look up information about a code given the fullcode.
             + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format
 
     + Body
-    {
-        "Code":
-        {
-            "codeLast4": "BF8Z",
-            "currency":"USD",
-            "initialValueInCents":2500,
-            "expires":"2020-08-06T08:00:00.000+0000"
-            "dateCreated":"2016-08-10T08:00:00.000+0000"
-        }
-    }
+    
+            {
+                "Code":
+                {
+                    "codeLast4": "BF8Z",
+                    "currency":"USD",
+                    "initialValueInCents":2500,
+                    "expires":"2020-08-06T08:00:00.000+0000"
+                    "dateCreated":"2016-08-10T08:00:00.000+0000"
+                }
+            }
 
 
 ### Retrieve Code Balance [GET /codes/{fullcode}/balance]
@@ -326,9 +342,10 @@ Retrieve the balance of a Code considering all previous Transactions.
 
 + Request (application/json)
     + Headers
+    
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 + Parameters 
-    + fullcode: (string) - The code given to the customer.
+    + fullcode (string) - The code given to the customer.
     
 + Response 200
     + Attributes
@@ -337,12 +354,13 @@ Retrieve the balance of a Code considering all previous Transactions.
 
     
     + Body
-        {
-            "balance":
+    
             {
-                "valueInCents":2475,
+                "balance":
+                {
+                    "valueInCents":2475,
+                }
             }
-        }
 
 ## Code Transaction [/code/{fullcode}/transactions]
 
@@ -353,23 +371,25 @@ A Code Transaction represents the use of all or part of the Code value.
 Use some or all of the remaining value of the code.  Attempting to use value for a code that is expired or does not have enough remaining value will result in an error.
 
 + Parameters 
-    + fullcode: (string) - The gift code.
+    + fullcode (string) - The gift code.
     
 + Request (application/json)
     + Headers
+    
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + valueInCents: (number, required) - The amount in cents to use from the Code.  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
-        + currency:  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
-        + userSuppliedId: (string, required) - A unique identifier for this transaction.
+        + valueInCents (number, required) - The amount in cents to use from the Code.  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
+        + currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
+        + userSuppliedId (string, required) - A unique identifier for this transaction.
 
     + Body
-    {
-        "userSuppliedId": "12345678",
-        "valueInCents": 165,
-        "currency": "USD"
-    }
+    
+            {
+                "userSuppliedId": "12345678",
+                "valueInCents": 165,
+                "currency": "USD"
+            }
 
 + Response 200
 
@@ -381,16 +401,17 @@ Use some or all of the remaining value of the code.  Attempting to use value for
         + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format
 
     + Body
-        {
-            "transaction":{
-                "userSuppliedId": "12345678",
-                "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                "valueInCents": 165,
-                "dateCreated": "2016-08-10T08:00:00.000+0000",
-                "valueAvailableAfterTransactionInCents": 4835
+    
+            {
+                "transaction":{
+                    "userSuppliedId": "12345678",
+                    "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                    "valueInCents": 165,
+                    "dateCreated": "2016-08-10T08:00:00.000+0000",
+                    "valueAvailableAfterTransactionInCents": 4835
+                    }
                 }
             }
-        }
 
 
         
@@ -407,7 +428,8 @@ Retrieve transactions for a Code given the full code.  Useful if you'd like to s
 
 + Request (application/json)
     + Headers
-        Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
    
 + Parameter
     + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
@@ -415,47 +437,50 @@ Retrieve transactions for a Code given the full code.  Useful if you'd like to s
 + Response 200
 
     + Body
-    {
-        "transactions":[
+    
             {
-                "userSuppliedId": "12345",
-                "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                "valueInCents": 500,
-                "dateCreated": "2016-08-11T08:32:00.000+0000",
-                "valueAvailableAfterTransactionInCents": 800
-            },
-            {
-                "userSuppliedId": "12344",
-                "transactionId":"avji1b55-6gu7-4ke5-82s5-fd37edb5ju9a",
-                "valueInCents": 700,
-                "dateCreated": "2016-08-10T08:00:00.000+0000",
-                "valueAvailableAfterTransactionInCents": 1300
+                "transactions":[
+                    {
+                        "userSuppliedId": "12345",
+                        "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                        "valueInCents": 500,
+                        "dateCreated": "2016-08-11T08:32:00.000+0000",
+                        "valueAvailableAfterTransactionInCents": 800
+                    },
+                    {
+                        "userSuppliedId": "12344",
+                        "transactionId":"avji1b55-6gu7-4ke5-82s5-fd37edb5ju9a",
+                        "valueInCents": 700,
+                        "dateCreated": "2016-08-10T08:00:00.000+0000",
+                        "valueAvailableAfterTransactionInCents": 1300
+                    }
+                ],
+                "pagination":{
+                    "count": 2,
+                    "limit": 100,
+                    "maxLimit": 1000,
+                    "offset": 0,
+                    "totalCount": 2
+                }
             }
-        ],
-        "pagination":{
-            "count": 2,
-            "limit": 100,
-            "maxLimit": 1000,
-            "offset": 0,
-            "totalCount": 2
-        }
-    }
     
 ### Retrieve a single transaction for a Code [GET /code/{fullcode}/transactions/{transactionIdOruserSuppliedId}]
 
 + Request (application/json)
     + Headers
-        Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
 + Response 200
 
     + Body
-        {
-            "transaction":{
-                "userSuppliedId": "12345678",
-                "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                "valueInCents": 165,
-                "dateCreated": "2016-08-10T08:00:00.000+0000",
-                "valueAvailableAfterTransactionInCents": 4835
+    
+            {
+                "transaction":{
+                    "userSuppliedId": "12345678",
+                    "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                    "valueInCents": 165,
+                    "dateCreated": "2016-08-10T08:00:00.000+0000",
+                    "valueAvailableAfterTransactionInCents": 4835
+                    }
                 }
             }
-        }
