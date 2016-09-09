@@ -80,8 +80,12 @@ Note that Giftbit is a PCI compliant platform and we use all modern best practic
 The API expects all dates in request parameters to conform to the ISO-8601 format, specifically "yyyy-MM-dd'T'HH:mm:ss.SSSZ".  You can see examples in this documentation.
 This allows you to control things such as Code expiry in fine granulatiry to the timezone of your choosing.   All responses will always be given in this same format converted to the UTC timezone (+0000)
 
-## About currency type
+## About currency value and currency type
 Where currency type (eg. USD, CDN, AUD) is required or returned, the API expects/uses 3 character uppercase codes conforming to the ISO-4217 standard. Giftbit does not do any currency conversion nor does currency influence internal behaviour; currency rather allows you to issue and track cards in different currencies as you choose.
+
+In all cases where value is concerned you need to provide the amount in the smallest currency unit. For most, this is the amount in cents (or pence, penny, or similarly named unit). For example, to create a Card for USD1.00, you would set the initialValue=100 (100 cents).
+
+For zero-decimal currencies, use the regular denomination. For example, for ¥1, you should set initialValue=1 (1 JPY), since ¥1 is the smallest currency unit.
 
 ## Legal responsibilities
 The Giftbit Currency API provides flexibility to implement multiple currency solutions (gift cards, unique promo codes, credit refunds, etc). It is the responsibility of the API user and their organization to understand and follow the jurisdictions and laws the govern all aspects of their implementation.
@@ -134,7 +138,7 @@ Create a Card and its corresponding Code.  Note that CardId on response should b
     + Attributes
         + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
         + Code
-            + initialValueInCents (number) - the starting value of the code, in cents
+            + initialValue (number) - the starting value of the code, in the smallest currency unit (such as cents)
             + currency (string) - The 3 character ISO-4217 currency.
             + expires (string) - The code's optional expiry date and time.  ISO-8601 format.  
 
@@ -144,7 +148,7 @@ Create a Card and its corresponding Code.  Note that CardId on response should b
                 userSuppliedId:"12345678",
                 "code":
                 {
-                    "initialValueInCents":5000,
+                    "initialValue":5000,
                     "currency":"CAD",
                     "expires":"2017-03-03T08:00:00.000+0000",
                 }
@@ -331,7 +335,7 @@ Look up information about a code given the fullcode.
         + Code
             + codeLast4 (string) - The last 4 characters of the Code.
             + currency (string) - The 3 character ISO-4217 currency.
-            + initialValueInCents (number) - The value of the code in cents at creation.
+            + initialValue (number) - The value of the code at creation in the smallest currency unit (such as cents)
             + expires (string) - The code's expiry date and time.  This field will be ommitted if the code was not created with an expiry.  ISO-8601 format.
             + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format
 
@@ -342,7 +346,7 @@ Look up information about a code given the fullcode.
                 {
                     "codeLast4": "BF8Z",
                     "currency":"USD",
-                    "initialValueInCents":2500,
+                    "initialValue":2500,
                     "expires":"2020-08-06T08:00:00.000+0000"
                     "dateCreated":"2016-08-10T08:00:00.000+0000"
                 }
@@ -363,7 +367,7 @@ Retrieve the balance of a Code considering all previous Transactions.
 + Response 200
     + Attributes
         + Balance
-            + valueInCents (number) - The current remaining value on the code in cents.
+            + value (number) - The current remaining value on the code in the smallest currency unit (such as cents).
 
     
     + Body
@@ -371,7 +375,7 @@ Retrieve the balance of a Code considering all previous Transactions.
             {
                 "balance":
                 {
-                    "valueInCents":2475,
+                    "value":2475,
                 }
             }
 
@@ -392,7 +396,7 @@ Use some or all of the remaining value of the code.  Attempting to use value for
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + valueInCents (number, required) - The amount in cents to use from the Code.  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
+        + value (number, required) - The amount to use from the Code in the smallest currency unit (such as cents).  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
         + currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
         + userSuppliedId (string, required) - A unique identifier for this transaction.
 
@@ -400,17 +404,17 @@ Use some or all of the remaining value of the code.  Attempting to use value for
     
             {
                 "userSuppliedId": "12345678",
-                "valueInCents": 165,
+                "value": 165,
                 "currency": "USD"
             }
 
 + Response 200
 
     + Attributes
-        + valueInCents (number) - The amount of the transaction (should equal valueInCents in the request)
+        + value (number) - The amount of the transaction in the smallest currency unit (such as cents). Should equal value in the request.
         + transactionId (string) - The unique Id for this transaction assigned by Giftbit at creation time
         + userSuppliedId (string) - Identifier of the transaction (should equal transactionId in the request).
-        + valueAvailableAfterTransactionInCents (number) - The current value of the code (after this use).
+        + valueAvailableAfterTransaction (number) - The current value of the code (after this transaction) in the smallest currency unit (such as cents).
         + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format
 
     + Body
@@ -419,9 +423,9 @@ Use some or all of the remaining value of the code.  Attempting to use value for
                 "transaction":{
                     "userSuppliedId": "12345678",
                     "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                    "valueInCents": 165,
+                    "value": 165,
                     "dateCreated": "2016-08-10T08:00:00.000+0000",
-                    "valueAvailableAfterTransactionInCents": 4835
+                    "valueAvailableAfterTransaction": 4835
                     }
                 }
             }
@@ -448,16 +452,16 @@ Retrieve transactions for a Code given the full code.  Useful if you'd like to s
                     {
                         "userSuppliedId": "12345",
                         "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                        "valueInCents": 500,
+                        "value": 500,
                         "dateCreated": "2016-08-11T08:32:00.000+0000",
-                        "valueAvailableAfterTransactionInCents": 800
+                        "valueAvailableAfterTransaction": 800
                     },
                     {
                         "userSuppliedId": "12344",
                         "transactionId":"avji1b55-6gu7-4ke5-82s5-fd37edb5ju9a",
-                        "valueInCents": 700,
+                        "value": 700,
                         "dateCreated": "2016-08-10T08:00:00.000+0000",
-                        "valueAvailableAfterTransactionInCents": 1300
+                        "valueAvailableAfterTransaction": 1300
                     }
                 ],
                 "pagination":{
@@ -483,9 +487,9 @@ Retrieve transactions for a Code given the full code.  Useful if you'd like to s
                 "transaction":{
                     "userSuppliedId": "12345678",
                     "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                    "valueInCents": 165,
+                    "value": 165,
                     "dateCreated": "2016-08-10T08:00:00.000+0000",
-                    "valueAvailableAfterTransactionInCents": 4835
+                    "valueAvailableAfterTransaction": 4835
                     }
                 }
             }
