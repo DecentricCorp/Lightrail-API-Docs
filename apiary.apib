@@ -83,9 +83,9 @@ This allows you to control things such as Code expiry in fine granulatiry to the
 ## About currency value and currency type
 Where currency type (eg. USD, CDN, AUD) is required or returned, the API expects/uses 3 character uppercase codes conforming to the ISO-4217 standard. Giftbit does not do any currency conversion nor does currency influence internal behaviour; currency rather allows you to issue and track cards in different currencies as you choose.
 
-In all cases where value is concerned you need to provide the amount in the smallest common currency unit. For most, this is the amount in cents (or pence, penny, or similarly named unit). For example, to create a Card for USD1.00, you would set the initialAmount=100 (100 cents).
+In all cases where value is concerned you need to provide the amount in the smallest currency unit. For most, this is the amount in cents (or pence, penny, or similarly named unit). For example, to create a Card for USD1.00, you would set the initialValue=100 (100 cents).
 
-For zero-decimal currencies, use the regular denomination. For example, for ¥1, you should set initialAmount=1 (1 JPY), since ¥1 is the smallest currency unit.
+For zero-decimal currencies, use the regular denomination. For example, for ¥1, you should set initialValue=1 (1 JPY), since ¥1 is the smallest currency unit.
 
 ## Legal responsibilities
 The Giftbit Currency API provides flexibility to implement multiple currency solutions (gift cards, unique promo codes, credit refunds, etc). It is the responsibility of the API user and their organization to understand and follow the jurisdictions and laws the govern all aspects of their implementation.
@@ -138,7 +138,7 @@ Create a Card and its corresponding Code.  Note that CardId on response should b
     + Attributes
         + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
         + Code
-            + initialValue (number) - the starting value of the code, in the smallest common currency unit (such as cents)
+            + initialValue (number) - the starting value of the code, in the smallest currency unit (such as cents)
             + currency (string) - The 3 character ISO-4217 currency.
             + expires (string) - The code's optional expiry date and time.  ISO-8601 format.  
 
@@ -335,7 +335,7 @@ Look up information about a code given the fullcode.
         + Code
             + codeLast4 (string) - The last 4 characters of the Code.
             + currency (string) - The 3 character ISO-4217 currency.
-            + initialValue (number) - The value of the code at creation in the smallest common currency unit (such as cents)
+            + initialValue (number) - The value of the code at creation in the smallest currency unit (such as cents)
             + expires (string) - The code's expiry date and time.  This field will be ommitted if the code was not created with an expiry.  ISO-8601 format.
             + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format
 
@@ -367,7 +367,7 @@ Retrieve the balance of a Code considering all previous Transactions.
 + Response 200
     + Attributes
         + Balance
-            + value (number) - The current remaining value on the code in the smallest common currency unit (such as cents).
+            + value (number) - The current remaining value on the code in the smallest currency unit (such as cents).
 
     
     + Body
@@ -396,7 +396,7 @@ Use some or all of the remaining value of the code.  Attempting to use value for
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + value (number, required) - The amount to use from the Code in the smallest common currency unit (such as cents).  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
+        + value (number, required) - The amount to use from the Code in the smallest currency unit (such as cents).  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
         + currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
         + userSuppliedId (string, required) - A unique identifier for this transaction.
 
@@ -411,10 +411,10 @@ Use some or all of the remaining value of the code.  Attempting to use value for
 + Response 200
 
     + Attributes
-        + value (number) - The amount of the transaction in the smallest common currency unit (such as cents). Should equal value in the request.
+        + value (number) - The amount of the transaction in the smallest currency unit (such as cents). Should equal value in the request.
         + transactionId (string) - The unique Id for this transaction assigned by Giftbit at creation time
         + userSuppliedId (string) - Identifier of the transaction (should equal transactionId in the request).
-        + valueAvailableAfterTransaction (number) - The current value of the code (after this transaction) in the smallest common currency unit (such as cents).
+        + valueAvailableAfterTransaction (number) - The current value of the code (after this transaction) in the smallest currency unit (such as cents).
         + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format
 
     + Body
