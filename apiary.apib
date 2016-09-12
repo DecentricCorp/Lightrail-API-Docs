@@ -119,12 +119,9 @@ Use the /ping endpoint to check that your authorization is working correctly or 
             "message": "Unauthorized",
             "code": "CREDENTIALS_INVALID"
         }
-# Group Endpoints that power the code creation experience
 
-Endpoints in the group are for use by your internal team to create and manage your Cards and Codes.
-
-## Card [/cards/]
-
+## Cards [/cards/]
+The /cards endpoint is for use by your internal team to create and manage your Cards and Codes.
 Cards represent a gift card, promotional offer, credit, or other means of eCommerce currency relevant to your business.  Every Card is created with a corresponding Code automatically.  You access details on your both your Cards and your Codes through the CardId, which eliminates the need to ever store a full code.
 
 ### Create a Card and its Code [POST]
@@ -310,14 +307,12 @@ Use this endpoint if your system or internal staff need to create a transaction 
 + Parameters 
     + CardId (string) - The identifier returned when the Card and Code were created.
 
-
-# Group Endpoints that power the code recipient experience
+## Codes [/codes/{fullcode}]
 
 Code represents the financial device that is worth value to you and your store.  The fullcode is what is distributed to your recipients. Your externally facing experience (balance checks, transaction history, and checkout/use of value) should interact with the Code and Code Transaction endpoints described here.  Only these endpoints accept full codes.
 
 You are never required to store the full code internally in your system, and we recommend for security that you do not.  You may interact internally (for customer support) with a Code through its corresponding CardId as described in the 'Card' reference.
 
-## Code [/codes/{fullcode}]
 
 ### Retrieve Basic Code Information [GET]
 
@@ -379,11 +374,7 @@ Retrieve the balance of a Code considering all previous Transactions.
                 }
             }
 
-## Code Transaction [/code/{fullcode}/transactions]
-
-A Code Transaction represents the use of all or part of the Code value.  
-
-### Use Gift Code Value [POST] 
+### Use Gift Code Value [POST /code/{fullcode}/transactions] 
 
 Use some or all of the remaining value of the code.  Attempting to use value for a code that is expired or does not have enough remaining value will result in an error.
 
@@ -433,7 +424,7 @@ Use some or all of the remaining value of the code.  Attempting to use value for
 
 ### Retrieve all transactions for a Code [GET /code/{fullcode}/transactions/{?limit}{?offset}]
 
-Retrieve transactions for a Code given the full code.  Useful if you'd like to show a recipient their coe usage history.  Results are returned in descending order of creation (newest first).
+Retrieve all transactions for a Code given the full code.  Useful if you'd like to show a recipient their coe usage history.  Results are returned in descending order of creation (newest first).
 
 + Request (application/json)
     + Headers
