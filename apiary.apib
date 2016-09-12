@@ -374,7 +374,7 @@ Retrieve the balance of a Code considering all previous Transactions.
                 }
             }
 
-### Use Gift Code Value [POST /code/{fullcode}/transactions] 
+### Use Gift Code Value [POST /codes/{fullcode}/transactions] 
 
 Use some or all of the remaining value of the code.  Attempting to use value for a code that is expired or does not have enough remaining value will result in an error.
 
@@ -422,7 +422,7 @@ Use some or all of the remaining value of the code.  Attempting to use value for
             }
 
 
-### Retrieve all transactions for a Code [GET /code/{fullcode}/transactions/{?limit}{?offset}]
+### Retrieve all transactions for a Code [GET /codes/{fullcode}/transactions/{?limit}{?offset}]
 
 Retrieve all transactions for a Code given the full code.  Useful if you'd like to show a recipient their coe usage history.  Results are returned in descending order of creation (newest first).
 
@@ -464,7 +464,7 @@ Retrieve all transactions for a Code given the full code.  Useful if you'd like 
                 }
             }
     
-### Retrieve a single transaction for a Code [GET /code/{fullcode}/transactions/{transactionIdOruserSuppliedId}]
+### Retrieve a single transaction for a Code [GET /codes/{fullcode}/transactions/{transactionIdOruserSuppliedId}]
 
 + Request (application/json)
     + Headers
