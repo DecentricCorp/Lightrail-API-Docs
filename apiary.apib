@@ -67,6 +67,27 @@ Error response JSON will be in the following format:
             code: (string, optional) - a code that can be provided to Giftbit support if troubleshooting help is needed
         }
 
+Example error responses:
+### 400 (bad request)
+        {
+            "status": 400,
+            "message": "Failed to create card due to error during code creation. Response from code creation: Bad Request. Missing Required Parameter 'initialValue'."
+        }
+
+### 401 (unauthorized)
+        {
+            "status": 401,
+            "message": "Unauthorized",
+            "code": "CREDENTIALS_INVALID"
+        }
+        
+### 409 (idempotency failure)
+
+        {
+            "message": "A different transaction with the same userSuppliedId already exists."
+        }
+
+
 ## A note on security and fullcodes
 
 A fullcode is the property of a Code object that represents real value in your checkout. We have some recommended best practices around creating and accessing them:
@@ -141,12 +162,12 @@ Create a Card and its corresponding Code.  Note that cardId on response should b
     + Body
     
             {
-                userSuppliedId:"12345678",
+                "userSuppliedId": "12345678",
                 "code":
                 {
                     "initialValue":5000,
                     "currency":"CAD",
-                    "expires":"2017-03-03T08:00:00.000+0000",
+                    "expires":"2017-03-03T08:00:00.000+0000"
                 }
             }
         
@@ -292,11 +313,12 @@ Use this endpoint if your system or internal staff need to retrieve up-to-date b
 + Response 200
 
     + Body
-        {
-            "balance":{
-                "currentValue": 200
+    
+            {
+                "balance":{
+                    "currentValue": 200
                 }
-        }
+            }
 
 ### Retrieve Transactions for a Code by cardId [GET /cards/{cardId}/code/transactions/]
 
@@ -372,7 +394,7 @@ Look up information about a code given the fullcode.
     + Body
     
             {
-                "Code":
+                "code":
                 {
                     "codeLast4": "BF8Z",
                     "currency":"USD",
@@ -391,23 +413,20 @@ Retrieve the balance of a Code considering all previous Transactions.
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
 + Parameters 
-    + fullcode (string) - The code given to the customer.
+    + fullcode (string) - the fullcode associated with the Code object and value given to the customer.
     
 + Response 200
-    + Attributes
-        + Balance
-            + value (number) - The current remaining value on the code in the smallest currency unit (such as cents).
 
-    
     + Body
     
             {
-                "balance":
-                {
-                    "value":2475,
+                "balance":{
+                    "currentValue": 200
                 }
             }
+
 
 ### Use Code value (create a Transaction) [POST /codes/{fullcode}/transactions] 
 
@@ -454,13 +473,7 @@ Use some or all of the remaining value of the Code.  Attempting to use value for
                     "valueAvailableAfterTransaction": 4835
                     }
                 }
-            }Add
-            
-+ Response 409
-
-        {
-            "message": "A different transaction with the same userSuppliedId already exists."
-        }
+            }
         
 ### Retrieve all Transactions for a Code [GET /codes/{fullcode}/transactions/{?limit}{?offset}]
 
