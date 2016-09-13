@@ -61,7 +61,9 @@ For example, your customer is using a Code in your checkout.  You POST to the /c
 
 Given the above, it is important you think about how to structure your userSuppliedIds and error handling so that you are always sending a unique value for different logical requests, but the same one for any retries.  
 
-Note that userSuppliedIds do not need to be unique across different endpoints.
+Attempting to reuse a userSuppliedId but providing different request parameters will result in a 409 error.
+
+Note that userSuppliedIds are considered per endpoint and do not need to be unique across different endpoints.
 
 ## Handling error responses
 
@@ -91,8 +93,8 @@ Example error responses:
         }
         
 ### 409 (idempotency failure)
-
         {
+            "status": 409,
             "message": "A different transaction with the same userSuppliedId already exists."
         }
 
