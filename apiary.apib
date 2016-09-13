@@ -553,9 +553,32 @@ Retrieve all Transactions for a Code given the fullcode.  Useful if you'd like t
                 }
             }
     
-### Retrieve a single Transaction for a Code [GET /codes/{fullcode}/transactions/{transactionIdOruserSuppliedId}]
+### Retrieve a single Transaction for a Code using the transactionId [GET /codes/{fullcode}/transactions/{transactionId}]
 
-Retrieve a Transactions for a Code given the fullcode and the transactionId or userSuppliedId.
+Retrieve a Transaction for a Code given the fullcode and the transactionId.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
++ Response 200
+
+    + Body
+    
+            {
+                "transaction":{
+                    "userSuppliedId": "12345678",
+                    "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                    "value": 165,
+                    "dateCreated": "2016-08-10T08:00:00.000+0000",
+                    "valueAvailableAfterTransaction": 4835
+                    }
+                }
+            }
+    
+### Retrieve a single Transaction for a Code using the userSuppliedId [GET /codes/{fullcode}/transactions?userSuppliedId={userSuppliedId}]
+
+Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
 
 + Request (application/json)
     + Headers
