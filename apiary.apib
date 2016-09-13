@@ -70,8 +70,8 @@ Error response JSON will be in the following format:
 ## A note on security and full codes
 
 Full codes represent real value in your checkout. We have some recommended best practices around creating and accessing them:
- - Only retrieve the full code, as returned by /cards/{CardId}/code/fullCode endpoint when you absolutely need it, such as when you will distribute it to your recipient.  No other API calls will return the full code.
- - There is no need to ever store full codes in your system and we strongly recommend against doing so.  You should store the corresponding CardId upon creation for future reference and API calls.  All functionality only requires you to pass the full code through your system in a transient manner.
+ - Only retrieve the full code, as returned by /cards/{cardId}/code/fullcode endpoint when you absolutely need it, such as when you will distribute it to your recipient.  No other API calls will return the full code.
+ - There is no need to ever store full codes in your system and we strongly recommend against doing so.  You should store the corresponding cardId upon creation for future reference and API calls.  All functionality only requires you to pass the full code through your system in a transient manner.
 
 Note that Giftbit is a PCI compliant platform and we use all modern best practices around cryptography and access control to keep your codes safe.
 
@@ -126,7 +126,7 @@ Cards represent a gift card, promotional offer, credit, or other means of eComme
 
 ### Create a Card and its Code [POST]
 
-Create a Card and its corresponding Code.  Note that CardId on response should be persisted to lookup or interact with the Code.  The Code is not returned as part of the response.  If you provide an expiry, please ensure you have confirmed the legality of expiring value for your implementation.
+Create a Card and its corresponding Code.  Note that cardId on response should be persisted to lookup or interact with the Code.  The Code is not returned as part of the response.  If you provide an expiry, please ensure you have confirmed the legality of expiring value for your implementation.
 
 + Request (application/json)
     + Headers
@@ -155,13 +155,13 @@ Create a Card and its corresponding Code.  Note that CardId on response should b
     + Attributes
         + Card
             + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
-            + CardId (string) - Giftbit's unique identifier for this Card.  Be sure to persist this value for future operations
+            + cardId (string) - Giftbit's unique identifier for this Card.  Be sure to persist this value for future operations
             + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format
 
     + Body
     
             {
-                "CardId":"5c1c1760-b185-4861-a4fc-47eca84bf52b",
+                "cardId":"5c1c1760-b185-4861-a4fc-47eca84bf52b",
                 "userSuppliedId":"12345678",
                 "dateCreated":"2016-08-10T08:00:00.000+0000"
             }
@@ -185,27 +185,27 @@ Retrieve your created cards.  Results are returned in descending order of creati
             {
                 "cards":[
                     {
-                    "CardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
+                    "cardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
                     "dateCreated": "2016-09-01T23:47:02.000+0000",
                     "userSuppliedId":"1234"
                     },
                     {
-                    "CardId": "4e61aba2-5d5a-4e99-8574-6479cecce0dd",
+                    "cardId": "4e61aba2-5d5a-4e99-8574-6479cecce0dd",
                     "dateCreated": "2016-09-01T23:42:35.000+0000",
                     "userSuppliedId":"1235"
                     },
                     {
-                    "CardId": "3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
+                    "cardId": "3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
                     "dateCreated": "2016-09-01T23:42:23.000+0000",
                     "userSuppliedId":"1236"
                     },
                     {
-                    "CardId": "c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
+                    "cardId": "c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
                     "dateCreated": "2016-09-01T23:42:17.000+0000",
                     "userSuppliedId":"1237"
                     },
                     {
-                    "CardId": "56d23f04-64a8-452b-b3a1-3e758ebb6adc",
+                    "cardId": "56d23f04-64a8-452b-b3a1-3e758ebb6adc",
                     "dateCreated": "2016-09-01T23:41:32.000+0000",
                     "userSuppliedId":"1238"
                     }
@@ -219,9 +219,12 @@ Retrieve your created cards.  Results are returned in descending order of creati
                 }
             }
     
-### Retrieve Card [GET /cards/{CardIdorUserSuppliedId}]
+### Retrieve Card [GET /cards/{cardId}]
 
-Look up a single card by your UserSuppliedId or by the Giftbit assigned CardId
+Look up a single card by your UserSuppliedId or by the Giftbit assigned cardId
+            
++ Parameters 
+    + cardId (string) - The identifier returned when the Card and Code were created.
 
 + Request (application/json)
     + Headers
@@ -235,15 +238,18 @@ Look up a single card by your UserSuppliedId or by the Giftbit assigned CardId
             {
                 "card":{
                     "userSuppliedId" : 
-                    "CardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
+                    "cardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
                     "dateCreated": "2016-09-01T23:47:02.000+0000"
                 }
             }
     
-### Retrieve a full code by CardId [GET /cards/{CardId}/code/fullcode]
+### Retrieve a full code by CardId [GET /cards/{cardId}/code/fullcode]
 
-After creating a Card, use this endpoint to retrieve the code to give to your recipient.  This is the code worth value to your organization; Do not store this code in your database or other parts of your system.  If you are tracking recipients, associate your recipient with the CardId.
+After creating a Card, use this endpoint to retrieve the code to give to your recipient.  This is the code worth value to your organization; Do not store this code in your database or other parts of your system.  If you are tracking recipients, associate your recipient with the cardId.
 
++ Parameters 
+    + cardId (string) - The identifier returned when the Card and Code were created.
+    
 + Request (application/json)
     + Headers
     
@@ -259,7 +265,7 @@ After creating a Card, use this endpoint to retrieve the code to give to your re
                 }
             }
 
-### Retrieve a Code by CardId [GET /cards/{CardId}/code]
+### Retrieve a Code by cardId [GET /cards/{cardId}/code]
 
 Use this endpoint if your system or internal staff need to retrieve basic information about a Code.  See the Code endpoint documentation for response format
 
@@ -269,9 +275,9 @@ Use this endpoint if your system or internal staff need to retrieve basic inform
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + CardId (string) - The identifier returned when the Card and Code were created.
+    + cardId (string) - The identifier returned when the Card and Code were created.
 
-### Retrieve a Code balance by CardId [GET /cards/{CardId}/code/balance]
+### Retrieve a Code balance by cardId [GET /cards/{cardId}/code/balance]
 
 Use this endpoint if your system or internal staff need to retrieve up to date balance information about a Code.  See the Code endpoint documentation for response format.
 
@@ -281,9 +287,18 @@ Use this endpoint if your system or internal staff need to retrieve up to date b
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + CardId (string) - The identifier returned when the Card and Code were created.
+    + cardId (string) - The identifier returned when the Card and Code were created.
+    
++ Response 200
 
-### Retrieve transactions for a code by CardId [GET /cards/{CardId}/code/transactions]
+    + Body
+        {
+            "balance":{
+                "currentValue": 200
+                }
+        }
+
+### Retrieve transactions for a code by cardId [GET /cards/{cardId}/code/transactions/]
 
 Use this endpoint if your system or internal staff need to retrieve all the transactions for a Code.  See the Code endpoint documentation for response format.
 
@@ -293,11 +308,11 @@ Use this endpoint if your system or internal staff need to retrieve all the tran
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + CardId (string) - The identifier returned when the Card and Code were created.
+    + cardId (string) - The identifier returned when the Card and Code were created.
     
-### Create a transaction for a code given the CardId [POST /cards/{CardId}/code/transactions]
+### Retrieve a single transaction for a code by cardId and transactionId [GET /cards/{cardId}/transactions/{transactionId}]
 
-Use this endpoint if your system or internal staff need to create a transaction for a Code, such as to mark all or part of it as used.  See the Code endpoint documentation for request and response format.
+Use this endpoint if your system or internal staff need to retrieve all the transactions for a Code.  See the Code endpoint documentation for response format.
 
 + Request (application/json)
     + Headers
@@ -305,13 +320,67 @@ Use this endpoint if your system or internal staff need to create a transaction 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Parameters 
-    + CardId (string) - The identifier returned when the Card and Code were created.
+    + cardId (string) - The identifier returned when the Card and Code were created.
+    + transactionId (string) - The identifier returned when the Transaction was created.
++ Response 200
+
+    + Body
+    
+            {
+                "transaction":{
+                    "userSuppliedId": "12345678",
+                    "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                    "value": 165,
+                    "dateCreated": "2016-08-10T08:00:00.000+0000",
+                    "valueAvailableAfterTransaction": 4835
+                    }
+                }
+            }
+    
+### Create a transaction for a code given the cardId [POST /cards/{cardId}/code/transactions]
+
+Use this endpoint if your system or internal staff need to create a transaction for a Code, such as to mark all or part of it as used.  See the Code endpoint documentation for request and response format.
+
++ Parameters 
+    + cardId (string) - The identifier returned when the Card and Code were created.
+    
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    + Attributes
+        + value (number, required) - The amount to use from the Code in the smallest currency unit (such as cents).  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
+        + currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
+        + userSuppliedId (string, required) - A unique identifier for this transaction.
+
+    + Body
+    
+            {
+                "userSuppliedId": "12345678",
+                "value": 165,
+                "currency": "USD"
+            }
+
++ Response 200
+    + Body
+            
+            {
+                "transaction":{
+                    "transactionId": "transaction-2ec1b6d649ae415aa9e1cd1fb80fce61",
+                    "value": 100,
+                    "valueAvailableAfterTransaction": 100,
+                    "userSuppliedId": "card-2b156baf9bea42ab89e64f7ddb2af194-1",
+                    "dateCreated": null
+                }
+            }
+    
 
 ## Codes [/codes/{fullcode}]
 
 Code represents the financial device that is worth value to you and your store.  The fullcode is what is distributed to your recipients. Your externally facing experience (balance checks, transaction history, and checkout/use of value) should interact with the Code and Code Transaction endpoints described here.  Only these endpoints accept full codes.
 
-You are never required to store the full code internally in your system, and we recommend for security that you do not.  You may interact internally (for customer support) with a Code through its corresponding CardId as described in the 'Card' reference.
+You are never required to store the full code internally in your system, and we recommend for security that you do not.  You may interact internally (for customer support) with a Code through its corresponding cardId as described in the 'Card' reference.
 
 
 ### Retrieve Basic Code Information [GET]
@@ -374,7 +443,7 @@ Retrieve the balance of a Code considering all previous Transactions.
                 }
             }
 
-### Use Gift Code Value [POST /code/{fullcode}/transactions] 
+### Use Gift Code Value [POST /codes/{fullcode}/transactions] 
 
 Use some or all of the remaining value of the code.  Attempting to use value for a code that is expired or does not have enough remaining value will result in an error.
 
@@ -422,7 +491,7 @@ Use some or all of the remaining value of the code.  Attempting to use value for
             }
 
 
-### Retrieve all transactions for a Code [GET /code/{fullcode}/transactions/{?limit}{?offset}]
+### Retrieve all transactions for a Code [GET /codes/{fullcode}/transactions/{?limit}{?offset}]
 
 Retrieve all transactions for a Code given the full code.  Useful if you'd like to show a recipient their coe usage history.  Results are returned in descending order of creation (newest first).
 
@@ -464,7 +533,7 @@ Retrieve all transactions for a Code given the full code.  Useful if you'd like 
                 }
             }
     
-### Retrieve a single transaction for a Code [GET /code/{fullcode}/transactions/{transactionIdOruserSuppliedId}]
+### Retrieve a single transaction for a Code [GET /codes/{fullcode}/transactions/{transactionIdOruserSuppliedId}]
 
 + Request (application/json)
     + Headers
