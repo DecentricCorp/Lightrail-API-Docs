@@ -165,6 +165,7 @@ Create a Card and its corresponding Code.  Note that cardId on response should b
                 "dateCreated":"2016-08-10T08:00:00.000+0000"
             }
     
+    
 ### List Cards [GET /cards/{?limit}{?offset}]
 
 Retrieve your created Cards.  Results are returned in descending order of creation (newest first).
@@ -453,9 +454,14 @@ Use some or all of the remaining value of the Code.  Attempting to use value for
                     "valueAvailableAfterTransaction": 4835
                     }
                 }
-            }
+            }Add
+            
++ Response 409
 
-
+        {
+            "message": "A different transaction with the same userSuppliedId already exists."
+        }
+        
 ### Retrieve all Transactions for a Code [GET /codes/{fullcode}/transactions/{?limit}{?offset}]
 
 Retrieve all Transactions for a Code given the fullcode.  Useful if you'd like to show a recipient their code usage history.  Results are returned in descending order of creation (newest first).
