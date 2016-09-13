@@ -428,9 +428,9 @@ Retrieve the balance of a Code considering all previous Transactions.
             }
 
 
-### Use Code value (create a Transaction) [POST /codes/{fullcode}/transactions] 
+### Use Code value [POST /codes/{fullcode}/transactions] 
 
-Use some or all of the remaining value of the Code.  Attempting to use value for a Code that is expired or does not have enough remaining value will result in an error.
+Use some or all of the remaining value of the Code (create a Transaction on the Code).  Attempting to use value for a Code that is expired or does not have enough remaining value will result in an error.
 
 + Parameters 
     + fullcode (string) - The gift code.
