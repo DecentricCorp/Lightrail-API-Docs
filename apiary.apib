@@ -44,11 +44,10 @@ There is a 1-1 relationship between a Card and a Code. You specify the details o
 A currently supported use case for this API is one in which Giftbit powers your gift cards. First, you would create a Card with an attached Code, which contains the value which you wish to send as well as the date you would like the code to expire (if applicable). You would then deliver the fullcode associated with this Code to your recipient, and allow the recipient to redeem value against this Code in one or more transactions. You can check the transaction history or balance remaining on the Code at any time.
 
 The steps you would take in this use case are: 
-- Create a new Card with associated Code (POST /cards)
-- Retrieve the fullcode using this Card's id to deliver to your recipient (GET /cards/{cardId}/code/fullcode)
-- Create a Transaction on the Code using the Card's id (POST /cards/{cardId}/code/transactions)
-- Check the Transactions associated with the Code using the Card's id (GET /cards/{cardId}/code/transactions)
-- Check the remaining value on the Code using the Card's id (GET /codes/{fullcode}/balance)
+- Create a new Card with associated Code (POST /cards). Make sure you keep the returned cardId.
+- Retrieve the fullcode using the cardId to deliver to your recipient (GET /cards/{cardId}/code/fullcode).
+- Accept the fullcode in your checkout, and create a Transaction on the Code (POST /codes/{fullcode}/transactions).
+- Check the remaining value associated with the fullcode and display to your recipient (GET /codes/{fullcode}/balance).
 
 ### High level architecture diagram
 
