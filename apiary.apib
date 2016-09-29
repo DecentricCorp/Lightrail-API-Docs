@@ -33,9 +33,11 @@ Be sure to store your production API token extremely securely in your production
 You authenticate with your `access_token` by including your token prefixed by the word ‘Bearer’ (case sensitive) and a space in the “Authorization” HTTP header, as per the examples in this
 documentation.
 
-## Understanding the API: the relationship between Cards and Codes
+## Understanding the API: the relationship between Cards, Codes, and Categories
 
-The API is structured around two main endpoints and their corresponding concepts: Cards and Codes. A Card represents a unique gift card, promotional code, credit, or other type of value that your business wishes to issue. A Card is the thing that your internal team will interact with following your implementation (creation, retrieval, listing, statistics, etc).  
+The API is structured around two main endpoints and their corresponding concepts: Cards and Codes. A Card represents a unique gift card, promotional code, credit, or other type of value that your business wishes to issue. A Card is the thing that your internal team will interact with following your implementation (creation, retrieval, listing, statistics, etc).
+
+A Category is an identifier that can be attached to one or many Cards. Each Card can also have multiple Categories. A Category consists of a key-value pair of strings; for example, one category might be {"city": "London"}. Categories allow Cards to be grouped for tracking and statistics purposes; in this case, Cards associated with the {"city": "London"} Category would have a set of statistics calculated for them, and you could compare them with another set of Cards in the Category {"city": "Paris"}.
 
 A Code is the unique financial device associated with a Card. A Code has a 'fullcode' that is a unique, unguessable alpha-numeric code that is distributed to a recipient. A Code has a balance, a currency type, an optional expiry and all the Transactions (uses) associated with that code. Your consumer-facing functionality (checkout, balance check, transaction history for a code) interacts with the /Code endpoint.
 
@@ -51,6 +53,13 @@ The steps and API calls you would take in this use case are:
 - Retrieve the fullcode using the cardId to deliver to your recipient (GET /cards/{cardId}/code/fullcode).
 - Accept the fullcode in your checkout, and create a Transaction on the Code (POST /codes/{fullcode}/transactions).
 - Check the remaining value associated with the fullcode and display to your recipient (GET /codes/{fullcode}/balance).
+
+### Creating a bulk order of codes for distribution
+If you are looking to distribute a large number of codes, you can order them to be emailed to you via CSV for you to use as you see fit. 
+
+The steps and API calls you would take in this use case are:
+- Create an order of Cards with associated Codes (POST /orders).
+- Receive an email with a CSV of fullcodes for these Cards.
 
 #### High level architecture diagram
 
@@ -79,6 +88,12 @@ Given the above, it is important you think about how to structure your userSuppl
 Attempting to reuse a userSuppliedId but providing different request parameters will result in a 409 error.
 
 Note that userSuppliedIds are considered per endpoint and do not need to be unique across different endpoints.
+
+## Reserved Categories
+
+Giftbit currently has two reserved Category keys: "giftbit_order" and "giftbit_type". A "giftbit_order" is the default grouping of Cards, and is assigned either through the /orders endpoint or the /cards endpoint; in this document, an order refers to a group of Cards that are attached to the same {"giftbit-order": "order name"} category. See the endpoint discussions for more details on how "giftbit_order" is assigned.
+
+A "giftbit_type" refers to the Card's purpose, and corresponds to the types that can be assigned through the web portal. There are four allowed values for the "giftbit_type" key: PROMO, GIFT_CARD, REFUND, and UNCATEGORIZED. If a "giftbit_type" is not provided on Card or order creation, the Cards will be assigned the UNCATEGORIZED value. 
 
 ## Handling error responses
 
@@ -178,16 +193,23 @@ Cards represent a gift card, promotional offer, credit, or other means of eComme
 
 Create a Card and its corresponding Code.  Note that cardId on response should be persisted to lookup or interact with the Code.  The Code is not returned as part of the response.  If you provide an expiry, please ensure you have confirmed the legality of expiring value for your implementation.
 
+You can also provide a "giftbit_order" Category, which will assign the Card to whichever order you specify. If no "giftbit_order" is provided, the Card will be assigned to a default {"giftbit_order": "YYYY-MM-DD"} Category indicating the date the Card was created. Categories are not returned as part of the response.
+
 + Request (application/json)
+The categories object is optional. If provided, it will attach the given Category objects to the Card, creating any that do not exist already.
+
     + Headers
-    
+
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
     + Attributes
         + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
         + Code
             + initialValue (number) - the starting value of the code, in the smallest currency unit (such as cents).
             + currency (string) - The 3 character ISO-4217 currency.
-            + expires (string) - The code's optional expiry date and time.  ISO-8601 format.  
+            + expires (string) - The code's optional expiry date and time.  ISO-8601 format.
+        + Categories
+            + categoryKey (string) - The key of the category. Examples: "giftbit_type", "giftbit_order", "city"
+            + categoryValue (string) - The value of the category. Examples: "PROMO", "My Order", "Victoria"
 
     + Body
     
@@ -198,6 +220,12 @@ Create a Card and its corresponding Code.  Note that cardId on response should b
                     "initialValue":5000,
                     "currency":"CAD",
                     "expires":"2017-03-03T08:00:00.000+0000"
+                }
+                "categories":
+                {
+                    "giftbit_type": "PROMO",
+                    "giftbit_order": "My Order",
+                    "My Custom Category Key": "My Custom Category Value"
                 }
             }
         
@@ -211,13 +239,68 @@ Create a Card and its corresponding Code.  Note that cardId on response should b
     + Body
     
             {
-                "cardId":"5c1c1760-b185-4861-a4fc-47eca84bf52b",
+                "cardId":"card-5c1c1760-b185-4861-a4fc-47eca84bf52b",
                 "userSuppliedId":"12345678",
                 "dateCreated":"2016-08-10T08:00:00.000+0000"
             }
     
     
-### List Cards [GET /cards/{?limit}{?offset}]
+### Order many Cards [POST /cards/orders] 
+
+Create an order of Cards. A CSV file of fullcodes associated with the Cards will be sent to your email address. If the numberOfCards provided is 1, the Card will be returned instead (the same as the /cards endpoint above). The userSuppliedId for the order serves as the order's name; that is, all Cards in the order will be attached to the {"giftbit_order": "userSuppliedId"} Category. 
+
++ Request (application/json)
+The categories object is optional. If provided, it will attach the given Category objects to the Card, creating any that do not exist already.
+
+    + Headers
+
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    + Attributes
+        + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
+        + numberOfCards (number) - The number of Cards and associated Codes you wish to create.
+        + Code
+            + initialValue (number) - the starting value of the code, in the smallest currency unit (such as cents).
+            + currency (string) - The 3 character ISO-4217 currency.
+            + expires (string) - The code's optional expiry date and time.  ISO-8601 format.
+        + Categories
+            + categoryKey (string) - The key of the category. Examples: "giftbit_type", "city"
+            + categoryValue (string) - The value of the category. Examples: "PROMO", "Victoria"
+
+    + Body
+    
+            {
+                "userSuppliedId": "My Order Name",
+                "numberOfCards": 100,
+                "code":
+                {
+                    "initialValue":5000,
+                    "currency":"CAD",
+                    "expires":"2017-03-03T08:00:00.000+0000"
+                }
+                "categories":
+                {
+                    "giftbit_type": "PROMO",
+                    "My Custom Category Key": "My Custom Category Value"
+                }
+            }
+        
++ Response 200
+    + Attributes
+        + OrderRequest
+            + userSuppliedId (string) - The unique identifier you provided when this order was created. 
+            + orderRequestId (string) - Giftbit's unique identifier for this order request.
+            + numberOfCards (number) - The number of Cards that are being created for this order.
+            + dateCreated (string) - The Giftbit system time of the order request's creation in ISO-8601 format.
+
+    + Body
+    
+            {
+                "userSuppliedId":"My Order Name",
+                "orderRequestId":"orderRequest-5c1c1760-b185-4861-a4fc-47eca84bf52b",
+                "numberOfCards": 100
+                "dateCreated":"2016-08-10T08:00:00.000+0000"
+            }
+### List Cards [GET /cards/{?limit}{?offset}{?categoryKey}{?categoryValue}]
 
 Retrieve your created Cards.  Results are returned in descending order of creation (newest first).
 + Request (application/json)
@@ -228,6 +311,8 @@ Retrieve your created Cards.  Results are returned in descending order of creati
 + Parameter
     + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
     + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
+    + categoryKey (string, optional) - A key to a Category. Will return all Cards attached to Categories with this key if supplied.
+    + categoryValue (string, optional) - A value of a Category. Will return all Cards attached to Categories with this value if supplied. If both a categoryKey and a categoryValue are supplied, will return all Cards associated with the unique Category having that categoryKey and categoryValue. 
 
 + Response 200
 
@@ -236,27 +321,27 @@ Retrieve your created Cards.  Results are returned in descending order of creati
             {
                 "cards":[
                     {
-                    "cardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
+                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
                     "dateCreated": "2016-09-01T23:47:02.000+0000",
                     "userSuppliedId":"1234"
                     },
                     {
-                    "cardId": "4e61aba2-5d5a-4e99-8574-6479cecce0dd",
+                    "cardId": "card-4e61aba2-5d5a-4e99-8574-6479cecce0dd",
                     "dateCreated": "2016-09-01T23:42:35.000+0000",
                     "userSuppliedId":"1235"
                     },
                     {
-                    "cardId": "3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
+                    "cardId": "card-3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
                     "dateCreated": "2016-09-01T23:42:23.000+0000",
                     "userSuppliedId":"1236"
                     },
                     {
-                    "cardId": "c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
+                    "cardId": "card-c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
                     "dateCreated": "2016-09-01T23:42:17.000+0000",
                     "userSuppliedId":"1237"
                     },
                     {
-                    "cardId": "56d23f04-64a8-452b-b3a1-3e758ebb6adc",
+                    "cardId": "card-56d23f04-64a8-452b-b3a1-3e758ebb6adc",
                     "dateCreated": "2016-09-01T23:41:32.000+0000",
                     "userSuppliedId":"1238"
                     }
@@ -289,12 +374,12 @@ Look up a single Card by by the Giftbit assigned cardId.
             {
                 "card":{
                     "userSuppliedId" : "1234",
-                    "cardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
+                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
                     "dateCreated": "2016-09-01T23:47:02.000+0000"
                 }
             }
             
-### Retrieve Card by userSuppliedId [GET /cards?userSuppliedId={userSuppliedId}]
+### Retrieve Card by userSuppliedId [GET /cards/{?userSuppliedId}]
 
 Look up a single Card by the userSuppliedId.
             
@@ -311,14 +396,48 @@ Look up a single Card by the userSuppliedId.
     + Body
         
             {
-                "card":{
-                    "userSuppliedId" : "1234",
-                    "cardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
-                    "dateCreated": "2016-09-01T23:47:02.000+0000"
-                }
+                "cards":[
+                    {
+                        "userSuppliedId" : "1234",
+                        "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
+                        "dateCreated": "2016-09-01T23:47:02.000+0000"
+                    }
+                ]
             }
     
+
+### Retrieve Categories by cardId [GET /cards/{cardId}/categories]
+
+After creating a Card, use this endpoint to retrieve all Categories associated with that Card.
+
++ Request (application/json)
+    + Headers
     
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+        
++ Response 200
+    + Body
+    
+            {
+                "categories":[
+                    {
+                        "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                        "key": "someCategoryKey",
+                        "value": "someCategoryValue"
+                    }, 
+                    {
+                        "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                        "key": "order",
+                        "value": "my order name"
+                    },
+                    {
+                        "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                        "key": "type",
+                        "value": "PROMO"
+                    }
+                ]
+            }
+            
 ### Retrieve a fullcode by cardId [GET /cards/{cardId}/code/fullcode]
 
 After creating a Card, use this endpoint to retrieve the fullcode to give to your recipient.  This is the code worth value to your organization; do not store this code in your database or other parts of your system.  If you are tracking recipients, associate your recipient with the cardId.
@@ -352,6 +471,20 @@ Use this endpoint if your system or internal staff need to retrieve basic inform
 
 + Parameters 
     + cardId (string) - The identifier returned when the Card and Code were created.
+    
++ Response 200
+    
+    + Body
+    
+            {
+                "code":{
+                    "currency": "CAD",
+                    "initialValue": 5000,
+                    "codeLastFour": "WXYZ",
+                    "dateCreated": "2016-08-10T08:00:00.000+0000",
+                    "expires": "2017-03-03T08:00:00.000+0000"
+                }
+            }
 
 ### Retrieve a Code balance by cardId [GET /cards/{cardId}/code/balance]
 
@@ -418,6 +551,42 @@ Use this endpoint if your system or internal staff need to create a Transaction 
         + currency  (string, required) - The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
         + userSuppliedId (string, required) - A unique identifier for this transaction.
     
+
+## Categories [/categories/]
+
+A Category represents a grouping of Cards that makes sense to your team, e.g. orders, types of cards, or any custom Category you wish to create. Most functions of Categories are closely tied to Cards.
+
+### List your existing Categories [GET /categories/{?categoryKey}{?categoryValue}{?limit}{?offset}]
+
+Retrieve a list of Categories that have been created.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+        
++ Response 200
+    + Body
+    
+            {
+                "categories":[
+                    {
+                        "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                        "key": "someCategoryKey",
+                        "value": "someCategoryValue"
+                    }, 
+                    {
+                        "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                        "key": "order",
+                        "value": "my order name"
+                    },
+                    {
+                        "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                        "key": "type",
+                        "value": "PROMO"
+                    }
+                ]
+            }
 
 ## Codes [/codes/{fullcode}]
 
@@ -522,7 +691,7 @@ Use some or all of the remaining value of the Code (create a Transaction on the 
             {
                 "transaction":{
                     "userSuppliedId": "12345678",
-                    "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                    "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
                     "value": 165,
                     "dateCreated": "2016-08-10T08:00:00.000+0000",
                     "valueAvailableAfterTransaction": 4835
@@ -550,14 +719,14 @@ Retrieve all Transactions for a Code given the fullcode.  Useful if you'd like t
                 "transactions":[
                     {
                         "userSuppliedId": "12345",
-                        "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                        "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
                         "value": 500,
                         "dateCreated": "2016-08-11T08:32:00.000+0000",
                         "valueAvailableAfterTransaction": 800
                     },
                     {
                         "userSuppliedId": "12344",
-                        "transactionId":"avji1b55-6gu7-4ke5-82s5-fd37edb5ju9a",
+                        "transactionId":"transaction-avji1b55-6gu7-4ke5-82s5-fd37edb5ju9a",
                         "value": 700,
                         "dateCreated": "2016-08-10T08:00:00.000+0000",
                         "valueAvailableAfterTransaction": 1300
@@ -587,7 +756,7 @@ Retrieve a Transaction for a Code given the fullcode and the transactionId.
             {
                 "transaction":{
                     "userSuppliedId": "12345678",
-                    "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                    "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
                     "value": 165,
                     "dateCreated": "2016-08-10T08:00:00.000+0000",
                     "valueAvailableAfterTransaction": 4835
@@ -610,7 +779,7 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
             {
                 "transaction":{
                     "userSuppliedId": "12345678",
-                    "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                    "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
                     "value": 165,
                     "dateCreated": "2016-08-10T08:00:00.000+0000",
                     "valueAvailableAfterTransaction": 4835
