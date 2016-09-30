@@ -37,13 +37,13 @@ documentation.
 
 The API is structured around two main endpoints and their corresponding concepts: Cards and Codes. A Card represents a unique gift card, promotional code, credit, or other type of value that your business wishes to issue. A Card is the thing that your internal team will interact with following your implementation (creation, retrieval, listing, statistics, etc).
 
-A Category is an identifier that can be attached to one or many Cards. Each Card can also have multiple Categories. A Category consists of a key-value pair of strings; for example, one category might be {"city": "London"}. Categories allow Cards to be grouped for tracking and statistics purposes; in this case, Cards associated with the {"city": "London"} Category would have a set of statistics calculated for them, and you could compare them with another set of Cards in the Category {"city": "Paris"}.
+A Category is an identifier that can be attached in a many-to-many relationship with Cards. A Category consists of a key-value pair of strings; for example, one category might be {"city": "London"}. Categories allow Cards to be grouped for tracking and statistics purposes; in this case, Cards associated with the {"city": "London"} Category would have a set of statistics calculated for them, and you could compare them with another set of Cards in the Category {"city": "Paris"}.
 
 A Code is the unique financial device associated with a Card. A Code has a 'fullcode' that is a unique, unguessable alpha-numeric code that is distributed to a recipient. A Code has a balance, a currency type, an optional expiry and all the Transactions (uses) associated with that code. Your consumer-facing functionality (checkout, balance check, transaction history for a code) interacts with the /Code endpoint.
 
 There is a 1-1 relationship between a Card and a Code. You specify the details of the Code when you create the Card. Giftbit plans to add extensive functionality to Card including automated delivery mechanisms, templating, external integrations, and more - hence the separation from Code.
 
-## Common use cases
+## Common use case
 
 ### Creating and accepting codes in your your checkout
 A common use case for this API is one in which Giftbit powers your gift cards. First, you would create a Card with an attached Code, which contains the value which you wish to send as well as the date you would like the code to expire (if applicable). You would then deliver the fullcode associated with this Code to your recipient, and allow the recipient to redeem value against this Code in one or more transactions. You can also allow the user to see the usage history or balance remaining on their Code at any time.
@@ -247,10 +247,10 @@ The categories object is optional. If provided, it will attach the given Categor
     
 ### Order many Cards [POST /cards/orders] 
 
-Create an order of Cards. A CSV file of fullcodes associated with the Cards will be sent to your email address. If the numberOfCards provided is 1, the Card will be returned instead (the same as the /cards endpoint above). The userSuppliedId for the order serves as the order's name; that is, all Cards in the order will be attached to the {"giftbit_order": "userSuppliedId"} Category. 
+Create an order of Cards. A CSV file of fullcodes associated with the Cards will be sent to your email address. If the numberOfCards provided is 1, the Card will be returned instead (the same as the /cards endpoint above). The userSuppliedId for the order serves as the order's name; that is, all Cards in the order will be attached to the {"giftbit_order": "userSuppliedId"} Category.
 
 + Request (application/json)
-The categories object is optional. If provided, it will attach the given Category objects to the Card, creating any that do not exist already.
+The categories object is optional. If provided, it will attach the given Category objects to the Card, creating any that do not exist already. Any "giftbit_order" Category supplied will be overwritten with the userSuppliedId for the order.
 
     + Headers
 
@@ -427,12 +427,12 @@ After creating a Card, use this endpoint to retrieve all Categories associated w
                     }, 
                     {
                         "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                        "key": "order",
+                        "key": "giftbit_order",
                         "value": "my order name"
                     },
                     {
                         "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                        "key": "type",
+                        "key": "giftbit_type",
                         "value": "PROMO"
                     }
                 ]
@@ -462,7 +462,7 @@ After creating a Card, use this endpoint to retrieve the fullcode to give to you
 
 ### Retrieve a Code by cardId [GET /cards/{cardId}/code]
 
-Use this endpoint if your system or internal staff need to retrieve basic information about a Code.  See the Code endpoint documentation for response format.
+Use this endpoint if your system or internal staff need to retrieve basic information about a Code. 
 
 + Request (application/json)
     + Headers
@@ -488,7 +488,7 @@ Use this endpoint if your system or internal staff need to retrieve basic inform
 
 ### Retrieve a Code balance by cardId [GET /cards/{cardId}/code/balance]
 
-Use this endpoint if your system or internal staff need to retrieve up-to-date balance information about a Code.  See the Code endpoint documentation for response format.
+Use this endpoint if your system or internal staff need to retrieve up-to-date balance information about a Code.
 
 + Request (application/json)
     + Headers
@@ -510,7 +510,7 @@ Use this endpoint if your system or internal staff need to retrieve up-to-date b
 
 ### Retrieve Transactions for a Code by cardId [GET /cards/{cardId}/code/transactions/]
 
-Use this endpoint if your system or internal staff need to retrieve all the Transactions for a Code.  See the Code endpoint documentation for response format.
+Use this endpoint if your system or internal staff need to retrieve all the Transactions for a Code.
 
 + Request (application/json)
     + Headers
@@ -520,9 +520,32 @@ Use this endpoint if your system or internal staff need to retrieve all the Tran
 + Parameters 
     + cardId (string) - The identifier returned when the Card and Code were created.
     
-### Retrieve a single Transaction for a code by cardId and transactionId [GET /cards/{cardId}/transactions/{transactionId}]
++ Response 200
+    
+    + Body
+        
+            {
+                "transactions":[
+                    {
+                        "transactionId": "transaction-86251f7b040b45d3b7364bae04c74870",
+                        "value": 500,
+                        "valueAvailableAfterTransaction": 500,
+                        "userSuppliedId": "someTransaction",
+                        "dateCreated": "2016-08-10T09:00:00.000+0000"
+                    }
+                ],
+                "pagination":{
+                    "count": 1,
+                    "limit": 100,
+                    "maxLimit": 1000,
+                    "offset": 0,
+                    "totalCount": 1
+                }
+            }
+    
+### Retrieve a single Transaction for a code by cardId and transactionId [GET /cards/{cardId}/code/transactions/{transactionId}]
 
-Use this endpoint if your system or internal staff need to retrieve all the Transactions for a Code.  See the Code endpoint documentation for response format.
+Use this endpoint if your system or internal staff need to retrieve all the Transactions for a Code.
 
 + Request (application/json)
     + Headers
@@ -533,10 +556,23 @@ Use this endpoint if your system or internal staff need to retrieve all the Tran
     + cardId (string) - The identifier returned when the Card and Code were created.
     + transactionId (string) - The identifier returned when the Transaction was created.
     
++ Response 200
+    
+    + Body
+            
+            {
+                "transaction" {
+                    "transactionId": "transaction-86251f7b040b45d3b7364bae04c74870",
+                    "value": 500,
+                    "valueAvailableAfterTransaction": 500,
+                    "userSuppliedId": "someTransaction",
+                    "dateCreated": "2016-08-10T09:00:00.000+0000"
+                }
+            }
     
 ### Create a Transaction for a Code given the cardId [POST /cards/{cardId}/code/transactions]
 
-Use this endpoint if your system or internal staff need to create a Transaction for a Code, such as to mark all or part of it as used.  See the Code endpoint documentation for request and response format.
+Use this endpoint if your system or internal staff need to create a Transaction for a Code, such as to mark all or part of it as used.
 
 + Parameters 
     + cardId (string) - The identifier returned when the Card and Code were created.
@@ -550,11 +586,33 @@ Use this endpoint if your system or internal staff need to create a Transaction 
         + value (number, required) - The amount to use from the Code in the smallest currency unit (such as cents).  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
         + currency  (string, required) - The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
         + userSuppliedId (string, required) - A unique identifier for this transaction.
+        
+    + Body
+    
+            {
+            "value": "500",
+            "currency": "CAD",
+            "userSuppliedId": "someTransaction"
+            }
+        
++ Response 200
+
+    + Body
+    
+            {
+                "transaction" {
+                    "transactionId": "transaction-86251f7b040b45d3b7364bae04c74870",
+                    "value": 500,
+                    "valueAvailableAfterTransaction": 500,
+                    "userSuppliedId": "someTransaction",
+                    "dateCreated": "2016-08-10T09:00:00.000+0000"
+                }
+            }
     
 
 ## Categories [/categories/]
 
-A Category represents a grouping of Cards that makes sense to your team, e.g. orders, types of cards, or any custom Category you wish to create. Most functions of Categories are closely tied to Cards.
+A Category represents a grouping of Cards e.g. orders, types of cards, or any custom Category you wish to create. Most functions of Categories are closely tied to Cards.
 
 ### List your existing Categories [GET /categories/{?categoryKey}{?categoryValue}{?limit}{?offset}]
 
@@ -577,12 +635,12 @@ Retrieve a list of Categories that have been created.
                     }, 
                     {
                         "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                        "key": "order",
+                        "key": "giftbit_order",
                         "value": "my order name"
                     },
                     {
                         "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                        "key": "type",
+                        "key": "giftbit_type",
                         "value": "PROMO"
                     }
                 ]
