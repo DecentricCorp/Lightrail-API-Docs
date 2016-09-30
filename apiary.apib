@@ -37,7 +37,7 @@ documentation.
 
 The API is structured around two main endpoints and their corresponding concepts: Cards and Codes. A Card represents a unique gift card, promotional code, credit, or other type of value that your business wishes to issue. A Card is the thing that your internal team will interact with following your implementation (creation, retrieval, listing, statistics, etc).
 
-A Category is an identifier that can be attached in a many-to-many relationship with Cards. A Category consists of a key-value pair of strings; for example, one category might be {"city": "London"}. Categories allow Cards to be grouped for tracking and statistics purposes; in this case, Cards associated with the {"city": "London"} Category would have a set of statistics calculated for them, and you could compare them with another set of Cards in the Category {"city": "Paris"}.
+A Category is an identifier that can be attached in a many-to-many relationship with Cards. A Category consists of a key-value pair of strings; for example, one category might be {"campaign": "first campaign"}. All of the statistics that Giftbit tracks are grouped by Category, so setting good Categories on your Cards will ensure you get the stats you are looking for. For example, if you want to compare statistics across campaigns, you can set a {"campaign": "first campaign"} Category on one group of Cards, and a {"campaign": "second campaign"} on another. Each would have their own set of statistics calculated for them.
 
 A Code is the unique financial device associated with a Card. A Code has a 'fullcode' that is a unique, unguessable alpha-numeric code that is distributed to a recipient. A Code has a balance, a currency type, an optional expiry and all the Transactions (uses) associated with that code. Your consumer-facing functionality (checkout, balance check, transaction history for a code) interacts with the /Code endpoint.
 
@@ -49,17 +49,15 @@ There is a 1-1 relationship between a Card and a Code. You specify the details o
 A common use case for this API is one in which Giftbit powers your gift cards. First, you would create a Card with an attached Code, which contains the value which you wish to send as well as the date you would like the code to expire (if applicable). You would then deliver the fullcode associated with this Code to your recipient, and allow the recipient to redeem value against this Code in one or more transactions. You can also allow the user to see the usage history or balance remaining on their Code at any time.
 
 The steps and API calls you would take in this use case are: 
-- Create a new Card with associated Code (POST /cards). Make sure you keep the returned cardId.
-- Retrieve the fullcode using the cardId to deliver to your recipient (GET /cards/{cardId}/code/fullcode).
+
+- If you want to create Cards on demand:
+    - Create a new Card with associated Code (POST /cards). Make sure you keep the returned cardId.
+    - Retrieve the fullcode using the cardId to deliver to your recipient (GET /cards/{cardId}/code/fullcode).
+- If you want to create many Cards at once:
+    - Create an order of Cards with associated Codes through the web portal.
+    - Receive an email with a CSV of fullcodes for these Cards.
 - Accept the fullcode in your checkout, and create a Transaction on the Code (POST /codes/{fullcode}/transactions).
 - Check the remaining value associated with the fullcode and display to your recipient (GET /codes/{fullcode}/balance).
-
-### Creating a bulk order of codes for distribution
-If you are looking to distribute a large number of codes, you can order them to be emailed to you via CSV for you to use as you see fit. 
-
-The steps and API calls you would take in this use case are:
-- Create an order of Cards with associated Codes (POST /orders).
-- Receive an email with a CSV of fullcodes for these Cards.
 
 #### High level architecture diagram
 
@@ -91,9 +89,11 @@ Note that userSuppliedIds are considered per endpoint and do not need to be uniq
 
 ## Reserved Categories: understanding giftbit_order and giftbit_type
 
-Giftbit currently has two reserved Category keys: "giftbit_order" and "giftbit_type". A "giftbit_order" is the default grouping of Cards, and is assigned either through the /orders endpoint or the /cards endpoint; in this document, an order refers to a group of Cards that are attached to the same {"giftbit-order": "order name"} category. See the endpoint discussions for more details on how "giftbit_order" is assigned.
+Giftbit currently has two reserved Category keys: "giftbit_order" and "giftbit_type". A "giftbit_order" is the default grouping of Cards, and is assigned either through the web portal or the /cards endpoint; in this document, an order refers to a group of Cards that are attached to the same {"giftbit-order": "order name"} Category. 
 
-A "giftbit_type" refers to the Card's purpose, and corresponds to the types that can be assigned through the web portal. There are four allowed values for the "giftbit_type" key: PROMO, GIFT_CARD, REFUND, and UNCATEGORIZED. If a "giftbit_type" is not provided on Card or order creation, the Cards will be assigned the UNCATEGORIZED value. 
+Like all any Category, stats are tracked by order - so descriptive order names applied to the right Cards will help you get the stats you are looking for. To group cards in the same order, you can supply a {"giftbit_order": "your order name here"} Category when creating a Card through the /cards endpoint, or you can order many cards at once through the web portal. If a "giftbit_order" Category is not provided on Card creation, the Cards will be assigned a default {"giftbit_order": "YYYY-MM-DD"} Category corresponding to the date they were created.
+
+A "giftbit_type" refers to the Card's purpose, and corresponds to the types that can be assigned through the web portal. There are four allowed values for the "giftbit_type" key: PROMO, GIFT_CARD, REFUND, and UNCATEGORIZED. If a "giftbit_type" is not provided on Card creation, the Cards will be assigned the UNCATEGORIZED value. 
 
 ## Handling error responses
 
@@ -244,62 +244,7 @@ The categories object is optional. If provided, it will attach the given Categor
                 "dateCreated":"2016-08-10T08:00:00.000+0000"
             }
     
-    
-### Order many Cards [POST /cards/orders] 
 
-Create an order of Cards. A CSV file of fullcodes associated with the Cards will be sent to your email address. If the numberOfCards provided is 1, the Card will be returned instead (the same as the /cards endpoint above). The userSuppliedId for the order serves as the order's name; that is, all Cards in the order will be attached to the {"giftbit_order": "userSuppliedId"} Category.
-
-+ Request (application/json)
-The categories object is optional. If provided, it will attach the given Category objects to the Cards, creating any that do not exist already. Any "giftbit_order" Category supplied will be overwritten with the userSuppliedId for the order.
-
-    + Headers
-
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    + Attributes
-        + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
-        + numberOfCards (number) - The number of Cards and associated Codes you wish to create.
-        + Code
-            + initialValue (number) - the starting value of the code, in the smallest currency unit (such as cents).
-            + currency (string) - The 3 character ISO-4217 currency.
-            + expires (string) - The code's optional expiry date and time.  ISO-8601 format.
-        + Categories
-            + categoryKey (string) - The key of the category. Examples: "giftbit_type", "city"
-            + categoryValue (string) - The value of the category. Examples: "PROMO", "Victoria"
-
-    + Body
-    
-            {
-                "userSuppliedId": "My Order Name",
-                "numberOfCards": 100,
-                "code":
-                {
-                    "initialValue":5000,
-                    "currency":"CAD",
-                    "expires":"2017-03-03T08:00:00.000+0000"
-                }
-                "categories":
-                {
-                    "giftbit_type": "PROMO",
-                    "My Custom Category Key": "My Custom Category Value"
-                }
-            }
-        
-+ Response 200
-    + Attributes
-        + OrderRequest
-            + userSuppliedId (string) - The unique identifier you provided when this order was created. 
-            + orderRequestId (string) - Giftbit's unique identifier for this order request.
-            + numberOfCards (number) - The number of Cards that are being created for this order.
-            + dateCreated (string) - The Giftbit system time of the order request's creation in ISO-8601 format.
-
-    + Body
-    
-            {
-                "userSuppliedId":"My Order Name",
-                "orderRequestId":"orderRequest-5c1c1760-b185-4861-a4fc-47eca84bf52b",
-                "numberOfCards": 100
-                "dateCreated":"2016-08-10T08:00:00.000+0000"
-            }
 ### List Cards [GET /cards/{?limit}{?offset}{?categoryKey}{?categoryValue}]
 
 Retrieve your created Cards.  Results are returned in descending order of creation (newest first).
