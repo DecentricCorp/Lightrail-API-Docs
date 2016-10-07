@@ -86,7 +86,7 @@ Giftbit currently has two reserved Category keys: "giftbit_order" and "giftbit_t
 
 Like any Category, stats are tracked by order - so descriptive order names applied to the right Cards will help you get the stats you are looking for. To group cards in the same order, you can supply the same value for {"giftbit_order": "your order name here"} Category when creating Cards through the /cards endpoint via the API, or you can order many cards at once through the web portal. If a "giftbit_order" Category is not provided on Card creation, the Cards will be assigned a default {"giftbit_order": "YYYY-MM-DD"} Category corresponding to the date they were created.
 
-A "giftbit_type" refers to the Card's purpose, and corresponds to the types that can be assigned through the web portal. There are four allowed values for the "giftbit_type" key: PROMO, GIFT_CARD, REFUND, and UNCATEGORIZED. If a "giftbit_type" is not provided on Card creation, the Cards will be assigned the UNCATEGORIZED value. 
+A "giftbit_type" refers to the Card's purpose, and corresponds to the types that can be assigned through the web portal. There are four allowed values for the "giftbit_type" key: PROMO, GIFT_CARD, ACCOUNT_CREDIT, and UNCATEGORIZED. If a "giftbit_type" is not provided on Card creation, the Cards will be assigned the UNCATEGORIZED value. 
 
 ## Handling error responses
 
