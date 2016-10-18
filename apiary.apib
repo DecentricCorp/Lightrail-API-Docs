@@ -159,10 +159,8 @@ Use the /ping endpoint to check that your authorization is working correctly or 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Response 200
-    + Attributes
-        + username (string) - The email address associated with the credentials provided.
-        + servertime (string) - The current time on the server (ISO 8601 format)
-
+    + Attributes (Healthcheck)
+        
     + Body
     
             {
@@ -194,10 +192,7 @@ The categories object is optional. If provided, it will attach the given Categor
     + Headers
 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    + Attributes
-        + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
-        + Code (CodeRequest) 
-        + Categories (Category)
+    + Attributes (CardRequest)
 
     + Body
     
@@ -219,11 +214,8 @@ The categories object is optional. If provided, it will attach the given Categor
         
 + Response 200
     + Attributes
-        + Card
-            + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
-            + cardId (string) - Giftbit's unique identifier for this Card.  Be sure to persist this value for future operations.
-            + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format.
-
+        + Card (CardResponse)
+        
     + Body
     
             {
@@ -241,13 +233,15 @@ Retrieve your created Cards.  Results are returned in descending order of creati
     
              Authorization: Bearer <YOUR_ACCESS_TOKEN>
    
-+ Parameter
++ Parameter 
     + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
     + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
     + categoryKey (string, optional) - A key to a Category. Will return all Cards attached to Categories with this key if supplied.
     + categoryValue (string, optional) - A value of a Category. Will return all Cards attached to Categories with this value if supplied. If both a categoryKey and a categoryValue are supplied, will return all Cards associated with the unique Category having that categoryKey and categoryValue. 
 
 + Response 200
+    + Attributes 
+        + cards (array[CardResponse])
 
     + Body
     
@@ -302,6 +296,9 @@ Look up a single Card by by the Giftbit assigned cardId.
 
 + Response 200
 
+    + Attributes 
+        + card (CardResponse)
+
     + Body
         
             {
@@ -325,7 +322,9 @@ Look up a single Card by the userSuppliedId.
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Response 200
-
+    + Attributes 
+        + cards (array[CardResponse])
+        
     + Body
         
             {
@@ -349,6 +348,9 @@ After creating a Card, use this endpoint to retrieve all Categories associated w
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
         
 + Response 200
+    + Attributes 
+        + cards (array[CategoryResponse])
+
     + Body
     
             {
@@ -454,7 +456,6 @@ Use this endpoint if your system or internal staff need to retrieve all the Tran
     + cardId (string) - The identifier returned when the Card and Code were created.
     
 + Response 200
-    
     + Body
         
             {
@@ -515,10 +516,7 @@ Use this endpoint if your system or internal staff need to create a Transaction 
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
-    + Attributes
-        + value (number, required) - The amount of the transaction in the smallest currency unit (such as cents). A positive value will increase the balance of the Code. A negative will decrease the balance of the Code. If the value of the transaction would bring the balance of the Code below zero, an error will be returned.
-        + currency  (string, required) - The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
-        + userSuppliedId (string, required) - A unique identifier for this transaction.
+    + Attributes (TransactionRequest)
         
     + Body
     
@@ -638,7 +636,7 @@ Retrieve the balance of a Code considering all previous Transactions.
             }
 
 
-### Use Code value [POST /codes/{fullcode}/transactions] 
+### Create a Transaction [POST /codes/{fullcode}/transactions] 
 
 Use some or all of the remaining value of the Code (create a Transaction on the Code).  Attempting to use value for a Code that is expired or does not have enough remaining value will result in 400 response.
 
@@ -776,6 +774,10 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
             
 # Data Structures
 
+## Pagination (object)
++ limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
++ offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
+
 ## IdempotentObject (object)
 + userSuppliedId (string, required) - The unique identifier provided when this call was made. 
 
@@ -796,11 +798,36 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
 + expires (string) - The code's optional expiry date and time.  ISO-8601 format.
 + startDate (string) - The code's optional start date and time.  ISO-8601 format.
 
+## Card (IdempotentObject)
+
+## CardRequest (Card)
++ code (CodeRequest, required)
++ categories (Category)
+
+## CardResponse (Card)
++ cardId (string, required) - Giftbit's unique identifier for this Card. Be sure to persist this value for future operations.
++ dateCreated (string, required) - The Giftbit system time of the creation in ISO-8601 format.
+
 ## Transaction (IdempotentObject)
-+ value (number, required) - The amount of the transaction in the smallest currency unit (such as cents). Equal to the value in the request.
-+ value (number, required) - The amount the transaction will change the balance on the Code in the smallest currency unit (such as cents). A transaction cannot reduce the code balance below 0
++ value (number, required) - The amount of the transaction in the smallest currency unit (such as cents). A transaction cannot reduce the code balance below 0
 + currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created.
+
+## TransactionRequest (Transaction) 
+
+## TransactionResponse (Transaction) 
 
 ## Category (object)
 + categoryKey (string) - The key of the category. Examples: "giftbit_type", "giftbit_order", "city"
 + categoryValue (string) - The value of the category. Examples: "PROMO", "My Order", "Victoria"
+
+## CategoryResponse (object)
++ categoryId (string) - Giftbit's unique identifier for this Category
++ key (string) - The key of the category.
++ value (string) - The value of the category.
+
+## BalanceResponse (object)
++ currentValue (number) - The current balance of the Code.
+
+## Healthcheck (object)
++ username (string) - The email address associated with the credentials provided.
++ servertime (string) - The current time on the server (ISO 8601 format)
