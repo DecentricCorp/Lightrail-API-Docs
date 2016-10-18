@@ -196,13 +196,8 @@ The categories object is optional. If provided, it will attach the given Categor
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
     + Attributes
         + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
-        + Code
-            + initialValue (number) - the starting value of the code, in the smallest currency unit (such as cents).
-            + currency (string) - The 3 character ISO-4217 currency.
-            + expires (string) - The code's optional expiry date and time.  ISO-8601 format.
-        + Categories
-            + categoryKey (string) - The key of the category. Examples: "giftbit_type", "giftbit_order", "city"
-            + categoryValue (string) - The value of the category. Examples: "PROMO", "My Order", "Victoria"
+        + Code (CodeRequest) 
+        + Categories (Category)
 
     + Body
     
@@ -296,9 +291,9 @@ Retrieve your created Cards.  Results are returned in descending order of creati
 ### Retrieve Card by cardId [GET /cards/{cardId}]
 
 Look up a single Card by by the Giftbit assigned cardId.
-            
+
 + Parameters 
-    + cardId (string) - The identifier returned when the Card and Code were created.
+    + cardId (string, required) - The Giftbit assigned cardId.
 
 + Request (application/json)
     + Headers
@@ -521,14 +516,14 @@ Use this endpoint if your system or internal staff need to create a Transaction 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + value (number, required) - The amount to use from the Code in the smallest currency unit (such as cents).  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
+        + value (number, required) - The amount of the transaction in the smallest currency unit (such as cents). A positive value will increase the balance of the Code. A negative will decrease the balance of the Code. If the value of the transaction would bring the balance of the Code below zero, an error will be returned.
         + currency  (string, required) - The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
         + userSuppliedId (string, required) - A unique identifier for this transaction.
         
     + Body
     
             {
-            "value": "500",
+            "value": -250,
             "currency": "CAD",
             "userSuppliedId": "someTransaction"
             }
@@ -540,8 +535,8 @@ Use this endpoint if your system or internal staff need to create a Transaction 
             {
                 "transaction" {
                     "transactionId": "transaction-86251f7b040b45d3b7364bae04c74870",
-                    "value": 500,
-                    "valueAvailableAfterTransaction": 500,
+                    "value": -250,
+                    "valueAvailableAfterTransaction": 4750,
                     "userSuppliedId": "someTransaction",
                     "dateCreated": "2016-08-10T09:00:00.000+0000"
                 }
@@ -604,12 +599,7 @@ Look up information about a code given the fullcode.
     
 + Response 200
     + Attributes
-        + Code
-            + codeLast4 (string) - The last 4 characters of the Code.
-            + currency (string) - The 3 character ISO-4217 currency.
-            + initialValue (number) - The value of the code at creation in the smallest currency unit (such as cents).
-            + expires (string) - The code's expiry date and time.  This field will be ommitted if the code was not created with an expiry.  ISO-8601 format.
-            + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format.
+        + Code (CodeResponse)
 
     + Body
     
@@ -650,7 +640,7 @@ Retrieve the balance of a Code considering all previous Transactions.
 
 ### Use Code value [POST /codes/{fullcode}/transactions] 
 
-Use some or all of the remaining value of the Code (create a Transaction on the Code).  Attempting to use value for a Code that is expired or does not have enough remaining value will result in an error.
+Use some or all of the remaining value of the Code (create a Transaction on the Code).  Attempting to use value for a Code that is expired or does not have enough remaining value will result in 400 response.
 
 + Parameters 
     + fullcode (string) - The gift code.
@@ -661,7 +651,7 @@ Use some or all of the remaining value of the Code (create a Transaction on the 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + value (number, required) - The amount to use from the Code in the smallest currency unit (such as cents).  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
+        + value (number, required) - The amount the transaction will change the balance on the Code in the smallest currency unit (such as cents).  Must be a negative number. If the transaction amount would bring the Code balance below zero, a 400 response will be returned.
         + currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
         + userSuppliedId (string, required) - A unique identifier for this transaction.
 
@@ -669,17 +659,17 @@ Use some or all of the remaining value of the Code (create a Transaction on the 
     
             {
                 "userSuppliedId": "12345678",
-                "value": 165,
+                "value": -165,
                 "currency": "USD"
             }
 
 + Response 200
 
     + Attributes
-        + value (number) - The amount of the transaction in the smallest currency unit (such as cents). Should equal value in the request.
+        + value (number) - The amount of the transaction in the smallest currency unit (such as cents). Equal to the value in the request.
         + transactionId (string) - The unique Id for this transaction assigned by Giftbit at creation time.
         + userSuppliedId (string) - Identifier of the transaction (should equal transactionId in the request).
-        + valueAvailableAfterTransaction (number) - The current value of the code (after this transaction) in the smallest currency unit (such as cents).
+        + valueAvailableAfterTransaction (number) - The remaining balance of the Code as a result of the transaction, at the time of the transaction.
         + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format.
 
     + Body
@@ -688,7 +678,7 @@ Use some or all of the remaining value of the Code (create a Transaction on the 
                 "transaction":{
                     "userSuppliedId": "12345678",
                     "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                    "value": 165,
+                    "value": -165,
                     "dateCreated": "2016-08-10T08:00:00.000+0000",
                     "valueAvailableAfterTransaction": 4835
                     }
@@ -716,14 +706,14 @@ Retrieve all Transactions for a Code given the fullcode.  Useful if you'd like t
                     {
                         "userSuppliedId": "12345",
                         "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                        "value": 500,
+                        "value": -500,
                         "dateCreated": "2016-08-11T08:32:00.000+0000",
                         "valueAvailableAfterTransaction": 800
                     },
                     {
                         "userSuppliedId": "12344",
                         "transactionId":"transaction-avji1b55-6gu7-4ke5-82s5-fd37edb5ju9a",
-                        "value": 700,
+                        "value": -700,
                         "dateCreated": "2016-08-10T08:00:00.000+0000",
                         "valueAvailableAfterTransaction": 1300
                     }
@@ -753,7 +743,7 @@ Retrieve a Transaction for a Code given the fullcode and the transactionId.
                 "transaction":{
                     "userSuppliedId": "12345678",
                     "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                    "value": 165,
+                    "value": -165,
                     "dateCreated": "2016-08-10T08:00:00.000+0000",
                     "valueAvailableAfterTransaction": 4835
                     }
@@ -776,9 +766,41 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
                 "transaction":{
                     "userSuppliedId": "12345678",
                     "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                    "value": 165,
+                    "value": -165,
                     "dateCreated": "2016-08-10T08:00:00.000+0000",
                     "valueAvailableAfterTransaction": 4835
                     }
                 }
             }
+            
+            
+# Data Structures
+
+## IdempotentObject (object)
++ userSuppliedId (string, required) - The unique identifier provided when this call was made. 
+
+## Code (object)
++ currency (string, required) - The 3 character ISO-4217 currency.
++ initialValue (number, required) - The value of the code at creation in the smallest currency unit (such as cents).
++ expires (string, optional) - The code's expiry date and time.  This field will be ommitted if the code was not created with an expiry.  ISO-8601 format.
++ startDate (string, optional) - The code's start date and time.  This field will be ommitted if the code was not created with an start date.  ISO-8601 format.
+
+## CodeResponse (Code)
++ codeLast4 (string, required) - The last 4 characters of the Code.
++ dateCreated (string, required) - The Giftbit system time of the creation in ISO-8601 format.
++ expires (string, optional) - The code's expiry date and time.  This field will be ommitted if the code was not created with an expiry.  ISO-8601 format.
+
+## CodeRequest (Code)
++ initialValue (number) - the starting value of the code, in the smallest currency unit (such as cents).
++ currency (string) - The 3 character ISO-4217 currency.
++ expires (string) - The code's optional expiry date and time.  ISO-8601 format.
++ startDate (string) - The code's optional start date and time.  ISO-8601 format.
+
+## Transaction (IdempotentObject)
++ value (number, required) - The amount of the transaction in the smallest currency unit (such as cents). Equal to the value in the request.
++ value (number, required) - The amount the transaction will change the balance on the Code in the smallest currency unit (such as cents). A transaction cannot reduce the code balance below 0
++ currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created.
+
+## Category (object)
++ categoryKey (string) - The key of the category. Examples: "giftbit_type", "giftbit_order", "city"
++ categoryValue (string) - The value of the category. Examples: "PROMO", "My Order", "Victoria"
