@@ -20,9 +20,10 @@ The base URL for Giftbit's API is <em>https://currencyapi.giftbit.com/v1/</em>.
 ## Account creation, test mode, and authorization
 
 You'll need your live or test `access_token` from your Giftbit merchant account details page to use the API. If you don't already have a merchant account you can <em><a href="http://info.giftbit.com/cf/currency_invite" target="_blank">sign up here</a></em>. Once you've signed up, you will be directed to our webapp. You can retrieve your test and live API tokens on your Account page.
+
 Be sure to store your live API token extremely securely in your production configurations.
 
-Test mode allows you to make calls to the API without affecting your Cards or the calculated statistics in live mode. Emails sent from test mode will be labeled as such; be aware that there are no restrictions on target email addresses while in test mode. 
+Test mode allows you to make calls to the API (using your test `access_token`) without affecting your Cards or the calculated statistics in live mode. Emails sent from test mode will be labeled as such; be aware that there are no restrictions on target email addresses while in test mode. 
 
 You authenticate with your `access_token` by including your token prefixed by the word ‘Bearer’ (case sensitive) and a space in the “Authorization” HTTP header, as per the examples in this
 documentation.
