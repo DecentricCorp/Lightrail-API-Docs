@@ -516,7 +516,9 @@ Use this endpoint if your system or internal staff need to retrieve all the Tran
     
 ### Create a Transaction for a Code given the cardId [POST /cards/{cardId}/code/transactions]
 
-Use this endpoint if your system or internal staff need to create a Transaction for a Code, such as to mark all or part of it as used or to add additional value to the Code.
+Use this endpoint if your system or internal staff need to create a Transaction for a Code, such as to mark all or part of it as used or to add additional value to the Code. 
+
+To transact against the Code in your checkout or when a recipient presents their `fullcode`, see the `Create a Transaction by Fullcode` below.
 
 + Parameters 
     + cardId (string) - The identifier returned when the Card and Code were created.
@@ -648,7 +650,7 @@ Retrieve the balance of a Code considering all previous Transactions.
                 }
             }
 
-### Create a Transaction [POST /codes/{fullcode}/transactions] 
+### Create a Transaction by Fullcode [POST /codes/{fullcode}/transactions] 
 
 Use some or all of the remaining value of the Code (create a Transaction on the Code). This endpoint is usefull when you are provided the `fullcode` by the recipient any they wish to use some or all of the Code's value (eg. in your checkout).
 
