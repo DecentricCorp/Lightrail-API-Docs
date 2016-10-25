@@ -166,8 +166,12 @@ Use the /ping endpoint to check that your authorization is working correctly or 
     + Body
     
             {
-                "username":"example_merchant_account@yourdomain.com",
-                "servertime": "2016-09-08T18:44:02.124+0000"
+                "user": 
+                {
+                    "username":"example_merchant_account@yourdomain.com",
+                    "servertime": "2016-09-08T18:44:02.124+0000",
+                    "mode": "LIVE"
+                }
             }
         
 + Response 401
@@ -832,4 +836,5 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
 
 ## Healthcheck (object)
 + username (string) - The email address associated with the credentials provided.
-+ servertime (string) - The current time on the server (ISO 8601 format)
++ servertime (string) - The current time on the server (ISO 8601 format).
++ mode (string) - String indicating whether the credentials provided are for TEST or LIVE mode.
