@@ -324,6 +324,7 @@ Look up a single Card by the userSuppliedId.
 + Response 200
     + Attributes 
         + cards (array[CardResponse])
+        + pagination(PaginationResponse)
         
     + Body
         
@@ -409,6 +410,9 @@ Use this endpoint if your system or internal staff need to retrieve basic inform
     
 + Response 200
     
+    + Attributes 
+        + code(CodeResponse)
+    
     + Body
     
             {
@@ -456,6 +460,10 @@ Use this endpoint if your system or internal staff need to retrieve all the Tran
     + cardId (string) - The identifier returned when the Card and Code were created.
     
 + Response 200
+    + Attributes 
+        + transactions(array[TransactionResponse])
+        + pagination(PaginationResponse)
+
     + Body
         
             {
@@ -491,7 +499,9 @@ Use this endpoint if your system or internal staff need to retrieve all the Tran
     + transactionId (string) - The identifier returned when the Transaction was created.
     
 + Response 200
-    
+    + Attributes 
+        + transaction(TransactionResponse)
+        
     + Body
             
             {
@@ -506,7 +516,9 @@ Use this endpoint if your system or internal staff need to retrieve all the Tran
     
 ### Create a Transaction for a Code given the cardId [POST /cards/{cardId}/code/transactions]
 
-Use this endpoint if your system or internal staff need to create a Transaction for a Code, such as to mark all or part of it as used.
+Use this endpoint if your system or internal staff need to create a Transaction for a Code, such as to mark all or part of it as used or to add additional value to the Code. 
+
+To transact against the Code in your checkout or when a recipient presents their `fullcode`, see the `Create a Transaction by Fullcode` below.
 
 + Parameters 
     + cardId (string) - The identifier returned when the Card and Code were created.
@@ -527,6 +539,9 @@ Use this endpoint if your system or internal staff need to create a Transaction 
             }
         
 + Response 200
+
+    + Attributes 
+        + transaction(TransactionResponse)
 
     + Body
     
@@ -635,10 +650,13 @@ Retrieve the balance of a Code considering all previous Transactions.
                 }
             }
 
+### Create a Transaction by Fullcode [POST /codes/{fullcode}/transactions] 
 
-### Create a Transaction [POST /codes/{fullcode}/transactions] 
+Use some or all of the remaining value of the Code (create a Transaction on the Code). This endpoint is usefull when you are provided the `fullcode` by the recipient any they wish to use some or all of the Code's value (eg. in your checkout).
 
-Use some or all of the remaining value of the Code (create a Transaction on the Code).  Attempting to use value for a Code that is expired or does not have enough remaining value will result in 400 response.
+You can only reduce the balance of the Code when transacting by with `fullcode`. If you wish to add value to the Code, create the transaction by the `cardId` as described above. 
+
+Attempting to use value for a Code that is expired or does not have enough remaining value will result in 400 response.
 
 + Parameters 
     + fullcode (string) - The gift code.
@@ -734,7 +752,9 @@ Retrieve a Transaction for a Code given the fullcode and the transactionId.
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 + Response 200
-
+    + Attributes 
+        + transaction(TransactionResponse)
+    
     + Body
     
             {
@@ -757,6 +777,8 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 + Response 200
+    + Attributes 
+        + transaction(TransactionResponse)
 
     + Body
     
@@ -775,8 +797,15 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
 # Data Structures
 
 ## Pagination (object)
-+ limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
-+ offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
++ limit (number, optional) - The maximum number of results to return at once. Default 100.
++ offset (number, optional) - The offset of the first results in the total results. Default 0.
+
+## PaginationResponse (Pagination) ]
++ count (number, required)
++ limit  (number, required)
++ maxLimit  (number, required)
++ offset  (number, required)
++ totalCount  (number, required)
 
 ## IdempotentObject (object)
 + userSuppliedId (string, required) - The unique identifier provided when this call was made. 
@@ -786,6 +815,7 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
 + initialValue (number, required) - The value of the code at creation in the smallest currency unit (such as cents).
 + expires (string, optional) - The code's expiry date and time.  This field will be ommitted if the code was not created with an expiry.  ISO-8601 format.
 + startDate (string, optional) - The code's start date and time.  This field will be ommitted if the code was not created with an start date.  ISO-8601 format.
++ metadata (object) - A collection of key/value pairs of additional information about the code. The `giftbit_*` namespace for keys is reserved. 
 
 ## CodeResponse (Code)
 + codeLast4 (string, required) - The last 4 characters of the Code.
@@ -811,10 +841,13 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
 ## Transaction (IdempotentObject)
 + value (number, required) - The amount of the transaction in the smallest currency unit (such as cents). A transaction cannot reduce the code balance below 0
 + currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created.
++ metadata (object) - A collection of key/value pairs of additional information about the transaction. The `giftbit_*` namespace for keys is reserved.
 
 ## TransactionRequest (Transaction) 
 
 ## TransactionResponse (Transaction) 
++ dateCreated(string, required) - Giftbit system time of the creation of the transaction. ISO-8601 format.
++ valueAvailableAfterTransaction(number, required) - The remaining balance of the `Code` as a result of the transaction in the smallest currency unit (such as cents).
 
 ## Category (object)
 + categoryKey (string) - The key of the category. Examples: "giftbit_type", "giftbit_order", "city"
