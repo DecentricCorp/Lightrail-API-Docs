@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: https://currencyapi-test.giftbit.com/v1/
+HOST: https://currencyapi.giftbit.com/v1/
 
 # Giftbit Currency API
 
@@ -22,6 +22,8 @@ The base URL for Giftbit's API is <em>https://currencyapi.giftbit.com/v1/</em>.
 You'll need your test or production `access_token` from your Giftbit merchant account details page to use the API. If you don't already have a merchant account you can <em><a href="http://info.giftbit.com/cf/currency_invite" target="_blank">sign up here</a></em>. Once you've signed up, contact Giftbit to get test credentials.
 
 Be sure to store your production API token extremely securely in your production configurations.
+
+Test mode allows you to make calls to the API without affecting your Cards or the calculated statistics in live mode. Emails sent from test mode will be labeled as such.
 
 You authenticate with your `access_token` by including your token prefixed by the word ‘Bearer’ (case sensitive) and a space in the “Authorization” HTTP header, as per the examples in this
 documentation.
@@ -164,8 +166,12 @@ Use the /ping endpoint to check that your authorization is working correctly or 
     + Body
     
             {
-                "username":"example_merchant_account@yourdomain.com",
-                "servertime": "2016-09-08T18:44:02.124+0000"
+                "user": 
+                {
+                    "username":"example_merchant_account@yourdomain.com",
+                    "servertime": "2016-09-08T18:44:02.124+0000",
+                    "mode": "LIVE"
+                }
             }
         
 + Response 401
@@ -863,4 +869,5 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
 
 ## Healthcheck (object)
 + username (string) - The email address associated with the credentials provided.
-+ servertime (string) - The current time on the server (ISO 8601 format)
++ servertime (string) - The current time on the server (ISO 8601 format).
++ mode (string) - String indicating whether the credentials provided are for TEST or LIVE mode.
