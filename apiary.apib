@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: https://currencyapi-test.giftbit.com/v1/
+HOST: https://currencyapi.giftbit.com/v1/
 
 # Giftbit Currency API
 
@@ -13,29 +13,26 @@ This interactive documentation will provide full code samples in many popular la
 
 The API Blueprint file that produces this documentation is in GitHub at https://github.com/Giftbit/currencyapi.  If you find a mistake or have a suggestion for improvement, please submit it directly via pull request.
 
-## API Base URLs
+## API Base URL
 
-Along with Giftbit's production environment we also have a test environment.  This interactive documentation will make calls to the test environment.  The respective base URLs are:
-<ul style="list-style-type:circle">
-  <li><em>https://currencyapi.giftbit.com/v1/</em></li>
-  <li><em>https://currencyapi-test.giftbit.com/v1/</em></li>
-</ul>
+The base URL for Giftbit's API is <em>https://currencyapi.giftbit.com/v1/</em>.
 
 ## Account creation and authorization
 
-You'll need your `access_token` from your Giftbit merchant account details page to use the API.
-If you don't already have a Testbed merchant account you can <em><a href="https://testbed.giftbit.com/v1/register" target="_blank">sign up here</a></em>.
-
-Once you are comfortable with your integration in your test environment you can <em><a href="http://info.giftbit.com/cf/currency_invite" target="_blank">sign up for a production account here</a></em>.
+You'll need your test or production `access_token` from your Giftbit merchant account details page to use the API. If you don't already have a merchant account you can <em><a href="http://info.giftbit.com/cf/currency_invite" target="_blank">sign up here</a></em>. Once you've signed up, contact Giftbit to get test credentials.
 
 Be sure to store your production API token extremely securely in your production configurations.
+
+Test mode allows you to make calls to the API without affecting your Cards or the calculated statistics in live mode. Emails sent from test mode will be labeled as such.
 
 You authenticate with your `access_token` by including your token prefixed by the word ‘Bearer’ (case sensitive) and a space in the “Authorization” HTTP header, as per the examples in this
 documentation.
 
-## Understanding the API: the relationship between Cards and Codes
+## Understanding the API: the relationship between Cards, Codes, and Categories
 
-The API is structured around two main endpoints and their corresponding concepts: Cards and Codes. A Card represents a unique gift card, promotional code, credit, or other type of value that your business wishes to issue. A Card is the thing that your internal team will interact with following your implementation (creation, retrieval, listing, statistics, etc).  
+The API is structured around two main endpoints and their corresponding concepts: Cards and Codes. A Card represents a unique gift card, promotional code, credit, or other type of value that your business wishes to issue. A Card is the thing that your internal team will interact with following your implementation (creation, retrieval, listing, statistics, etc).
+
+A Category is an identifier that can be attached in a many-to-many relationship with Cards. A Category consists of a key-value pair of strings; for example, one category might be {"campaign": "first campaign"}. All of the statistics that Giftbit tracks are grouped by Category, so setting good Categories on your Cards will ensure you get the stats you are looking for. For example, if you want to compare statistics across campaigns, you can set a {"campaign": "first campaign"} Category on one group of Cards, and a {"campaign": "second campaign"} on another. Each would have their own set of statistics calculated for them.
 
 A Code is the unique financial device associated with a Card. A Code has a 'fullcode' that is a unique, unguessable alpha-numeric code that is distributed to a recipient. A Code has a balance, a currency type, an optional expiry and all the Transactions (uses) associated with that code. Your consumer-facing functionality (checkout, balance check, transaction history for a code) interacts with the /Code endpoint.
 
@@ -47,8 +44,13 @@ There is a 1-1 relationship between a Card and a Code. You specify the details o
 A common use case for this API is one in which Giftbit powers your gift cards. First, you would create a Card with an attached Code, which contains the value which you wish to send as well as the date you would like the code to expire (if applicable). You would then deliver the fullcode associated with this Code to your recipient, and allow the recipient to redeem value against this Code in one or more transactions. You can also allow the user to see the usage history or balance remaining on their Code at any time.
 
 The steps and API calls you would take in this use case are: 
-- Create a new Card with associated Code (POST /cards). Make sure you keep the returned cardId.
-- Retrieve the fullcode using the cardId to deliver to your recipient (GET /cards/{cardId}/code/fullcode).
+
+- If you want to create Cards on demand via the API:
+    - Create one or more new Card(s) with associated Code(s) (POST /cards). Make sure you keep the returned cardId(s).
+    - Retrieve the fullcode for each code using the cardId to deliver to your recipient (GET /cards/{cardId}/code/fullcode).
+- If you want to create many Cards at once via the web portal:
+    - Create an order of Cards with associated Codes through the web portal.
+    - Receive an email with a CSV of fullcodes for these Cards.
 - Accept the fullcode in your checkout, and create a Transaction on the Code (POST /codes/{fullcode}/transactions).
 - Check the remaining value associated with the fullcode and display to your recipient (GET /codes/{fullcode}/balance).
 
@@ -79,6 +81,14 @@ Given the above, it is important you think about how to structure your userSuppl
 Attempting to reuse a userSuppliedId but providing different request parameters will result in a 409 error.
 
 Note that userSuppliedIds are considered per endpoint and do not need to be unique across different endpoints.
+
+## Reserved Categories: understanding giftbit_order and giftbit_type
+
+Giftbit currently has two reserved Category keys: "giftbit_order" and "giftbit_type". A "giftbit_order" is the default grouping of Cards, and is assigned either through the web portal or the /cards endpoint; in this document, an order refers to a group of Cards that are attached to the same {"giftbit-order": "order name"} Category. 
+
+Like any Category, stats are tracked by order - so descriptive order names applied to the right Cards will help you get the stats you are looking for. To group cards in the same order, you can supply the same value for {"giftbit_order": "your order name here"} Category when creating Cards through the /cards endpoint via the API, or you can order many cards at once through the web portal. If a "giftbit_order" Category is not provided on Card creation, the Cards will be assigned a default {"giftbit_order": "YYYY-MM-DD"} Category corresponding to the date they were created.
+
+A "giftbit_type" refers to the Card's purpose, and corresponds to the types that can be assigned through the web portal. There are four allowed values for the "giftbit_type" key: PROMO, GIFT_CARD, ACCOUNT_CREDIT, and UNCATEGORIZED. If a "giftbit_type" is not provided on Card creation, the Cards will be assigned the UNCATEGORIZED value. 
 
 ## Handling error responses
 
@@ -151,15 +161,17 @@ Use the /ping endpoint to check that your authorization is working correctly or 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Response 200
-    + Attributes
-        + username (string) - The email address associated with the credentials provided.
-        + servertime (string) - The current time on the server (ISO 8601 format)
-
+    + Attributes (Healthcheck)
+        
     + Body
     
             {
-                "username":"example_merchant_account@yourdomain.com",
-                "servertime": "2016-09-08T18:44:02.124+0000"
+                "user": 
+                {
+                    "username":"example_merchant_account@yourdomain.com",
+                    "servertime": "2016-09-08T18:44:02.124+0000",
+                    "mode": "LIVE"
+                }
             }
         
 + Response 401
@@ -178,16 +190,15 @@ Cards represent a gift card, promotional offer, credit, or other means of eComme
 
 Create a Card and its corresponding Code.  Note that cardId on response should be persisted to lookup or interact with the Code.  The Code is not returned as part of the response.  If you provide an expiry, please ensure you have confirmed the legality of expiring value for your implementation.
 
+You can also provide a "giftbit_order" Category, which will assign the Card to whichever order you specify. If no "giftbit_order" is provided, the Card will be assigned to a default {"giftbit_order": "YYYY-MM-DD"} Category indicating the date the Card was created. Categories are not returned as part of the response.
+
 + Request (application/json)
+The categories object is optional. If provided, it will attach the given Category objects to the Card, creating any that do not exist already.
+
     + Headers
-    
+
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    + Attributes
-        + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
-        + Code
-            + initialValue (number) - the starting value of the code, in the smallest currency unit (such as cents).
-            + currency (string) - The 3 character ISO-4217 currency.
-            + expires (string) - The code's optional expiry date and time.  ISO-8601 format.  
+    + Attributes (CardRequest)
 
     + Body
     
@@ -198,26 +209,29 @@ Create a Card and its corresponding Code.  Note that cardId on response should b
                     "initialValue":5000,
                     "currency":"CAD",
                     "expires":"2017-03-03T08:00:00.000+0000"
+                },
+                "categories":
+                {
+                    "giftbit_type": "PROMO",
+                    "giftbit_order": "My Order",
+                    "My Custom Category Key": "My Custom Category Value"
                 }
             }
         
 + Response 200
     + Attributes
-        + Card
-            + userSuppliedId (string) - The unique identifier you provided when this Card was created. 
-            + cardId (string) - Giftbit's unique identifier for this Card.  Be sure to persist this value for future operations.
-            + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format.
-
+        + Card (CardResponse)
+        
     + Body
     
             {
-                "cardId":"5c1c1760-b185-4861-a4fc-47eca84bf52b",
+                "cardId":"card-5c1c1760-b185-4861-a4fc-47eca84bf52b",
                 "userSuppliedId":"12345678",
                 "dateCreated":"2016-08-10T08:00:00.000+0000"
             }
     
-    
-### List Cards [GET /cards/{?limit}{?offset}]
+
+### List Cards [GET /cards/{?limit}{?offset}{?categoryKey}{?categoryValue}]
 
 Retrieve your created Cards.  Results are returned in descending order of creation (newest first).
 + Request (application/json)
@@ -225,38 +239,42 @@ Retrieve your created Cards.  Results are returned in descending order of creati
     
              Authorization: Bearer <YOUR_ACCESS_TOKEN>
    
-+ Parameter
++ Parameter 
     + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
     + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
+    + categoryKey (string, optional) - A key to a Category. Will return all Cards attached to Categories with this key if supplied.
+    + categoryValue (string, optional) - A value of a Category. Will return all Cards attached to Categories with this value if supplied. If both a categoryKey and a categoryValue are supplied, will return all Cards associated with the unique Category having that categoryKey and categoryValue. 
 
 + Response 200
+    + Attributes 
+        + cards (array[CardResponse])
 
     + Body
     
             {
                 "cards":[
                     {
-                    "cardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
+                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
                     "dateCreated": "2016-09-01T23:47:02.000+0000",
                     "userSuppliedId":"1234"
                     },
                     {
-                    "cardId": "4e61aba2-5d5a-4e99-8574-6479cecce0dd",
+                    "cardId": "card-4e61aba2-5d5a-4e99-8574-6479cecce0dd",
                     "dateCreated": "2016-09-01T23:42:35.000+0000",
                     "userSuppliedId":"1235"
                     },
                     {
-                    "cardId": "3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
+                    "cardId": "card-3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
                     "dateCreated": "2016-09-01T23:42:23.000+0000",
                     "userSuppliedId":"1236"
                     },
                     {
-                    "cardId": "c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
+                    "cardId": "card-c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
                     "dateCreated": "2016-09-01T23:42:17.000+0000",
                     "userSuppliedId":"1237"
                     },
                     {
-                    "cardId": "56d23f04-64a8-452b-b3a1-3e758ebb6adc",
+                    "cardId": "card-56d23f04-64a8-452b-b3a1-3e758ebb6adc",
                     "dateCreated": "2016-09-01T23:41:32.000+0000",
                     "userSuppliedId":"1238"
                     }
@@ -273,9 +291,9 @@ Retrieve your created Cards.  Results are returned in descending order of creati
 ### Retrieve Card by cardId [GET /cards/{cardId}]
 
 Look up a single Card by by the Giftbit assigned cardId.
-            
+
 + Parameters 
-    + cardId (string) - The identifier returned when the Card and Code were created.
+    + cardId (string, required) - The Giftbit assigned cardId.
 
 + Request (application/json)
     + Headers
@@ -284,17 +302,20 @@ Look up a single Card by by the Giftbit assigned cardId.
 
 + Response 200
 
+    + Attributes 
+        + card (CardResponse)
+
     + Body
         
             {
                 "card":{
                     "userSuppliedId" : "1234",
-                    "cardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
+                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
                     "dateCreated": "2016-09-01T23:47:02.000+0000"
                 }
             }
             
-### Retrieve Card by userSuppliedId [GET /cards?userSuppliedId={userSuppliedId}]
+### Retrieve Card by userSuppliedId [GET /cards{?userSuppliedId}]
 
 Look up a single Card by the userSuppliedId.
             
@@ -307,18 +328,58 @@ Look up a single Card by the userSuppliedId.
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Response 200
-
+    + Attributes 
+        + cards (array[CardResponse])
+        + pagination(PaginationResponse)
+        
     + Body
         
             {
-                "card":{
-                    "userSuppliedId" : "1234",
-                    "cardId": "8f893901-c143-4def-9124-bd0c25a0c3a8",
-                    "dateCreated": "2016-09-01T23:47:02.000+0000"
-                }
+                "cards":[
+                    {
+                        "userSuppliedId" : "1234",
+                        "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
+                        "dateCreated": "2016-09-01T23:47:02.000+0000"
+                    }
+                ]
             }
     
+
+### Retrieve Categories by cardId [GET /cards/{cardId}/categories]
+
+After creating a Card, use this endpoint to retrieve all Categories associated with that Card.
+
++ Request (application/json)
+    + Headers
     
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+        
++ Response 200
+    + Attributes 
+        + cards (array[CategoryResponse])
+
+    + Body
+    
+            {
+                "categories":[
+                    {
+                        "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                        "key": "someCategoryKey",
+                        "value": "someCategoryValue"
+                    }, 
+                    {
+                        "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                        "key": "giftbit_order",
+                        "value": "my order name"
+                    },
+                    {
+                        "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                        "key": "giftbit_type",
+                        "value": "PROMO"
+                    }
+                ]
+            }
+            
 ### Retrieve a fullcode by cardId [GET /cards/{cardId}/code/fullcode]
 
 After creating a Card, use this endpoint to retrieve the fullcode to give to your recipient.  This is the code worth value to your organization; do not store this code in your database or other parts of your system.  If you are tracking recipients, associate your recipient with the cardId.
@@ -343,7 +404,7 @@ After creating a Card, use this endpoint to retrieve the fullcode to give to you
 
 ### Retrieve a Code by cardId [GET /cards/{cardId}/code]
 
-Use this endpoint if your system or internal staff need to retrieve basic information about a Code.  See the Code endpoint documentation for response format.
+Use this endpoint if your system or internal staff need to retrieve basic information about a Code. 
 
 + Request (application/json)
     + Headers
@@ -352,10 +413,27 @@ Use this endpoint if your system or internal staff need to retrieve basic inform
 
 + Parameters 
     + cardId (string) - The identifier returned when the Card and Code were created.
+    
++ Response 200
+    
+    + Attributes 
+        + code(CodeResponse)
+    
+    + Body
+    
+            {
+                "code":{
+                    "currency": "CAD",
+                    "initialValue": 5000,
+                    "codeLastFour": "WXYZ",
+                    "dateCreated": "2016-08-10T08:00:00.000+0000",
+                    "expires": "2017-03-03T08:00:00.000+0000"
+                }
+            }
 
 ### Retrieve a Code balance by cardId [GET /cards/{cardId}/code/balance]
 
-Use this endpoint if your system or internal staff need to retrieve up-to-date balance information about a Code.  See the Code endpoint documentation for response format.
+Use this endpoint if your system or internal staff need to retrieve up-to-date balance information about a Code.
 
 + Request (application/json)
     + Headers
@@ -377,7 +455,7 @@ Use this endpoint if your system or internal staff need to retrieve up-to-date b
 
 ### Retrieve Transactions for a Code by cardId [GET /cards/{cardId}/code/transactions/]
 
-Use this endpoint if your system or internal staff need to retrieve all the Transactions for a Code.  See the Code endpoint documentation for response format.
+Use this endpoint if your system or internal staff need to retrieve all the Transactions for a Code.
 
 + Request (application/json)
     + Headers
@@ -387,9 +465,35 @@ Use this endpoint if your system or internal staff need to retrieve all the Tran
 + Parameters 
     + cardId (string) - The identifier returned when the Card and Code were created.
     
-### Retrieve a single Transaction for a code by cardId and transactionId [GET /cards/{cardId}/transactions/{transactionId}]
++ Response 200
+    + Attributes 
+        + transactions(array[TransactionResponse])
+        + pagination(PaginationResponse)
 
-Use this endpoint if your system or internal staff need to retrieve all the Transactions for a Code.  See the Code endpoint documentation for response format.
+    + Body
+        
+            {
+                "transactions":[
+                    {
+                        "transactionId": "transaction-86251f7b040b45d3b7364bae04c74870",
+                        "value": 500,
+                        "valueAvailableAfterTransaction": 500,
+                        "userSuppliedId": "someTransaction",
+                        "dateCreated": "2016-08-10T09:00:00.000+0000"
+                    }
+                ],
+                "pagination":{
+                    "count": 1,
+                    "limit": 100,
+                    "maxLimit": 1000,
+                    "offset": 0,
+                    "totalCount": 1
+                }
+            }
+    
+### Retrieve a single Transaction for a code by cardId and transactionId [GET /cards/{cardId}/code/transactions/{transactionId}]
+
+Use this endpoint if your system or internal staff need to retrieve all the Transactions for a Code.
 
 + Request (application/json)
     + Headers
@@ -400,10 +504,27 @@ Use this endpoint if your system or internal staff need to retrieve all the Tran
     + cardId (string) - The identifier returned when the Card and Code were created.
     + transactionId (string) - The identifier returned when the Transaction was created.
     
++ Response 200
+    + Attributes 
+        + transaction(TransactionResponse)
+        
+    + Body
+            
+            {
+                "transaction" {
+                    "transactionId": "transaction-86251f7b040b45d3b7364bae04c74870",
+                    "value": 500,
+                    "valueAvailableAfterTransaction": 500,
+                    "userSuppliedId": "someTransaction",
+                    "dateCreated": "2016-08-10T09:00:00.000+0000"
+                }
+            }
     
 ### Create a Transaction for a Code given the cardId [POST /cards/{cardId}/code/transactions]
 
-Use this endpoint if your system or internal staff need to create a Transaction for a Code, such as to mark all or part of it as used.  See the Code endpoint documentation for request and response format.
+Use this endpoint if your system or internal staff need to create a Transaction for a Code, such as to mark all or part of it as used or to add additional value to the Code. 
+
+To transact against the Code in your checkout or when a recipient presents their `fullcode`, see the `Create a Transaction by Fullcode` below.
 
 + Parameters 
     + cardId (string) - The identifier returned when the Card and Code were created.
@@ -413,11 +534,69 @@ Use this endpoint if your system or internal staff need to create a Transaction 
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
-    + Attributes
-        + value (number, required) - The amount to use from the Code in the smallest currency unit (such as cents).  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
-        + currency  (string, required) - The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
-        + userSuppliedId (string, required) - A unique identifier for this transaction.
+    + Attributes (TransactionRequest)
+        
+    + Body
     
+            {
+            "value": -250,
+            "currency": "CAD",
+            "userSuppliedId": "someTransaction"
+            }
+        
++ Response 200
+
+    + Attributes 
+        + transaction(TransactionResponse)
+
+    + Body
+    
+            {
+                "transaction" {
+                    "transactionId": "transaction-86251f7b040b45d3b7364bae04c74870",
+                    "value": -250,
+                    "valueAvailableAfterTransaction": 4750,
+                    "userSuppliedId": "someTransaction",
+                    "dateCreated": "2016-08-10T09:00:00.000+0000"
+                }
+            }
+    
+
+## Categories [/categories/]
+
+A Category represents a grouping of Cards e.g. orders, types of cards, or any custom Category you wish to create. Most functions of Categories are closely tied to Cards.
+
+### List your existing Categories [GET /categories/{?categoryKey}{?categoryValue}{?limit}{?offset}]
+
+Retrieve a list of Categories that have been created.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+        
++ Response 200
+    + Body
+    
+            {
+                "categories":[
+                    {
+                        "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                        "key": "someCategoryKey",
+                        "value": "someCategoryValue"
+                    }, 
+                    {
+                        "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                        "key": "giftbit_order",
+                        "value": "my order name"
+                    },
+                    {
+                        "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                        "key": "giftbit_type",
+                        "value": "PROMO"
+                    }
+                ]
+            }
 
 ## Codes [/codes/{fullcode}]
 
@@ -439,12 +618,7 @@ Look up information about a code given the fullcode.
     
 + Response 200
     + Attributes
-        + Code
-            + codeLast4 (string) - The last 4 characters of the Code.
-            + currency (string) - The 3 character ISO-4217 currency.
-            + initialValue (number) - The value of the code at creation in the smallest currency unit (such as cents).
-            + expires (string) - The code's expiry date and time.  This field will be ommitted if the code was not created with an expiry.  ISO-8601 format.
-            + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format.
+        + Code (CodeResponse)
 
     + Body
     
@@ -482,10 +656,13 @@ Retrieve the balance of a Code considering all previous Transactions.
                 }
             }
 
+### Create a Transaction by Fullcode [POST /codes/{fullcode}/transactions] 
 
-### Use Code value [POST /codes/{fullcode}/transactions] 
+Use some or all of the remaining value of the Code (create a Transaction on the Code). This endpoint is usefull when you are provided the `fullcode` by the recipient any they wish to use some or all of the Code's value (eg. in your checkout).
 
-Use some or all of the remaining value of the Code (create a Transaction on the Code).  Attempting to use value for a Code that is expired or does not have enough remaining value will result in an error.
+You can only reduce the balance of the Code when transacting by with `fullcode`. If you wish to add value to the Code, create the transaction by the `cardId` as described above. 
+
+Attempting to use value for a Code that is expired or does not have enough remaining value will result in 400 response.
 
 + Parameters 
     + fullcode (string) - The gift code.
@@ -496,7 +673,7 @@ Use some or all of the remaining value of the Code (create a Transaction on the 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + value (number, required) - The amount to use from the Code in the smallest currency unit (such as cents).  Must be a postive number.  If the amount exceeds the current value of the code, an error will result.
+        + value (number, required) - The amount the transaction will change the balance on the Code in the smallest currency unit (such as cents).  Must be a negative number. If the transaction amount would bring the Code balance below zero, a 400 response will be returned.
         + currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created or an error will result.
         + userSuppliedId (string, required) - A unique identifier for this transaction.
 
@@ -504,17 +681,17 @@ Use some or all of the remaining value of the Code (create a Transaction on the 
     
             {
                 "userSuppliedId": "12345678",
-                "value": 165,
+                "value": -165,
                 "currency": "USD"
             }
 
 + Response 200
 
     + Attributes
-        + value (number) - The amount of the transaction in the smallest currency unit (such as cents). Should equal value in the request.
+        + value (number) - The amount of the transaction in the smallest currency unit (such as cents). Equal to the value in the request.
         + transactionId (string) - The unique Id for this transaction assigned by Giftbit at creation time.
         + userSuppliedId (string) - Identifier of the transaction (should equal transactionId in the request).
-        + valueAvailableAfterTransaction (number) - The current value of the code (after this transaction) in the smallest currency unit (such as cents).
+        + valueAvailableAfterTransaction (number) - The remaining balance of the Code as a result of the transaction, at the time of the transaction.
         + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format.
 
     + Body
@@ -522,8 +699,8 @@ Use some or all of the remaining value of the Code (create a Transaction on the 
             {
                 "transaction":{
                     "userSuppliedId": "12345678",
-                    "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                    "value": 165,
+                    "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                    "value": -165,
                     "dateCreated": "2016-08-10T08:00:00.000+0000",
                     "valueAvailableAfterTransaction": 4835
                     }
@@ -550,15 +727,15 @@ Retrieve all Transactions for a Code given the fullcode.  Useful if you'd like t
                 "transactions":[
                     {
                         "userSuppliedId": "12345",
-                        "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                        "value": 500,
+                        "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                        "value": -500,
                         "dateCreated": "2016-08-11T08:32:00.000+0000",
                         "valueAvailableAfterTransaction": 800
                     },
                     {
                         "userSuppliedId": "12344",
-                        "transactionId":"avji1b55-6gu7-4ke5-82s5-fd37edb5ju9a",
-                        "value": 700,
+                        "transactionId":"transaction-avji1b55-6gu7-4ke5-82s5-fd37edb5ju9a",
+                        "value": -700,
                         "dateCreated": "2016-08-10T08:00:00.000+0000",
                         "valueAvailableAfterTransaction": 1300
                     }
@@ -581,14 +758,16 @@ Retrieve a Transaction for a Code given the fullcode and the transactionId.
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 + Response 200
-
+    + Attributes 
+        + transaction(TransactionResponse)
+    
     + Body
     
             {
                 "transaction":{
                     "userSuppliedId": "12345678",
-                    "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                    "value": 165,
+                    "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                    "value": -165,
                     "dateCreated": "2016-08-10T08:00:00.000+0000",
                     "valueAvailableAfterTransaction": 4835
                     }
@@ -604,16 +783,91 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 + Response 200
+    + Attributes 
+        + transaction(TransactionResponse)
 
     + Body
     
             {
                 "transaction":{
                     "userSuppliedId": "12345678",
-                    "transactionId":"d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                    "value": 165,
+                    "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
+                    "value": -165,
                     "dateCreated": "2016-08-10T08:00:00.000+0000",
                     "valueAvailableAfterTransaction": 4835
                     }
                 }
             }
+            
+            
+# Data Structures
+
+## Pagination (object)
++ limit (number, optional) - The maximum number of results to return at once. Default 100.
++ offset (number, optional) - The offset of the first results in the total results. Default 0.
+
+## PaginationResponse (Pagination) ]
++ count (number, required)
++ limit  (number, required)
++ maxLimit  (number, required)
++ offset  (number, required)
++ totalCount  (number, required)
+
+## IdempotentObject (object)
++ userSuppliedId (string, required) - The unique identifier provided when this call was made. 
+
+## Code (object)
++ currency (string, required) - The 3 character ISO-4217 currency.
++ initialValue (number, required) - The value of the code at creation in the smallest currency unit (such as cents).
++ expires (string, optional) - The code's expiry date and time.  This field will be ommitted if the code was not created with an expiry.  ISO-8601 format.
++ startDate (string, optional) - The code's start date and time.  This field will be ommitted if the code was not created with an start date.  ISO-8601 format.
++ metadata (object) - A collection of key/value pairs of additional information about the code. The `giftbit_*` namespace for keys is reserved. 
+
+## CodeResponse (Code)
++ codeLast4 (string, required) - The last 4 characters of the Code.
++ dateCreated (string, required) - The Giftbit system time of the creation in ISO-8601 format.
++ expires (string, optional) - The code's expiry date and time.  This field will be ommitted if the code was not created with an expiry.  ISO-8601 format.
+
+## CodeRequest (Code)
++ initialValue (number) - the starting value of the code, in the smallest currency unit (such as cents).
++ currency (string) - The 3 character ISO-4217 currency.
++ expires (string) - The code's optional expiry date and time.  ISO-8601 format.
++ startDate (string) - The code's optional start date and time.  ISO-8601 format.
+
+## Card (IdempotentObject)
+
+## CardRequest (Card)
++ code (CodeRequest, required)
++ categories (Category)
+
+## CardResponse (Card)
++ cardId (string, required) - Giftbit's unique identifier for this Card. Be sure to persist this value for future operations.
++ dateCreated (string, required) - The Giftbit system time of the creation in ISO-8601 format.
+
+## Transaction (IdempotentObject)
++ value (number, required) - The amount of the transaction in the smallest currency unit (such as cents). A transaction cannot reduce the code balance below 0
++ currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match the currency of code when it was created.
++ metadata (object) - A collection of key/value pairs of additional information about the transaction. The `giftbit_*` namespace for keys is reserved.
+
+## TransactionRequest (Transaction) 
+
+## TransactionResponse (Transaction) 
++ dateCreated(string, required) - Giftbit system time of the creation of the transaction. ISO-8601 format.
++ valueAvailableAfterTransaction(number, required) - The remaining balance of the `Code` as a result of the transaction in the smallest currency unit (such as cents).
+
+## Category (object)
++ categoryKey (string) - The key of the category. Examples: "giftbit_type", "giftbit_order", "city"
++ categoryValue (string) - The value of the category. Examples: "PROMO", "My Order", "Victoria"
+
+## CategoryResponse (object)
++ categoryId (string) - Giftbit's unique identifier for this Category
++ key (string) - The key of the category.
++ value (string) - The value of the category.
+
+## BalanceResponse (object)
++ currentValue (number) - The current balance of the Code.
+
+## Healthcheck (object)
++ username (string) - The email address associated with the credentials provided.
++ servertime (string) - The current time on the server (ISO 8601 format).
++ mode (string) - String indicating whether the credentials provided are for TEST or LIVE mode.
