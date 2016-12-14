@@ -62,7 +62,8 @@ The steps and API calls you would take in this use case are:
 Another common use case for this API is to power a points/rewards accumulation system for your user/application ecosystem.  In this example, you are not distributing or making use of Codes at all, but rather using the Cards endpoint exclusively to maintain points for your users.
 
 The steps and API calls you would take in this use case are: 
-- Create a new Card (POST /cards). Make sure you keep the returned cardId and associate it with a particular user in your system.
+- Create a new Contact ({POST /contacts) with your user's details. Make sure you keep the returned contactId.
+- Create a new Card (POST /cards), including the contactId from above to associate that Card with your Contact. Make sure you keep the returned cardId for future transactions.
 - Every time you wish to adjust the user's points, create an appropriate transaction (POST cards/{cardId}/code/transactions).
 - Check the remaining value associated with the fullcode and display to your recipient (GET /cards/{cardId}/code/balance).
 
