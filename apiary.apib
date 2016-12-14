@@ -194,6 +194,7 @@ You can also provide a "giftbit_order" Category, which will assign the Card to w
 
 + Request (application/json)
 The categories object is optional. If provided, it will attach the given Category objects to the Card, creating any that do not exist already.
+The contactId string is also optional; it must correspond to one of your Contacts' contactId fields.
 
     + Headers
 
@@ -215,7 +216,8 @@ The categories object is optional. If provided, it will attach the given Categor
                     "giftbit_type": "PROMO",
                     "giftbit_order": "My Order",
                     "My Custom Category Key": "My Custom Category Value"
-                }
+                },
+                "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d48"
             }
         
 + Response 200
@@ -227,7 +229,25 @@ The categories object is optional. If provided, it will attach the given Categor
             {
                 "cardId":"card-5c1c1760-b185-4861-a4fc-47eca84bf52b",
                 "userSuppliedId":"12345678",
+                "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d48",
                 "dateCreated":"2016-08-10T08:00:00.000+0000"
+                "categories":[
+                            {
+                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                                "key": "My Custom Category Key",
+                                "value": "My Custom Category Value"
+                            }, 
+                            {
+                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                                "key": "giftbit_order",
+                                "value": "my order name"
+                            },
+                            {
+                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                                "key": "giftbit_type",
+                                "value": "PROMO"
+                            }
+                        ]
             }
     
 
@@ -256,27 +276,112 @@ Retrieve your created Cards.  Results are returned in descending order of creati
                     {
                     "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
                     "dateCreated": "2016-09-01T23:47:02.000+0000",
-                    "userSuppliedId":"1234"
+                    "userSuppliedId":"1234",
+                    "categories":[
+                            {
+                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                                "key": "someCategoryKey",
+                                "value": "someCategoryValue"
+                            }, 
+                            {
+                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                                "key": "giftbit_order",
+                                "value": "my order name"
+                            },
+                            {
+                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                                "key": "giftbit_type",
+                                "value": "PROMO"
+                            }
+                        ]
                     },
                     {
                     "cardId": "card-4e61aba2-5d5a-4e99-8574-6479cecce0dd",
                     "dateCreated": "2016-09-01T23:42:35.000+0000",
-                    "userSuppliedId":"1235"
+                    "userSuppliedId":"1235",
+                    "categories":[
+                            {
+                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                                "key": "someCategoryKey",
+                                "value": "someCategoryValue"
+                            }, 
+                            {
+                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                                "key": "giftbit_order",
+                                "value": "my order name"
+                            },
+                            {
+                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                                "key": "giftbit_type",
+                                "value": "PROMO"
+                            }
+                        ]
                     },
                     {
                     "cardId": "card-3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
                     "dateCreated": "2016-09-01T23:42:23.000+0000",
-                    "userSuppliedId":"1236"
+                    "userSuppliedId":"1236",
+                    "categories":[
+                            {
+                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                                "key": "someCategoryKey",
+                                "value": "someCategoryValue"
+                            }, 
+                            {
+                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                                "key": "giftbit_order",
+                                "value": "my order name"
+                            },
+                            {
+                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                                "key": "giftbit_type",
+                                "value": "PROMO"
+                            }
+                        ]
                     },
                     {
                     "cardId": "card-c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
                     "dateCreated": "2016-09-01T23:42:17.000+0000",
-                    "userSuppliedId":"1237"
+                    "userSuppliedId":"1237",
+                    "categories":[
+                            {
+                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                                "key": "someCategoryKey",
+                                "value": "someCategoryValue"
+                            }, 
+                            {
+                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                                "key": "giftbit_order",
+                                "value": "my order name"
+                            },
+                            {
+                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                                "key": "giftbit_type",
+                                "value": "PROMO"
+                            }
+                        ]
                     },
                     {
                     "cardId": "card-56d23f04-64a8-452b-b3a1-3e758ebb6adc",
                     "dateCreated": "2016-09-01T23:41:32.000+0000",
-                    "userSuppliedId":"1238"
+                    "userSuppliedId":"1238",
+                    "categories":[
+                            {
+                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                                "key": "someCategoryKey",
+                                "value": "someCategoryValue"
+                            }, 
+                            {
+                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                                "key": "giftbit_order",
+                                "value": "my order name"
+                            },
+                            {
+                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                                "key": "giftbit_type",
+                                "value": "PROMO"
+                            }
+                        ]
                     }
                 ],
                 "pagination":{
@@ -311,7 +416,76 @@ Look up a single Card by by the Giftbit assigned cardId.
                 "card":{
                     "userSuppliedId" : "1234",
                     "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
-                    "dateCreated": "2016-09-01T23:47:02.000+0000"
+                    "dateCreated": "2016-09-01T23:47:02.000+0000",
+                    "categories":[
+                            {
+                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                                "key": "someCategoryKey",
+                                "value": "someCategoryValue"
+                            }, 
+                            {
+                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                                "key": "giftbit_order",
+                                "value": "my order name"
+                            },
+                            {
+                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                                "key": "giftbit_type",
+                                "value": "PROMO"
+                            }
+                        ]
+                }
+            }
+            
+### Update Card by cardId [PATCH /cards/{cardId}]
+
+Update the contact on a Card by the Giftbit assigned cardId. The contactId must correspond to one of your Contacts' contactIds. 
+
++ Parameters 
+    + cardId (string, required) - The Giftbit assigned cardId.
+    + contactId (string)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
+    + Body
+    
+            {
+                "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d49"
+            }
+
++ Response 200
+
+    + Attributes 
+        + card (CardResponse)
+
+    + Body
+        
+            {
+                "card":{
+                    "userSuppliedId" : "1234",
+                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
+                    "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d49",
+                    "dateCreated": "2016-09-01T23:47:02.000+0000",
+                    "categories":[
+                            {
+                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                                "key": "someCategoryKey",
+                                "value": "someCategoryValue"
+                            }, 
+                            {
+                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                                "key": "giftbit_order",
+                                "value": "my order name"
+                            },
+                            {
+                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                                "key": "giftbit_type",
+                                "value": "PROMO"
+                            }
+                        ]
                 }
             }
             
@@ -339,7 +513,24 @@ Look up a single Card by the userSuppliedId.
                     {
                         "userSuppliedId" : "1234",
                         "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
-                        "dateCreated": "2016-09-01T23:47:02.000+0000"
+                        "dateCreated": "2016-09-01T23:47:02.000+0000",
+                        "categories":[
+                            {
+                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
+                                "key": "someCategoryKey",
+                                "value": "someCategoryValue"
+                            }, 
+                            {
+                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
+                                "key": "giftbit_order",
+                                "value": "my order name"
+                            },
+                            {
+                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
+                                "key": "giftbit_type",
+                                "value": "PROMO"
+                            }
+                        ]
                     }
                 ]
             }
@@ -598,6 +789,198 @@ Retrieve a list of Categories that have been created.
                 ]
             }
 
+## Contacts [/contacts]
+
+A Contact represents a recipient of one of your Cards or Codes. Contacts can be attached to Cards to help you keep track of who is interacting with your Cards.
+
+### Create Contact [POST /contacts]
+
+Create a new Contact. Once created, a Contact can be attached to a Card.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
+    + Body
+    
+            {
+                "userSuppliedId": "12345678",
+                "email": "noreply@giftbit.com"
+            }
+            
++ Parameters 
+    + userSuppliedId (string, required) - This must be unique.
+    + email (string) - Optional.
+    + firstName (string) - Optional.
+    + lastName (string) - Optional.
+    
++ Response 200
+    + Attributes
+        + contactId (string, required) - Giftbit's unique identifier for this Contact. Be sure to persist this value for future operations.
+        + userSuppliedId (string, required) - The unique ID supplied on Contact creation.
+        + dateCreated(string, required) - Giftbit system time of the creation of the Contact. ISO-8601 format.
+        + email (string) - The provided email, if applicable.
+        + firstName (string) - The provided firstName, if applicable.
+        + lastName (string) - The provided lastName, if applicable.
+
+    + Body
+    
+            {
+                "contact":
+                {
+                    "contactId": "contact-0f06b54b9fa44727a7ba7043de5365cf",
+                    "userSuppliedId": "12345678",
+                    "email": "noreply@giftbit.com",
+                    "firstName": null,
+                    "lastName": null,
+                    "dateCreated": "2016-12-09T00:06:00.000+0000"
+                }
+            }
+
+### Update Contact [PATCH /contacts/{contactId}/]
+
+Update a Contact. A Contact's email, firstName, or lastName can be updated.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
+    + Body
+    
+            {
+                "firstName": "Jane",
+                "lastName": "Smith"
+            }
+            
++ Parameters 
+    + contactId (string, required) - The contactId provided on Contact creation.
+    + email (string) - Optional.
+    + firstName (string) - Optional.
+    + lastName (string) - Optional.
+    
++ Response 200
+    + Attributes
+        + contactId (string, required) - Giftbit's unique identifier for this Contact. Be sure to persist this value for future operations.
+        + userSuppliedId (string, required) - The unique ID supplied on Contact creation.
+        + dateCreated(string, required) - Giftbit system time of the creation of the Contact. ISO-8601 format.
+        + email (string) - The provided email, if applicable.
+        + firstName (string) - The provided firstName, if applicable.
+        + lastName (string) - The provided lastName, if applicable.
+
+    + Body
+    
+            {
+                "contact":
+                {
+                    "contactId": "contact-0f06b54b9fa44727a7ba7043de5365cf",
+                    "userSuppliedId": "12345678",
+                    "email": "noreply@giftbit.com",
+                    "firstName": "Jane",
+                    "lastName": "Smith",
+                    "dateCreated": "2016-12-09T00:06:00.000+0000"
+                }
+            }
+
+### List Contacts [GET /contacts{?limit}{?offset}{?email}{?firstName}{?lastName}{?userSuppliedId}]
+
+Retrieve a list of your created Contacts.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
++ Parameters 
+    + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
+    + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
+    + email (string, optional)
+    + firstName (string, optional)
+    + lastName (string, optional)
+    + userSuppliedId (string, optional) - The unique ID supplied on Contact creation.
+    
++ Response 200
+    + Attributes
+        + contactId (string, required) - Giftbit's unique identifier for this Contact. Be sure to persist this value for future operations.
+        + userSuppliedId (string, required) - The unique ID supplied on Contact creation.
+        + dateCreated(string, required) - Giftbit system time of the creation of the Contact. ISO-8601 format.
+        + email (string) - The provided email, if applicable.
+        + firstName (string) - The provided firstName, if applicable.
+        + lastName (string) - The provided lastName, if applicable.
+
+    + Body
+    
+            {
+                "contacts":[
+                    {
+                        "contactId": "contact-0f06b54b9fa44727a7ba7043de5365cf",
+                        "userSuppliedId": "12345678",
+                        "email": "noreply@giftbit.com",
+                        "firstName": "Jane",
+                        "lastName": "Smith",
+                        "dateCreated": "2016-12-09T00:06:00.000+0000"
+                    },
+                    {
+                        "contactId": "contact-1f06b54b9fa44727a7ba7043de5365ce",
+                        "userSuppliedId": "12345679",
+                        "email": "noreply@giftbit.com",
+                        "firstName": "John",
+                        "lastName": "Smith",
+                        "dateCreated": "2016-12-09T00:06:00.000+0000"
+                    }
+                ]
+            }
+
+### Show Contact [GET /contacts/{contactId}]
+
+Look up a Contact given its contactId.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
++ Parameters 
+    + contactId (string, required) - The contactId provided on Contact creation.
+    
++ Response 200
+    + Attributes
+        + contactId (string, required) - Giftbit's unique identifier for this Contact. Be sure to persist this value for future operations.
+        + userSuppliedId (string, required) - The unique ID supplied on Contact creation.
+        + dateCreated(string, required) - Giftbit system time of the creation of the Contact. ISO-8601 format.
+        + email (string) - The provided email, if applicable.
+        + firstName (string) - The provided firstName, if applicable.
+        + lastName (string) - The provided lastName, if applicable.
+
+    + Body
+    
+            {
+                "contact":
+                {
+                    "contactId": "contact-0f06b54b9fa44727a7ba7043de5365cf",
+                    "userSuppliedId": "12345678",
+                    "email": "noreply@giftbit.com",
+                    "firstName": "Jane",
+                    "lastName": "Smith",
+                    "dateCreated": "2016-12-09T00:06:00.000+0000"
+                }
+            }
+            
+### Delete Contact [DELETE /contacts/{contactId}]
+
+Delete a Contact. Contact will not appear when listing Contacts.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
++ Parameters 
+    + contactId (string, required) - The contactId provided on Contact creation.
+    
++ Response 204
+
 ## Codes [/codes/{fullcode}]
 
 A Code represents the financial device that is worth value to you and your store.  The fullcode is what is distributed to your recipients. Your external-facing experience (balance checks, transaction history, and checkout/use of value) should interact with the Code and Code Transaction endpoints described here.  Only these endpoints accept fullcodes.
@@ -837,12 +1220,17 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
 ## Card (IdempotentObject)
 
 ## CardRequest (Card)
++ userSuppliedId (string, required)
 + code (CodeRequest, required)
 + categories (Category)
++ contactId (string)
 
 ## CardResponse (Card)
 + cardId (string, required) - Giftbit's unique identifier for this Card. Be sure to persist this value for future operations.
++ userSuppliedId (string, required) - The userSuppliedId provided at Card creation.
++ contactId (string)
 + dateCreated (string, required) - The Giftbit system time of the creation in ISO-8601 format.
++ categories (object) - The Categories associated with this Card. 
 
 ## Transaction (IdempotentObject)
 + value (number, required) - The amount of the transaction in the smallest currency unit (such as cents). A transaction cannot reduce the code balance below 0
