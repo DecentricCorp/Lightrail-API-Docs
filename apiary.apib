@@ -252,7 +252,7 @@ The contactId string is also optional; it must correspond to one of your Contact
             }
     
 
-### List Cards [GET /cards/{?limit}{?offset}{?categoryKey}{?categoryValue}]
+### List Cards [GET /cards/{?limit}{?offset}{?categoryKey}{?categoryValue}{?contactId}]
 
 Retrieve your created Cards.  Results are returned in descending order of creation (newest first).
 + Request (application/json)
@@ -264,7 +264,8 @@ Retrieve your created Cards.  Results are returned in descending order of creati
     + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
     + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
     + categoryKey (string, optional) - A key to a Category. Will return all Cards attached to Categories with this key if supplied.
-    + categoryValue (string, optional) - A value of a Category. Will return all Cards attached to Categories with this value if supplied. If both a categoryKey and a categoryValue are supplied, will return all Cards associated with the unique Category having that categoryKey and categoryValue. 
+    + categoryValue (string, optional) - A value of a Category. Will return all Cards attached to Categories with this value if supplied. If both a categoryKey and a categoryValue are supplied, will return all Cards associated with the unique Category having that categoryKey and categoryValue.
+    + contactId (string, optional) - A contactId to filter by.
 
 + Response 200
     + Attributes 
