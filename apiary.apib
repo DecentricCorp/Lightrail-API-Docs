@@ -88,7 +88,7 @@ The steps and API calls you would take in this use case are:
       (GET _/cards/{cardId}/code/fullcode_).
 - Accept the fullcode in your checkout, and create a Transaction on the Code 
   (POST _/codes/{fullcode}/transactions_).
-- Check the remaining value associated with the fullcode and display to your recipient 
+- Check the remaining value associated with the `fullcode` and display to your recipient 
   (GET _/codes/{fullcode}/balance_).
 
 #### High level architecture diagram
@@ -106,7 +106,7 @@ The steps and API calls you would take in this use case are:
   Make sure you keep the returned `cardId` for future transactions.
 - Every time you wish to adjust the user's points, create an appropriate transaction 
   (POST _cards/{cardId}/code/transactions_).
-- Check the remaining value associated with the `fullcode` and display to your recipient 
+- Check the remaining value associated with the `cardId` and display to your recipient 
   (GET _/cards/{cardId}/code/balance_).
 
 Note that in this example, you do everything through the `cardId` and do not need to use the Code endpoint.
