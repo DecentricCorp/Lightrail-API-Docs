@@ -39,15 +39,17 @@ and a space in the Authorization HTTP header. For example `Authorization: Bearer
 
 ### Programs
 
-Programs define a set of rules from which a Card can be created. They are created from the 
-<a href="https://currency.giftbit.com/app/#/programs" target="_blank">Programs</a> section of your account. 
-Programs improve tracking of Card activity within your account, and also provide the flexibility
-to add integrators.  
+Programs define a set of rules from which a Card can be created. 
+They are created within the <a href="https://currency.giftbit.com/app/#/programs" target="_blank">Programs</a> section of the Giftbit web application. 
+Programs are used to structure and organize related Cards, and also improve tracking of activity within your account. 
+Cards created in a Program follow the rules of the Program including details such as currency, permitted denominations or range of value, and card lifespan. 
+Use of Programs is required in order to create Cards.
 
-Adding integrators to a program allows you to let others issue Cards from your Program.
-When an integrator is added to a Program it creates an additonal `access_token` which your integrator 
-will use in their API requests to Giftbit. An Integrator's access is restricted to a Program and their activity
-is tracked and managed for you by Giftbit.
+
+Programs also provide the flexibility to add integrators. 
+Adding integrators allows you to lend permission so another party can create and issue Cards according to the rules of your Program. 
+When an integrator is added to a Program it creates an additional `access_token` which your integrator  will use in API requests to Giftbit. 
+An Integrator's access is restricted to a Program. The integrator’s activity is tracked and managed through Giftbit.
 
 ### Cards and Codes
 
@@ -57,22 +59,31 @@ A Card represents a unique gift card, promotional code, credit, or other type of
 to issue. A Card is the object that your system will interact with following your implementation 
 (creation, retrieval, listing, statistics, etc).
 
-A Code is the unique financial device associated with a Card. A Code has a `fullcode` that is a unique and 
-unguessable alpha-numeric code that can be distributed to a recipient. A Code has a balance, a currency type, 
-an optional expiry and all the Transactions (uses) associated with that Code. Your consumer-facing functionality 
-(checkout, balance check, transaction history for a code) interacts with the _/code_ endpoint.
+A Code is the unique financial device associated with a Card. 
+A Code has a `fullcode` that is a unique and unguessable alpha-numeric code that can be distributed to a recipient. 
+A Code also has a balance, an optional expiry and metadata. Transactions and adjustments of the balance are associated with the Code. 
+Your consumer-facing functionality (checkout, balance check, transaction history for a code) interacts with the _/code_ endpoint.
 
 There is a 1-1 relationship between a Card and a Code. You specify the details of the Code when you create the 
 Card and must supply the `programId` as a field of the Code object in the request. 
 Giftbit plans to add extensive functionality to Card including automated delivery mechanisms, templating, 
 external integrations, and more - hence the separation from Code.
 
-## Common use cases
+### Contacts
+
+A Contact represents a recipient of one of your Cards or Codes. 
+Contacts can be attached to Cards to improve tracking and to enable targeting of promotions based on customer behavior.
+Use of Contacts is optional.
+
+A Contact has an email address, an optional first and/or last name and optional identifiers such as your system’s customer ID. 
+
+
+## Common Use Cases
 
 ### Creating and Accepting Codes in Your Checkout
 
-A common use case for this API is one in which Giftbit powers your gift cards. You would create one or more Programs which
-would define the rules for which gift cards would be created by. 
+A common use case for this API is one in which Giftbit powers your gift cards. 
+You would create one or more Programs which define the rules for the creation of your gift cards.
 Then you would create a Card with an attached Code, which contains the value which you wish to send as well as the date you would 
 like the code to expire (if applicable). You would then deliver the `fullcode` associated with this Code to 
 your recipient, and allow the recipient to redeem value against this Code in one or more transactions. You 
@@ -99,18 +110,19 @@ Another common use case for this API is to power a points/rewards accumulation s
 ecosystem.  In this example, you are not distributing or making use of Codes at all, but rather using the Cards 
 endpoint exclusively to maintain points for your users.
 
-The steps and API calls you would take in this use case are: 
+The steps and API calls you would take in this use case are:  
+- Create a Program though your Giftbit account which will represent your points accumulation system.
 - Create a new Contact (POST _/contacts_) with your user's details. Make sure you keep the returned `contactId`.
 - Create a new Card (POST _/cards_), including the `contactId` from above to associate that Card with your Contact. 
   Make sure you keep the returned `cardId` for future transactions.
-- Every time you wish to adjust the user's points, create an appropriate transaction 
+- Every time you wish to adjust the user's points or permit redemption of points, create an appropriate transaction 
   (POST _cards/{cardId}/code/transactions_).
 - Check the remaining value associated with the `cardId` and display to your recipient 
   (GET _/cards/{cardId}/code/balance_).
 
 Note that in this example, you do everything through the `cardId` and do not need to use the Code endpoint.
 
-If this usecase fits your need, a great way to reward your users for appropriate points milestones is to 
+If this use case fits your need, a great way to reward your users for appropriate points milestones is to 
 send them gift cards to top brands through <a href="https://www.giftbit.com" target="_blank">Giftbit’s Rewards API.</a>
 
 ## Coding for Idempotency and the UserSuppliedId Field
@@ -144,23 +156,10 @@ will ensure you get the stats you are looking for. Suppose you wanted to compare
 campaigns. You could set a `{"campaign": "first campaign"}` Category on one group of Cards, and a 
 `{"campaign": "second campaign"}` on another. Each would have their own set of statistics calculated for them.
 
-## Reserved Categories: Understanding giftbit_order and giftbit_type
-
-Giftbit currently has two reserved Category keys: `giftbit_order` and `giftbit_type`. The Category `giftbit_order` is the
-default grouping of Cards, and is assigned either through the web portal or the _/cards_ endpoint; in this 
-document, an order refers to a group of Cards that are attached to the same `{"giftbit_order": "order name"}`
-Category. 
-
-Like any Category, stats are tracked by order - so descriptive order names applied to the right Cards will help 
-you get the stats you are looking for. To group cards in the same order, you can supply the same Category when 
-creating Cards through the _/cards_ endpoint via the API. If a `giftbit_order` Category is not provided on 
-Card creation, the Cards will be assigned a default `{"giftbit_order": "YYYY-MM-DD"}` Category corresponding to 
-the date they were created.
-
-The Category `giftbit_type` refers to the Card's purpose, and corresponds to the types that can be assigned through 
-the web portal. There are four allowed values for the this f: `PROMO`, `GIFT_CARD`, `ACCOUNT_CREDIT`, 
-or `UNCATEGORIZED`. If a `giftbit_type` is not provided on Card creation, the Cards will be assigned the 
-`UNCATEGORIZED` value. 
+You'll notice Giftbit automatically adds several reserved Categories during Card creation such as `giftbit_order` and `giftbit_program`.
+The Category `giftbit_order` is the default grouping of Cards, and is assigned either through the web portal or the _/cards_ endpoint; in this 
+document, an Order refers to a group of Cards that are attached to the same `{"giftbit_order": "order name"}`
+Category. These categories are added to provide statistics for aggregate groupings of cards.
 
 ## Handling Error Responses
 
@@ -280,7 +279,7 @@ please ensure you have confirmed the legality of expiring value for your impleme
 
 You can also provide a "giftbit_order" Category, which will assign the Card to whichever order you specify. 
 If no "giftbit_order" is provided, the Card will be assigned to a default {"giftbit_order": "YYYY-MM-DD"} 
-Category indicating the date the Card was created. Categories are not returned as part of the response.
+Category indicating the date the Card was created. 
 
 + Request (application/json)
 The categories object is optional. If provided, it will attach the given Category objects to the Card, 
@@ -299,8 +298,6 @@ of your Contacts' contactId fields.
                 "code":
                 {
                     "initialValue":5000,
-                    "currency":"CAD",
-                    "expires":"2017-03-03T08:00:00.000+0000",
                     "programId":"program-a0d2fda60d13448fba0efdd61733c412",
                 },
                 "categories":
@@ -317,17 +314,18 @@ of your Contacts' contactId fields.
         + Card (CardResponse)
         
     + Body
-        
+            
             {
-                "cardId":"card-5c1c1760-b185-4861-a4fc-47eca84bf52b",
-                "userSuppliedId":"12345678",
-                "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d48",
-                "dateCreated":"2016-08-10T08:00:00.000+0000"
-                "categories":[
+                "card":{
+                    "userSuppliedId" : "1234",
+                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
+                    "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d49",
+                    "dateCreated": "2016-09-01T23:47:02.000+0000",
+                    "categories":[
                             {
                                 "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "My Custom Category Key",
-                                "value": "My Custom Category Value"
+                                "key": "someCategoryKey",
+                                "value": "someCategoryValue"
                             }, 
                             {
                                 "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
@@ -340,11 +338,12 @@ of your Contacts' contactId fields.
                                 "value": "PROMO"
                             },
                             {
-                                "categoryId": "category-32883cc97ad148c38cf825f895e85aff",
+                                "categoryId": "category-8b3b5f3e502a43d789fd6d88296c4a22",
                                 "key": "giftbit_program",
-                                "value": "program-a0d2fda60d13448fba0efdd61733c412"
+                                "value": "program-6cb2f3b117b44eb5986ac8cf36b59125"
                             }
                         ]
+                }
             }
     
 
@@ -377,6 +376,7 @@ Retrieve your created Cards.  Results are returned in descending order of creati
                     {
                     "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
                     "dateCreated": "2016-09-01T23:47:02.000+0000",
+                    "contactId": null,
                     "userSuppliedId":"1234",
                     "categories":[
                             {
@@ -399,6 +399,7 @@ Retrieve your created Cards.  Results are returned in descending order of creati
                     {
                     "cardId": "card-4e61aba2-5d5a-4e99-8574-6479cecce0dd",
                     "dateCreated": "2016-09-01T23:42:35.000+0000",
+                    "contactId": null,
                     "userSuppliedId":"1235",
                     "categories":[
                             {
@@ -421,6 +422,7 @@ Retrieve your created Cards.  Results are returned in descending order of creati
                     {
                     "cardId": "card-3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
                     "dateCreated": "2016-09-01T23:42:23.000+0000",
+                    "contactId": null,
                     "userSuppliedId":"1236",
                     "categories":[
                             {
@@ -443,6 +445,7 @@ Retrieve your created Cards.  Results are returned in descending order of creati
                     {
                     "cardId": "card-c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
                     "dateCreated": "2016-09-01T23:42:17.000+0000",
+                    "contactId": null,
                     "userSuppliedId":"1237",
                     "categories":[
                             {
@@ -465,6 +468,7 @@ Retrieve your created Cards.  Results are returned in descending order of creati
                     {
                     "cardId": "card-56d23f04-64a8-452b-b3a1-3e758ebb6adc",
                     "dateCreated": "2016-09-01T23:41:32.000+0000",
+                    "contactId": null,
                     "userSuppliedId":"1238",
                     "categories":[
                             {
@@ -587,6 +591,11 @@ Contacts' contactIds.
                                 "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
                                 "key": "giftbit_type",
                                 "value": "PROMO"
+                            },
+                            {
+                                "categoryId": "category-8b3b5f3e502a43d789fd6d88296c4a22",
+                                "key": "giftbit_program",
+                                "value": "program-6cb2f3b117b44eb5986ac8cf36b59125"
                             }
                         ]
                 }
@@ -1136,7 +1145,7 @@ Retrieve the balance of a Code considering all previous Transactions.
 ### Create a Transaction by Fullcode [POST /codes/{fullcode}/transactions] 
 
 Use some or all of the remaining value of the Code (create a Transaction on the Code). This endpoint is 
-usefull when you are provided the `fullcode` by the recipient any they wish to use some or all of the Code's 
+useful when you are provided the `fullcode` by the recipient any they wish to use some or all of the Code's 
 value (eg. in your checkout).
 
 You can only reduce the balance of the Code when transacting by with `fullcode`. If you wish to add value 
@@ -1288,6 +1297,109 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
             }
             
             
+## Programs [/programs/{programId}]
+
+The _/programs_ endpoint can be used to retrieve the details of your Programs. 
+As an integrator this endpoint can be used to view the details of the Programs you have access to.
+
+### Retrieve by programId [GET /programs/{programId}]
+
+Retrieve Program details by the `programId`.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
++ Parameter
+    + programId (string, required) - The `programId` of the Program you want to retrieve.
+            
++ Response 200
+
+    + Body
+    
+            {
+               "program":{
+                  "programId":"program-3c582fbbf3b34031a5894e4f2c2bfcc6",
+                  "userSuppliedId":"5dcc0933-72d18da0-767a497b",
+                  "name":"My Program!",
+                  "active":true,
+                  "currency":"USD",
+                  "dateCreated":"2017-01-05T23:53:35.000+0000",
+                  "programExpiresDate":null,
+                  "programStartDate":"2017-01-05T23:52:57.000+0000",
+                  "codeActivePeriodInDays":30,
+                  "codeValueMin":100,
+                  "codeValueMax":1000000,
+                  "fixedCodeValues":null,
+                  "metadata":{
+                     "giftbit_description":""
+                  }
+               }
+            }
+            
+            
+### List Programs [GET /programs]
+
+Used to list Program details. This endpoint can be used to lookup a `programId` rather than copying it from within your Giftbit account.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
++ Response 200
+
+    + Body
+    
+            {
+               "programs":[
+                  {
+                     "program":{
+                        "programId":"program-3c582fbbf3b34031a5894e4f2c2bfcc6",
+                        "userSuppliedId":"5dcc0933-72d18da0-767a497b",
+                        "name":"My Program!",
+                        "active":true,
+                        "currency":"USD",
+                        "dateCreated":"2017-01-05T23:53:35.000+0000",
+                        "programExpiresDate":null,
+                        "programStartDate":"2017-01-05T23:52:57.000+0000",
+                        "codeActivePeriodInDays":30,
+                        "codeValueMin":100,
+                        "codeValueMax":1000000,
+                        "fixedCodeValues":null,
+                        "metadata":null
+                     }
+                  },
+                  {
+                     "program":{
+                        "programId":"program-58510e126d084b6ba645c500ac6e8d81",
+                        "userSuppliedId":"5b218ea7-57e5a730-64a1d258",
+                        "name":"My Program!",
+                        "active":true,
+                        "currency":"CAD",
+                        "dateCreated":"2016-10-05T23:53:35.000+0000",
+                        "programExpiresDate":null,
+                        "programStartDate":"2016-10-05T23:53:35.000+0000",
+                        "codeActivePeriodInDays":365,
+                        "codeValueMin":100,
+                        "codeValueMax":50000,
+                        "fixedCodeValues":null,
+                        "metadata":null
+                     }
+                  }
+               ],
+               "pagination":{
+                  "count":2,
+                  "limit":100,
+                  "maxLimit":1000,
+                  "offset":0,
+                  "totalCount":2
+               }
+            }
+            
+            
+            
 # Data Structures
 
 ## Pagination (object)
@@ -1317,15 +1429,13 @@ Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
   The `giftbit_*` namespace for keys is reserved. 
 
 ## CodeResponse (Code)
-+ codeLast4 (string, required) - The last 4 characters of the Code.
-+ dateCreated (string, required) - The Giftbit system time of the creation in ISO-8601 format.
-+ expires (string, optional) - The code's expiry date and time.  This field will be ommitted 
++ codeLast4 (string) - The last 4 characters of the Code.
++ dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format.
++ expires (string) - The code's expiry date and time.  This field will be ommitted 
   if the code was not created with an expiry.  ISO-8601 format.
 
-## CodeRequest (Code)
+## CodeRequest
 + initialValue (number) - the starting value of the code, in the smallest currency unit (such as cents).
-+ currency (string) - The 3 character ISO-4217 currency.
-+ expires (string) - The code's optional expiry date and time.  ISO-8601 format.
 + startDate (string) - The code's optional start date and time.  ISO-8601 format.
 + programId (string) - The id of the Program for which the code will be created from.
 
