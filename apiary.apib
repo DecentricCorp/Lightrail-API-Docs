@@ -61,7 +61,7 @@ to issue. A Card is the object that your system will interact with following you
 
 A Code is the unique financial device associated with a Card. 
 A Code has a `fullcode` that is a unique and unguessable alpha-numeric code that can be distributed to a recipient. 
-A Code also has a balance, an optional expiry and meta data. Transactions and adjustments of the balance are associated with the Code. 
+A Code also has a balance, an optional expiry and metadata. Transactions and adjustments of the balance are associated with the Code. 
 Your consumer-facing functionality (checkout, balance check, transaction history for a code) interacts with the _/code_ endpoint.
 
 There is a 1-1 relationship between a Card and a Code. You specify the details of the Code when you create the 
@@ -72,7 +72,7 @@ external integrations, and more - hence the separation from Code.
 ### Contacts
 
 A Contact represents a recipient of one of your Cards or Codes. 
-Contacts can be attached to Cards to improve tracking, Card security and to enable targeting of promotions based on customer behavior.
+Contacts can be attached to Cards to improve tracking and to enable targeting of promotions based on customer behavior.
 Use of Contacts is optional.
 
 A Contact has an email address, an optional first and/or last name and optional identifiers such as your system’s customer ID. 
@@ -107,7 +107,7 @@ The steps and API calls you would take in this use case are:
 
 ### Building a Points Accumulation System for Your Users
 Another common use case for this API is to power a points/rewards accumulation system for your user/application 
-ecosystem.  In this example, you are not distributing or making use of Codes at all, but rather using the Cards 
+ecosystem. In this example, you are not distributing or making use of Codes at all, but rather using the Cards 
 endpoint exclusively to maintain points for your users.
 
 The steps and API calls you would take in this use case are:  
