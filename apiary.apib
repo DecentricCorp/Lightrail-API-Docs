@@ -275,7 +275,7 @@ Cards and your Codes through the cardId, which eliminates the need to ever store
 
 Create a Card and its corresponding Code.  Note that `cardId` on response should be persisted to lookup or 
 interact with the Code. The Code is not returned as part of the response. The currency and expiry will automatically
-be set from the supplied Program.
+be set from the Program that the card belongs to.
 
 + Request (application/json)
 The categories object is optional. If provided, it will attach the given Category objects to the Card, 
