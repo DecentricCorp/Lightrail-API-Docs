@@ -274,12 +274,8 @@ Cards and your Codes through the cardId, which eliminates the need to ever store
 ### Create a Card and its Code [POST]
 
 Create a Card and its corresponding Code.  Note that `cardId` on response should be persisted to lookup or 
-interact with the Code. The Code is not returned as part of the response.  If you provide an expiry, 
-please ensure you have confirmed the legality of expiring value for your implementation.
-
-You can also provide a "giftbit_order" Category, which will assign the Card to whichever order you specify. 
-If no "giftbit_order" is provided, the Card will be assigned to a default {"giftbit_order": "YYYY-MM-DD"} 
-Category indicating the date the Card was created. 
+interact with the Code. The Code is not returned as part of the response. The currency and expiry will automatically
+be set from the supplied Program. u
 
 + Request (application/json)
 The categories object is optional. If provided, it will attach the given Category objects to the Card, 
