@@ -274,12 +274,8 @@ Cards and your Codes through the cardId, which eliminates the need to ever store
 ### Create a Card and its Code [POST]
 
 Create a Card and its corresponding Code.  Note that `cardId` on response should be persisted to lookup or 
-interact with the Code. The Code is not returned as part of the response.  If you provide an expiry, 
-please ensure you have confirmed the legality of expiring value for your implementation.
-
-You can also provide a "giftbit_order" Category, which will assign the Card to whichever order you specify. 
-If no "giftbit_order" is provided, the Card will be assigned to a default {"giftbit_order": "YYYY-MM-DD"} 
-Category indicating the date the Card was created. 
+interact with the Code. The Code is not returned as part of the response. The currency and expiry will automatically
+be set from the Program that the card belongs to.
 
 + Request (application/json)
 The categories object is optional. If provided, it will attach the given Category objects to the Card, 
@@ -542,20 +538,21 @@ Look up a single Card by by the Giftbit assigned cardId.
                 }
             }
             
-### Update Card by cardId [PATCH /cards/{cardId}{?contactId}]
+### Update Card by cardId [PATCH /cards/{cardId}]
 
 Update the contact on a Card by the Giftbit assigned cardId. The contactId must correspond to one of your 
 Contacts' contactIds. 
 
 + Parameters 
     + cardId (string, required) - The Giftbit assigned cardId.
-    + contactId (string) - contactId (string, required) - Giftbit's unique identifier for this Contact. 
-      Be sure to persist 
 
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
+    + Attributes
+        + contactId (string, required) - The Contact's unique identifier which you'd like to update the card with.
             
     + Body
     
