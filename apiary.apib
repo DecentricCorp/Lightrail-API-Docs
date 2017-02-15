@@ -538,20 +538,21 @@ Look up a single Card by by the Giftbit assigned cardId.
                 }
             }
             
-### Update Card by cardId [PATCH /cards/{cardId}{?contactId}]
+### Update Card by cardId [PATCH /cards/{cardId}]
 
 Update the contact on a Card by the Giftbit assigned cardId. The contactId must correspond to one of your 
 Contacts' contactIds. 
 
 + Parameters 
     + cardId (string, required) - The Giftbit assigned cardId.
-    + contactId (string) - contactId (string, required) - Giftbit's unique identifier for this Contact. 
-      Be sure to persist 
 
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
+    + Attributes
+        + contactId (string, required) - Giftbit's unique identifier for the Contact you'd like to update the card with.
             
     + Body
     
