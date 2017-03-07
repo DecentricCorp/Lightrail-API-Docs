@@ -69,15 +69,6 @@ Card and must supply the `programId` as a field of the Code object in the reques
 Giftbit plans to add extensive functionality to Card including automated delivery mechanisms, templating, 
 external integrations, and more - hence the separation from Code.
 
-### Contacts
-
-A Contact represents a recipient of one of your Cards or Codes. 
-Contacts can be attached to Cards to improve tracking and to enable targeting of promotions based on customer behavior.
-Use of Contacts is optional.
-
-A Contact has an email address, an optional first and/or last name and optional identifiers such as your system’s customer ID. 
-
-
 ## Common Use Cases
 
 ### Creating and Accepting Codes in Your Checkout
@@ -146,6 +137,15 @@ that you are always sending a unique value for different logical requests, but t
 Attempting to reuse a `userSuppliedId` but providing different request parameters will result in a 409 error.
 
 Note that `userSuppliedId`'s are considered per endpoint and do not need to be unique across different endpoints.
+
+## Contacts
+
+A Contact represents a recipient of one of your Cards.
+Contacts can be attached to Cards to improve tracking and to enable targeting of promotions based on customer behavior.
+Use of Contacts is optional.
+
+A Contact has an email address, an optional first and/or last name and optional identifiers such as your system’s customer ID. 
+
 
 ## The Category Field on Card
 
@@ -1442,7 +1442,7 @@ Used to list Program details. This endpoint can be used to lookup a `programId` 
 + userSuppliedId (string, required)
 + code (CodeRequest, required)
 + categories (Category)
-+ contactId (string)
++ contactId (string) - Giftbit's unique identifier for the Contact.
 
 ## CardResponse (Card)
 + cardId (string, required) - Giftbit's unique identifier for this Card. Be sure to persist this 
