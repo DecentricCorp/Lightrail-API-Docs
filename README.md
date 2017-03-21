@@ -1,4 +1,4 @@
-# Giftbit currency API
+# Lightrail API
 
 This repository hosts the API Blueprint file for https://www.giftbit.com/currencyapi/
 
