@@ -1,12 +1,12 @@
 FORMAT: 1A
 HOST: https://currencyapi.giftbit.com/v1/
 
-# Giftbit Currency API
+# Lightrail API
 
-Building into Giftbit's RESTful Currency API gives you a complete and powerful e-commerce value
+Building into Lightrail's RESTful API gives you a complete and powerful e-commerce value
 solution for your business to easily power gift cards, promotions, credits, points programs and more.
 
-Contact Giftbit anytime at currencyapi@giftbit.com for technical, use case exploration, or general 
+Contact Lightrail anytime at `hello@lightrail.com` for technical, use case exploration, or general 
 assistance - we are here to help you build the right solution.
 
 ## Reporting Errors or Suggestions
@@ -19,11 +19,11 @@ If you find a mistake or have a suggestion for improvement, please submit it dir
 
 ## API Base URL
 
-The base URL for Giftbit's API is <em>https://currencyapi.giftbit.com/v1/</em>.
+The base URL for Lightrail's API is <em>https://currencyapi.giftbit.com/v1/</em>.
 
 ## Account Creation and Authorization
 
-You'll need your test or production `access_token` from your Giftbit account details page 
+You'll need your test or production `access_token` from your Lightrail account details page 
 to use the API. If you don't already have an account, you can contact us to request a demo
 <em><a href="http://info.giftbit.com/currency/request-a-demo" target="_blank">here</a></em>. 
 Be sure to store your production `access_token` extremely securely in your production configurations.
@@ -40,7 +40,7 @@ and a space in the Authorization HTTP header. For example `Authorization: Bearer
 ### Programs
 
 Programs define a set of rules from which a Card can be created. 
-They are created within the <a href="https://currency.giftbit.com/app/#/programs" target="_blank">Programs</a> section of the Giftbit web application. 
+They are created within the <a href="https://currency.giftbit.com/app/#/programs" target="_blank">Programs</a> section of the Lightrail web application. 
 Programs are used to structure and organize related Cards, and also improve tracking of activity within your account. 
 Cards created in a Program follow the rules of the Program including details such as currency, permitted denominations or range of value, and card lifespan. 
 Use of Programs is required in order to create Cards.
@@ -48,8 +48,8 @@ Use of Programs is required in order to create Cards.
 
 Programs also provide the flexibility to add integrators. 
 Adding integrators allows you to lend permission so another party can create and issue Cards according to the rules of your Program. 
-When an integrator is added to a Program it creates an additional `access_token` which your integrator  will use in API requests to Giftbit. 
-An Integrator's access is restricted to a Program. The integrator’s activity is tracked and managed through Giftbit.
+When an integrator is added to a Program it creates an additional `access_token` which your integrator  will use in API requests to Lightrail. 
+An Integrator's access is restricted to a Program. The integrator’s activity is tracked and managed through Lightrail.
 
 ### Cards and Codes
 
@@ -66,14 +66,14 @@ Your consumer-facing functionality (checkout, balance check, transaction history
 
 There is a 1-1 relationship between a Card and a Code. You specify the details of the Code when you create the 
 Card and must supply the `programId` as a field of the Code object in the request. 
-Giftbit plans to add extensive functionality to Card including automated delivery mechanisms, templating, 
+Lightrail plans to add extensive functionality to Card including automated delivery mechanisms, templating, 
 external integrations, and more - hence the separation from Code.
 
 ## Common Use Cases
 
 ### Creating and Accepting Codes in Your Checkout
 
-A common use case for this API is one in which Giftbit powers your gift cards. 
+A common use case for this API is one in which Lightrail powers your gift cards. 
 You would create one or more Programs which define the rules for the creation of your gift cards.
 Then you would create a Card with an attached Code, which contains the value which you wish to send as well as the date you would 
 like the code to expire (if applicable). You would then deliver the `fullcode` associated with this Code to 
@@ -81,7 +81,7 @@ your recipient, and allow the recipient to redeem value against this Code in one
 can also allow the user to see the usage history or balance remaining on their Code at any time.
 
 The steps and API calls you would take in this use case are: 
-- Create a Program through your Giftbit account.
+- Create a Program through your Lightrail account.
 - If you want to create Cards on demand via the API:
     - Create one or more new Card(s) with associated Code(s) (POST _/cards_). Make sure you keep the returned 
       `cardId`(s).
@@ -94,7 +94,7 @@ The steps and API calls you would take in this use case are:
 
 #### High level architecture diagram
 
-![High level architecture](http://resources.giftbit.com/api/embeddedimages/Currency.API.high.level.architecture.png)
+![High level architecture](http://resources.giftbit.com/api/embeddedimages/lightrail-api-high-level-architecture-diagram.png)
 
 ### Building a Points Accumulation System for Your Users
 Another common use case for this API is to power a points/rewards accumulation system for your user/application 
@@ -102,7 +102,7 @@ ecosystem.  In this example, you are not distributing or making use of Codes at 
 endpoint exclusively to maintain points for your users.
 
 The steps and API calls you would take in this use case are:  
-- Create a Program though your Giftbit account which will represent your points accumulation system.
+- Create a Program though your Lightrail account which will represent your points accumulation system.
 - Create a new Contact (POST _/contacts_) with your user's details. Make sure you keep the returned `contactId`.
 - Create a new Card (POST _/cards_), including the `contactId` from above to associate that Card with your Contact. 
   Make sure you keep the returned `cardId` for future transactions.
@@ -119,13 +119,13 @@ send them gift cards to top brands through <a href="https://www.giftbit.com" tar
 ## Coding for Idempotency and the UserSuppliedId Field
 
 The API is fully idempotent on the `userSuppliedId` field, which is a required parameter for all endpoint 
-operations that result in a change of state on the Giftbit side (POST, PUT, PATCH).  Therefore, in the case 
+operations that result in a change of state on the Lightrail side (POST, PUT, PATCH).  Therefore, in the case 
 of a non-received response from the API or other unknown condition, it is safe and recommended to retry the 
 request with the same `userSuppliedId`.
 
 For example, your customer is using a Code in your checkout.  You POST to the _/codes/{fullcode}/transactions_ 
 endpoint to mark the use, but get a network timeout and are unable to process the response. As a result, your 
-system doesn't know if Giftbit successfully received your POST and recorded the transaction.  With idempotency, 
+system doesn't know if Lightrail successfully received your POST and recorded the transaction.  With idempotency, 
 you do not need any lookups or other complicated error handling to see if the original API call succeeded. 
 You can simply retry the same call (as many times as needed) with the same `userSuppliedId`, and get the same 
 200 response upon success whether or not a previous request went through. Our server will do the operation once
@@ -151,12 +151,12 @@ A Contact has an email address, an optional first and/or last name and optional 
 
 A Category is an identifier that can be attached in a many-to-many relationship with Cards. A Category 
 consists of key-value pair of strings. For example, one category might be `{"campaign": "first campaign"}`. 
-All of the statistics that Giftbit tracks are grouped by Category, so setting good Categories on your Cards 
+All of the statistics that Lightrail tracks are grouped by Category, so setting good Categories on your Cards 
 will ensure you get the stats you are looking for. Suppose you wanted to compare statistics across 
 campaigns. You could set a `{"campaign": "first campaign"}` Category on one group of Cards, and a 
 `{"campaign": "second campaign"}` on another. Each would have their own set of statistics calculated for them.
 
-You'll notice Giftbit automatically adds several reserved Categories during Card creation such as `giftbit_order` and `giftbit_program`.
+You'll notice Lightrail automatically adds several reserved Categories during Card creation such as `giftbit_order` and `giftbit_program`.
 The Category `giftbit_order` is the default grouping of Cards, and is assigned either through the web portal or the _/cards_ endpoint; in this 
 document, an Order refers to a group of Cards that are attached to the same `{"giftbit_order": "order name"}`
 Category. These categories are added to provide statistics for aggregate groupings of cards.
@@ -168,7 +168,7 @@ Clients should always check the HTTP status code of the response and act accordi
 Error response JSON will be in the following format:
 - status: (number) - will match the HTTP response code.    
 - message: (string, optional) - a descriptive error message if one is available
-- code: (string, optional) - a code that can be provided to Giftbit support if troubleshooting help is needed
+- code: (string, optional) - a code that can be provided to Lightrail support if troubleshooting help is needed
 
 Example error responses:
 ### 400 (bad request)
@@ -201,7 +201,7 @@ recommended best practices around creating and accessing them:
  - There is no need to ever store fullcodes in your system and we strongly recommend against doing so.  
    You should store the corresponding cardId upon creation for future reference and API calls.  All functionality only requires you to pass the fullcode through your system in a transient manner.
 
-Note that Giftbit is a PCI compliant platform and we use all modern best practices around cryptography and 
+Note that Lightrail is a PCI compliant platform and we use all modern best practices around cryptography and 
 access control to keep your codes safe.
 
 ## About Dates
@@ -212,7 +212,7 @@ All responses will always be given in this same format converted to the UTC time
 
 ## About Currency Value, Currency Type, and No-Currency Use (Such as Points)
 Where currency type (eg. USD, CDN, AUD) is required or returned, the API expects/uses 3 character uppercase 
-codes conforming to the ISO-4217 standard. Giftbit does not do any currency conversion nor does currency 
+codes conforming to the ISO-4217 standard. Lightrail does not do any currency conversion nor does currency 
 influence internal behaviour; rather, currency allows you to issue and track cards in different currencies 
 as you choose.
 
@@ -229,7 +229,7 @@ If you wish to represent non-currency amounts in cards, use value of 'XXX' when 
 'XXX' is used in ISO-4217 to denote a transaction involving non-currency and our API supports this concept.
 
 ## Legal Responsibilities
-The Giftbit Currency API provides flexibility to implement multiple currency solutions (gift cards, unique 
+The Lightrail API provides flexibility to implement multiple currency solutions (gift cards, unique 
 promo codes, credit refunds, etc). It is the responsibility of the API user and their organization to 
 understand and follow the jurisdictions and laws that govern all aspects of their implementation.
 
@@ -496,10 +496,10 @@ Retrieve your created Cards.  Results are returned in descending order of creati
     
 ### Retrieve Card by cardId [GET /cards/{cardId}]
 
-Look up a single Card by by the Giftbit assigned cardId.
+Look up a single Card by by the Lightrail assigned cardId.
 
 + Parameters 
-    + cardId (string, required) - The Giftbit assigned cardId.
+    + cardId (string, required) - The Lightrail assigned cardId.
 
 + Request (application/json)
     + Headers
@@ -540,11 +540,11 @@ Look up a single Card by by the Giftbit assigned cardId.
             
 ### Update Card by cardId [PATCH /cards/{cardId}]
 
-Update the contact on a Card by the Giftbit assigned cardId. The contactId must correspond to one of your 
+Update the contact on a Card by the Lightrail assigned cardId. The contactId must correspond to one of your 
 Contacts' contactIds. 
 
 + Parameters 
-    + cardId (string, required) - The Giftbit assigned cardId.
+    + cardId (string, required) - The Lightrail assigned cardId.
 
 + Request (application/json)
     + Headers
@@ -997,10 +997,10 @@ Retrieve a list of your created Contacts.
     
 + Response 200
     + Attributes
-        + contactId (string, required) - Giftbit's unique identifier for this Contact. Be sure to persist 
+        + contactId (string, required) - Lightrail's unique identifier for this Contact. Be sure to persist 
           this value for future operations.
         + userSuppliedId (string, required) - The unique ID supplied on Contact creation.
-        + dateCreated(string, required) - Giftbit system time of the creation of the Contact. ISO-8601 format.
+        + dateCreated(string, required) - Lightrail system time of the creation of the Contact. ISO-8601 format.
         + email (string) - The provided email, if applicable.
         + firstName (string) - The provided firstName, if applicable.
         + lastName (string) - The provided lastName, if applicable.
@@ -1042,10 +1042,10 @@ Look up a Contact given its contactId.
     
 + Response 200
     + Attributes
-        + contactId (string, required) - Giftbit's unique identifier for this Contact. Be sure to persist 
+        + contactId (string, required) - Lightrail's unique identifier for this Contact. Be sure to persist 
           this value for future operations.
         + userSuppliedId (string, required) - The unique ID supplied on Contact creation.
-        + dateCreated(string, required) - Giftbit system time of the creation of the Contact. ISO-8601 format.
+        + dateCreated(string, required) - Lightrail system time of the creation of the Contact. ISO-8601 format.
         + email (string) - The provided email, if applicable.
         + firstName (string) - The provided firstName, if applicable.
         + lastName (string) - The provided lastName, if applicable.
@@ -1180,11 +1180,11 @@ Attempting to use value for a Code that is expired or does not have enough remai
     + Attributes
         + value (number) - The amount of the transaction in the smallest currency unit (such as cents). 
           Equal to the value in the request.
-        + transactionId (string) - The unique Id for this transaction assigned by Giftbit at creation time.
+        + transactionId (string) - The unique Id for this transaction assigned by Lightrail at creation time.
         + userSuppliedId (string) - Identifier of the transaction (should equal transactionId in the request).
         + valueAvailableAfterTransaction (number) - The remaining balance of the Code as a result of the 
           transaction, at the time of the transaction.
-        + dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format.
+        + dateCreated (string) - The Lightrail system time of the creation in ISO-8601 format.
 
     + Body
     
@@ -1338,7 +1338,7 @@ Retrieve Program details by the `programId`.
             
 ### List Programs [GET /programs]
 
-Used to list Program details. This endpoint can be used to lookup a `programId` rather than copying it from within your Giftbit account.
+Used to list Program details. This endpoint can be used to lookup a `programId` rather than copying it from within your Lightrail account.
 
 + Request (application/json)
     + Headers
@@ -1427,7 +1427,7 @@ Used to list Program details. This endpoint can be used to lookup a `programId` 
 
 ## CodeResponse (Code)
 + codeLast4 (string) - The last 4 characters of the Code.
-+ dateCreated (string) - The Giftbit system time of the creation in ISO-8601 format.
++ dateCreated (string) - The Lightrail system time of the creation in ISO-8601 format.
 + expires (string) - The code's expiry date and time.  This field will be ommitted 
   if the code was not created with an expiry.  ISO-8601 format.
 
@@ -1442,14 +1442,14 @@ Used to list Program details. This endpoint can be used to lookup a `programId` 
 + userSuppliedId (string, required)
 + code (CodeRequest, required)
 + categories (Category)
-+ contactId (string) - Giftbit's unique identifier for the Contact. Note, the Contact must be created before the request to create the card.
++ contactId (string) - Lightrail's unique identifier for the Contact. Note, the Contact must be created before the request to create the card.
 
 ## CardResponse (Card)
-+ cardId (string, required) - Giftbit's unique identifier for this Card. Be sure to persist this 
++ cardId (string, required) - Lightrail's unique identifier for this Card. Be sure to persist this 
   value for future operations.
 + userSuppliedId (string, required) - The userSuppliedId provided at Card creation.
 + contactId (string)
-+ dateCreated (string, required) - The Giftbit system time of the creation in ISO-8601 format.
++ dateCreated (string, required) - The Lightrail system time of the creation in ISO-8601 format.
 + categories (object) - The Categories associated with this Card. 
 
 ## Transaction (IdempotentObject)
@@ -1463,7 +1463,7 @@ Used to list Program details. This endpoint can be used to lookup a `programId` 
 ## TransactionRequest (Transaction) 
 
 ## TransactionResponse (Transaction) 
-+ dateCreated(string, required) - Giftbit system time of the creation of the transaction. ISO-8601 format.
++ dateCreated(string, required) - Lightrail system time of the creation of the transaction. ISO-8601 format.
 + valueAvailableAfterTransaction(number, required) - The remaining balance of the `Code` as a result of 
   the transaction in the smallest currency unit (such as cents).
 
@@ -1472,7 +1472,7 @@ Used to list Program details. This endpoint can be used to lookup a `programId` 
 + categoryValue (string) - The value of the category. Examples: "PROMO", "My Order", "Victoria"
 
 ## CategoryResponse (object)
-+ categoryId (string) - Giftbit's unique identifier for this Category
++ categoryId (string) - Lightrail's unique identifier for this Category
 + key (string) - The key of the category.
 + value (string) - The value of the category.
 
@@ -1491,9 +1491,9 @@ Used to list Program details. This endpoint can be used to lookup a `programId` 
 + lastName (string) - Optional.
 
 ## Contact (object)
-+ contactId (string, required) - Giftbit's unique identifier for this Contact. Be sure to persist this value for future operations.
++ contactId (string, required) - Lightrail's unique identifier for this Contact. Be sure to persist this value for future operations.
 + userSuppliedId (string, required) - The unique ID supplied on Contact creation.
-+ dateCreated(string, required) - Giftbit system time of the creation of the Contact. ISO-8601 format.
++ dateCreated(string, required) - Lightrail system time of the creation of the Contact. ISO-8601 format.
 + email (string) - The provided email, if applicable.
 + firstName (string) - The provided firstName, if applicable.
 + lastName (string) - The provided lastName, if applicable.
