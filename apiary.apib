@@ -298,7 +298,6 @@ of your Contacts' contactId fields.
                 },
                 "categories":
                 {
-                    "giftbit_type": "PROMO",
                     "giftbit_order": "My Order",
                     "My Custom Category Key": "My Custom Category Value"
                 },
@@ -327,11 +326,6 @@ of your Contacts' contactId fields.
                                 "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
                                 "key": "giftbit_order",
                                 "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                                "key": "giftbit_type",
-                                "value": "PROMO"
                             },
                             {
                                 "categoryId": "category-8b3b5f3e502a43d789fd6d88296c4a22",
@@ -384,11 +378,6 @@ Retrieve your created Cards.  Results are returned in descending order of creati
                                 "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
                                 "key": "giftbit_order",
                                 "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                                "key": "giftbit_type",
-                                "value": "PROMO"
                             }
                         ]
                     },
@@ -407,11 +396,6 @@ Retrieve your created Cards.  Results are returned in descending order of creati
                                 "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
                                 "key": "giftbit_order",
                                 "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                                "key": "giftbit_type",
-                                "value": "PROMO"
                             }
                         ]
                     },
@@ -430,11 +414,6 @@ Retrieve your created Cards.  Results are returned in descending order of creati
                                 "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
                                 "key": "giftbit_order",
                                 "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                                "key": "giftbit_type",
-                                "value": "PROMO"
                             }
                         ]
                     },
@@ -453,11 +432,6 @@ Retrieve your created Cards.  Results are returned in descending order of creati
                                 "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
                                 "key": "giftbit_order",
                                 "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                                "key": "giftbit_type",
-                                "value": "PROMO"
                             }
                         ]
                     },
@@ -476,11 +450,6 @@ Retrieve your created Cards.  Results are returned in descending order of creati
                                 "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
                                 "key": "giftbit_order",
                                 "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                                "key": "giftbit_type",
-                                "value": "PROMO"
                             }
                         ]
                     }
@@ -528,11 +497,6 @@ Look up a single Card by by the Lightrail assigned cardId.
                                 "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
                                 "key": "giftbit_order",
                                 "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                                "key": "giftbit_type",
-                                "value": "PROMO"
                             }
                         ]
                 }
@@ -585,11 +549,6 @@ Contacts' contactIds.
                                 "value": "my order name"
                             },
                             {
-                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                                "key": "giftbit_type",
-                                "value": "PROMO"
-                            },
-                            {
                                 "categoryId": "category-8b3b5f3e502a43d789fd6d88296c4a22",
                                 "key": "giftbit_program",
                                 "value": "program-6cb2f3b117b44eb5986ac8cf36b59125"
@@ -633,11 +592,6 @@ Look up a single Card by the userSuppliedId.
                                 "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
                                 "key": "giftbit_order",
                                 "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                                "key": "giftbit_type",
-                                "value": "PROMO"
                             }
                         ]
                     }
@@ -671,11 +625,6 @@ After creating a Card, use this endpoint to retrieve all Categories associated w
                         "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
                         "key": "giftbit_order",
                         "value": "my order name"
-                    },
-                    {
-                        "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                        "key": "giftbit_type",
-                        "value": "PROMO"
                     }
                 ]
             }
@@ -892,11 +841,6 @@ Retrieve a list of Categories that have been created.
                         "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
                         "key": "giftbit_order",
                         "value": "my order name"
-                    },
-                    {
-                        "categoryId": "category-abe0bf1085fc49f88fc1545a00102800",
-                        "key": "giftbit_type",
-                        "value": "PROMO"
                     }
                 ]
             }
@@ -1468,8 +1412,8 @@ Used to list Program details. This endpoint can be used to lookup a `programId` 
   the transaction in the smallest currency unit (such as cents).
 
 ## Category (object)
-+ categoryKey (string) - The key of the category. Examples: "giftbit_type", "giftbit_order", "city"
-+ categoryValue (string) - The value of the category. Examples: "PROMO", "My Order", "Victoria"
++ categoryKey (string) - The key of the category. Examples: "giftbit_order", "city"
++ categoryValue (string) - The value of the category. Examples: "My Order", "san francisco"
 
 ## CategoryResponse (object)
 + categoryId (string) - Lightrail's unique identifier for this Category
