@@ -5,7 +5,7 @@ HOST: https://api.lightrail.com/v1/
 
 Welcome to the Lightrail API documentation.  Lightrail is an extremely powerful and flexible platform, but designed to be rapidly adopted and built into.
 This document is part of that experience; In addition to being a fully interactive REST reference, it is designed to minimize implementation time by elaborating on common
-use cases, explaining the relevant portions of the Lightrail system and giving common API calls and examples for each.  Don't hesitate to reach out at any point. 
+use cases, explaining the relevant portions of the Lightrail system and giving common API calls and examples for each.  
 Contact us anytime at hello@lightrail.com - we are here to help you solidify your use case and implementation.
 
 ### A Note on the Documentation
@@ -60,7 +60,8 @@ In a standard gift card program the recipient would manually enter the `fullcode
 
 #### Account Cards
 
-Account Cards represent value that is attached to a Contact. They are used when implementing a customer account credit or points program and can be thought of as a customer's account, kind of like a bank account.
+Account Cards represent value that is attached to a Contact. 
+They are used when implementing a customer account credit or points program and can be thought of as a customer's account.
 Since Account Cards do not have a `fullcode`, their value is interacted with using the Card object. 
 
 ## Use Case Exploration
@@ -70,6 +71,8 @@ The following sections dive into Lightrail's most common use cases. Feel free to
 Also note, the ability to incentivize your users or recipients through Lightrail Card Promotions is availabe for both Gift Cards and Account Cards. 
 Detailed information for Card Promotions and how it can be applied to either use case can be found in the following [Card Promotions Section](http://docs.giftbitcurrencyapi19.apiary.io/#introduction/card-promotions). 
 
+Looking to import your existing codes into the Lightrail system? We support that. Please let us know to find out more. 
+
 ### Use Case 1: Powering Your Gift Card Program
  
 A common use case for the Lightrail API is one in which Lightrail powers your gift cards. 
@@ -78,6 +81,9 @@ For example, suppose your business is an online ecommerce platform and you want 
 When a customer purchases a gift card, you would create a Gift Card in the Lightrail API. You would retrieve the Gift Card's `fullcode` and deliver it to the customer.
 Your store's checkout process would need to allow customers the opportunity to enter the `fullcode` of any gift cards they have.
 When completing the purchase you would create a Transaction using the customer entered `fullcode`, redeeming the required value from the Gift Card, completing the transaction. 
+
+Is your store is running on an established ecommerce platform? 
+Lightrail supports popular ecommerce platforms and has dedicated integrations teams here to support you.
 
 Lightrail enables fine grained control of the rules for which Gift Cards can be issued using Gift Card Programs.
 
@@ -134,6 +140,7 @@ If this use case fits your need for points, a great way to reward your customers
 ## Super Charge your Branded Currency: Promotions
 
 In addition to the many capabilities Lightrail provides out of the box, Lightrail enables you the abilty to attach Promotions to Cards, allowing you to incentivize and motivate your users or recipeints. 
+Promotions work by adding temporary value to your cards with special redemption rules. 
 Promotions can be use in both the gift card and account credit use cases. 
 
 Promotions are created from a Promotion Program. 
@@ -142,7 +149,7 @@ A Card is always created with a `PRINCIPAL` ValueStore. When promotions are atta
 
 #### How Promotions Fit Into the Lightrail Object Model
 
-For example, suppose you've created a $10 USD Card. It could be either a Gift Card or Account Card. Below is a model of the newly created objects.
+For example, suppose you've created a $10 USD Card. It could be either a Gift Card or an Account Card. Below is a model of the newly created objects.
 
 ![Promotion Object Model Part1](http://resources.giftbit.com/api/embeddedimages/Lightrail_Promitions_Object_Model_p1.png)
 
@@ -154,7 +161,8 @@ Suppose the recipient spends $8 USD within the 10 day limit. Below you can see h
 
 ![Promotion Object Model Part3](http://resources.giftbit.com/api/embeddedimages/Lightrail_Promitions_Object_Model_p3.png)
 
-This example illustrates that when Transactions are created against Cards that have multiple ValueStores, any valid ValueStore will be transacted against in order of expiry.
+This example illustrates that when Transactions are created against Cards that have multiple ValueStores, any valid ValueStore will be transacted against in order of expiry. 
+As you can see, Lightrail automatically handles the complexity of taking value from the correct ValueStore.
 
 ## Implementation Details
 
@@ -163,7 +171,7 @@ This example illustrates that when Transactions are created against Cards that h
 The API is fully idempotent on the `userSuppliedId` field, which is a required parameter for all endpoint operations that result in a change of state on the Lightrail side (POST, PUT, PATCH).  
 Therefore, in the case of a non-received response from the API or other unknown condition, it is safe and recommended to retry the request with the same `userSuppliedId`.
 
-For example, your customer is using a Code in your checkout.  
+For example, your customer is using a `fullcode` in your checkout.  
 You POST to the _/codes/{fullcode}/transactions_ endpoint to mark the use, but get a network timeout and are unable to process the response. 
 As a result, your system doesn't know if Lightrail successfully received your POST and recorded the transaction. 
 With idempotency, you do not need any lookups or other complicated error handling to see if the original API call succeeded. 
@@ -250,7 +258,7 @@ Cards represent a gift card, promotional offer, credit, or other means of eComme
 business.  Every Card is created with a corresponding Code automatically.  You access details on both your 
 Cards and your Codes through the cardId, which eliminates the need to ever store a fullcode.
 
-### List Cards [GET /cards/{?limit}{?offset}{?categoryKey}{?categoryValue}{?contactId}]
+### List Cards [GET /cards/{?limit}{?offset}{?categoryKey}{?categoryValue}{?contactId}{?cardType}{?currency}{?userSuppliedId}]
 
 Retrieve your created Cards.  Results are returned in descending order of creation (newest first).
 + Request (application/json)
@@ -258,15 +266,15 @@ Retrieve your created Cards.  Results are returned in descending order of creati
     
              Authorization: Bearer <YOUR_ACCESS_TOKEN>
    
-+ Parameter 
++ Parameter
     + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
     + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
-    + categoryKey (string, optional) - A key to a Category. Will return all Cards attached to Categories with 
-      this key if supplied.
-    + categoryValue (string, optional) - A value of a Category. Will return all Cards attached to Categories 
-      with this value if supplied. If both a categoryKey and a categoryValue are supplied, will return all 
-      Cards associated with the unique Category having that categoryKey and categoryValue.
+    + categoryKey (string, optional) - A key of a Category. 
+    + categoryValue (string, optional) - A value of a Category. 
     + contactId (string, optional) - A contactId to filter by.
+    + cardType (string, optional) - `ACCOUNT_CARD`, `GIFT_CARD`.
+    + currency (string, optional) - The 3 character ISO-4217 currency.
+    + userSuppliedId (string, optional)
 
 + Response 200
     + Attributes 
@@ -275,105 +283,55 @@ Retrieve your created Cards.  Results are returned in descending order of creati
     + Body
     
             {
-                "cards":[
+              "cards": [
+                {
+                  "cardId": "card-0a0ea9dc17cf4b1da661569d301007d9",
+                  "userSuppliedId": "giftcard1",
+                  "contactId": null,
+                  "dateCreated": "2017-05-19T22:25:53.511+0000",
+                  "categories": [
                     {
-                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
-                    "dateCreated": "2016-09-01T23:47:02.000+0000",
-                    "contactId": null,
-                    "userSuppliedId":"1234",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
+                      "categoryId": "category-d0f09aa94b0843a3a530d4be3ec26b50",
+                      "key": "giftbit_program",
+                      "value": "program-3298ee1b076a47efb2b3a987a1008afc"
                     },
                     {
-                    "cardId": "card-4e61aba2-5d5a-4e99-8574-6479cecce0dd",
-                    "dateCreated": "2016-09-01T23:42:35.000+0000",
-                    "contactId": null,
-                    "userSuppliedId":"1235",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
-                    },
-                    {
-                    "cardId": "card-3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
-                    "dateCreated": "2016-09-01T23:42:23.000+0000",
-                    "contactId": null,
-                    "userSuppliedId":"1236",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
-                    },
-                    {
-                    "cardId": "card-c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
-                    "dateCreated": "2016-09-01T23:42:17.000+0000",
-                    "contactId": null,
-                    "userSuppliedId":"1237",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
-                    },
-                    {
-                    "cardId": "card-56d23f04-64a8-452b-b3a1-3e758ebb6adc",
-                    "dateCreated": "2016-09-01T23:41:32.000+0000",
-                    "contactId": null,
-                    "userSuppliedId":"1238",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
+                      "categoryId": "category-8b7c420644c845d6b4c393333da4ea6e",
+                      "key": "giftbit_order",
+                      "value": "ordername"
                     }
-                ],
-                "pagination":{
-                    "count": 5,
-                    "limit": 100,
-                    "maxLimit": 1000,
-                    "offset": 0,
-                    "totalCount": 5
+                  ],
+                  "cardType": "GIFT_CARD",
+                  "currency": "USD"
+                },
+                {
+                  "cardId": "card-b8734ae818854278825c4cfc9dea1e0d",
+                  "userSuppliedId": "giftcard2",
+                  "contactId": null,
+                  "dateCreated": "2017-05-19T22:25:53.505+0000",
+                  "categories": [
+                    {
+                      "categoryId": "category-d0f09aa94b0843a3a530d4be3ec26b50",
+                      "key": "giftbit_program",
+                      "value": "program-3298ee1b076a47efb2b3a987a1008afc"
+                    },
+                    {
+                      "categoryId": "category-8b7c420644c845d6b4c393333da4ea6e",
+                      "key": "giftbit_order",
+                      "value": "ordername"
+                    }
+                  ],
+                  "cardType": "GIFT_CARD",
+                  "currency": "USD"
                 }
+              ],
+              "pagination": {
+                "count": 2,
+                "limit": 100,
+                "maxLimit": 1000,
+                "offset": 0,
+                "totalCount": 2
+              }
             }
 
 ### Retrieve Card by cardId [GET /cards/{cardId}]
@@ -381,7 +339,7 @@ Retrieve your created Cards.  Results are returned in descending order of creati
 Look up a single Card by by the Lightrail assigned cardId.
 
 + Parameters 
-    + cardId (string, required) - The Lightrail assigned cardId.
+    + cardId (string, required)
 
 + Request (application/json)
     + Headers
@@ -396,52 +354,51 @@ Look up a single Card by by the Lightrail assigned cardId.
     + Body
         
             {
-                "card":{
-                    "userSuppliedId" : "1234",
-                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
-                    "dateCreated": "2016-09-01T23:47:02.000+0000",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
-                }
+              "card": {
+                "cardId": "card-0a0ea9dc17cf4b1da661569d301007d9",
+                "userSuppliedId": "giftcard1",
+                "contactId": null,
+                "dateCreated": "2017-05-19T22:25:53.511+0000",
+                "categories": [
+                  {
+                    "categoryId": "category-8b7c420644c845d6b4c393333da4ea6e",
+                    "key": "giftbit_order",
+                    "value": "ordername"
+                  },
+                  {
+                    "categoryId": "category-d0f09aa94b0843a3a530d4be3ec26b50",
+                    "key": "giftbit_program",
+                    "value": "program-3298ee1b076a47efb2b3a987a1008afc"
+                  }
+                ],
+                "cardType": "GIFT_CARD",
+                "currency": "USD"
+              }
             }
 
 ### Create Account Card [POST /cards]
 
 + Request (application/json)
-The categories object is optional. If provided, it will attach the given Category objects to the Card, 
-creating any that do not exist already. The contactId string is also optional; it must correspond to one 
-of your Contacts' contactId fields.
-
     + Headers
-
+    
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    + Attributes (CardRequest)
+    + Attributes 
+        + userSuppliedId (string, required)
+        + cardType (string, required) - ACCOUNT_CARD
+        + currency 
+        + initialValue (number, optional) - If not provided, will default to 0.
+        + categories (Category)  
+        + contactId (string, required) - Note, the Contact must be created before the request to create the card.
+        + expires (string, optional) - Defaults to never expires.
+
 
     + Body
     
             {
-                "userSuppliedId": "12345678",
-                "code":
-                {
-                    "initialValue":5000,
-                    "programId":"program-a0d2fda60d13448fba0efdd61733c412",
-                },
-                "categories":
-                {
-                    "giftbit_order": "My Order",
-                    "My Custom Category Key": "My Custom Category Value"
-                },
-                "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d48"
+                "userSuppliedId": "accountcard-2",
+                "cardType": "ACCOUNT_CARD",
+                "contactId": "contact-babda3a527914929b2fb7b987b7d4dad",
+                "currency": "USD"
             }
         
 + Response 200
@@ -451,58 +408,51 @@ of your Contacts' contactId fields.
     + Body
             
             {
-                "card":{
-                    "userSuppliedId" : "1234",
-                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
-                    "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d49",
-                    "dateCreated": "2016-09-01T23:47:02.000+0000",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-8b3b5f3e502a43d789fd6d88296c4a22",
-                                "key": "giftbit_program",
-                                "value": "program-6cb2f3b117b44eb5986ac8cf36b59125"
-                            }
-                        ]
-                }
+              "card": {
+                "cardId": "card-5737daabe19e40f5bf586ee6565a48e7",
+                "userSuppliedId": "accountcard-2",
+                "contactId": "contact-babda3a527914929b2fb7b987b7d4dad",
+                "dateCreated": "2017-06-02T00:34:38.736+0000",
+                "categories": [
+                  {
+                    "categoryId": "category-e7712b71809444d694584aac6ea31f2c",
+                    "key": "giftbit_order",
+                    "value": "2017-06-02"
+                  },
+                  {
+                    "categoryId": "category-5524e3037d7142d79de040b2795b42cb",
+                    "key": "giftbit_program",
+                    "value": "program-account-USD-user-5022fccf827647ee9cfb63b779d62193"
+                  }
+                ],
+                "cardType": "ACCOUNT_CARD",
+                "currency": "USD"
+              }
             }
 
 ### Create Gift Card [POST /cards]
 
 + Request (application/json)
-The categories object is optional. If provided, it will attach the given Category objects to the Card, 
-creating any that do not exist already. The contactId string is also optional; it must correspond to one 
-of your Contacts' contactId fields.
 
     + Headers
 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    + Attributes (CardRequest)
+    + Attributes 
+        + userSuppliedId (string, required)
+        + cardType (string, required) - GIFT_CARD
+        + initialValue (number, optional) - If not provided, will default to 0.
+        + programId (string, required)
+        + categories (Category)  
+        + contactId (string, required) - Note, the Contact must be created before the request to create the card.
+        + expires (string, optional) - Defaults to never expires.
 
     + Body
     
             {
-                "userSuppliedId": "12345678",
-                "code":
-                {
-                    "initialValue":5000,
-                    "programId":"program-a0d2fda60d13448fba0efdd61733c412",
-                },
-                "categories":
-                {
-                    "giftbit_order": "My Order",
-                    "My Custom Category Key": "My Custom Category Value"
-                },
-                "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d48"
+                "userSuppliedId": "giftcard-1",
+                "cardType": "GIFT_CARD",
+                "programId": "program-3298ee1b076a47efb2b3a987a1008afc",
+                "initialValue": 500
             }
         
 + Response 200
@@ -512,37 +462,36 @@ of your Contacts' contactId fields.
     + Body
             
             {
-                "card":{
-                    "userSuppliedId" : "1234",
-                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
-                    "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d49",
-                    "dateCreated": "2016-09-01T23:47:02.000+0000",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-8b3b5f3e502a43d789fd6d88296c4a22",
-                                "key": "giftbit_program",
-                                "value": "program-6cb2f3b117b44eb5986ac8cf36b59125"
-                            }
-                        ]
-                }
+              "card": {
+                "cardId": "card-62ec23f22cd14b4d912d93999083b6b6",
+                "userSuppliedId": "giftcard-1",
+                "contactId": null,
+                "dateCreated": "2017-06-02T00:27:02.910+0000",
+                "categories": [
+                  {
+                    "categoryId": "category-e7712b71809444d694584aac6ea31f2c",
+                    "key": "giftbit_order",
+                    "value": "2017-06-02"
+                  },
+                  {
+                    "categoryId": "category-d0f09aa94b0843a3a530d4be3ec26b50",
+                    "key": "giftbit_program",
+                    "value": "program-3298ee1b076a47efb2b3a987a1008afc"
+                  }
+                ],
+                "cardType": "GIFT_CARD",
+                "currency": "USD"
+              }
             }
 
 ### Retrieve fullcode [GET /cards/{cardId}/fullcode]
 
-After creating a Card, use this endpoint to retrieve the fullcode to give to your recipient.  This is the code worth value to your organization; do not store this code in your database or other parts of your system.  If you are tracking recipients, associate your recipient with the cardId.
+After creating a Gift Card, use this endpoint to retrieve the fullcode to give to your recipient. 
+This is the code worth value to your organization; do not store this code in your database or other parts of your system.  
+If you are tracking recipients, associate your recipient with the cardId. Only available for Gift Cards.
 
 + Parameters 
-    + cardId (string) - The identifier returned when the Card and Code were created.
+    + cardId (string) 
     
 + Request (application/json)
     + Headers
@@ -615,12 +564,16 @@ Contacts' contactIds.
             }            
 
 ### Activate Card [POST /cards/{cardId}/activate]
++ Response 200
 
 ### Freeze Card [POST /cards/{cardId}/freeze]
++ Response 200
 
 ### Unfreeze Card [POST /cards/{cardId}/unfreeze]
++ Response 200
 
 ### Cancel Card [POST /cards/{cardId}/cancel]
++ Response 200
 
 ## Contacts [/contacts]
 
@@ -917,6 +870,26 @@ Look up a Accounts for a contactId.
 
 # Data Structures
 
+## IdempotentObject (object)
++ userSuppliedId (string, required) - The unique identifier provided when this call was made. 
+
+## Card (IdempotentObject)
+
+## CardRequest (Card)
++ userSuppliedId (string, required)
++ cardType (string) - `GIFT_CARD`
++ code (CodeRequest, required)
++ categories (Category)  
++ contactId (string) 
+
+## CardResponse (Card)
++ cardId (string) 
++ userSuppliedId (string) 
++ contactId (string) 
++ dateCreated (string) - Lightrail system time of the creation in ISO-8601 format.
++ categories (Category) 
++ cardType (string) - `ACCOUNT_CARD`, `GIFT_CARD`.
+
 ## Pagination (object)
 + limit (number, optional) - The maximum number of results to return at once. Default 100.
 + offset (number, optional) - The offset of the first results in the total results. Default 0.
@@ -927,9 +900,6 @@ Look up a Accounts for a contactId.
 + maxLimit  (number, required)
 + offset  (number, required)
 + totalCount  (number, required)
-
-## IdempotentObject (object)
-+ userSuppliedId (string, required) - The unique identifier provided when this call was made. 
 
 ## Code (object)
 + currency (string, required) - The 3 character ISO-4217 currency.
@@ -954,21 +924,7 @@ Look up a Accounts for a contactId.
 + startDate (string) - The code's optional start date and time.  ISO-8601 format.
 + programId (string) - The id of the Program for which the code will be created from.
 
-## Card (IdempotentObject)
 
-## CardRequest (Card)
-+ userSuppliedId (string, required)
-+ code (CodeRequest, required)
-+ categories (Category)
-+ contactId (string) - Lightrail's unique identifier for the Contact. Note, the Contact must be created before the request to create the card.
-
-## CardResponse (Card)
-+ cardId (string, required) - Lightrail's unique identifier for this Card. Be sure to persist this 
-  value for future operations.
-+ userSuppliedId (string, required) - The userSuppliedId provided at Card creation.
-+ contactId (string)
-+ dateCreated (string, required) - The Lightrail system time of the creation in ISO-8601 format.
-+ categories (object) - The Categories associated with this Card. 
 
 ## Transaction (IdempotentObject)
 + value (number, required) - The amount of the transaction in the smallest currency unit (such as cents). 
