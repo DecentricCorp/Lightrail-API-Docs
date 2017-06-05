@@ -681,6 +681,15 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
+    + Attributes
+        + userSuppliedId (string, required)
+    
+    + Body
+            
+            {
+                "userSuppliedId": "cancel-1"
+            }
     
 + Response 200
 
@@ -1001,6 +1010,10 @@ Contacts can be attached to Cards to help you keep track of who is interacting w
             }
 
 ### Create Transaction [POST /cards/{cardId}/transactions]
+A feature the Lightrail API supports is the ability to create pending Transactions. 
+This means the value required for the pending Transaction will be unavailable to be used from other Transactions. 
+A pending Transaction can either be captured, which confirms the Transaction, or they can be voided, removing the lock on the required funds. 
+
 + Parameters
     + cardId (string, required)
 
@@ -1045,10 +1058,10 @@ Contacts can be attached to Cards to help you keep track of who is interacting w
                 }
             }
 
-### Capture Transaction [POST /cards/{cardId}/transactions/{transactionId}/capture]
+### Capture Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/capture]
 + Parameters
     + cardId (string, required)
-    + transactionId (string, required)
+    + transactionId (string, required) - Must be a pending Transaction.
 
 + Request (application/json)
     + Headers
@@ -1080,10 +1093,10 @@ Contacts can be attached to Cards to help you keep track of who is interacting w
                 }
             }
 
-### Void Transaction [POST /cards/{cardId}/transactions/{transactionId}/void]
+### Void Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/void]
 + Parameters
     + cardId (string, required)
-    + transactionId (string, required)
+    + transactionId (string, required) - Must be a pending Transaction.
 
 + Request (application/json)
     + Headers
@@ -1116,9 +1129,10 @@ Contacts can be attached to Cards to help you keep track of who is interacting w
             }
 
 ### Refund Transaction [POST /cards/{cardId}/transactions/{transactionId}/refund]
+
 + Parameters
     + cardId (string, required)
-    + transactionId (string, required)
+    + transactionId (string, required) - Must be a Transaction with transactionType `DRAWDOWN`.
 
 + Request (application/json)
     + Headers
