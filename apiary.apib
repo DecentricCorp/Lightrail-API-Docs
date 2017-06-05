@@ -4,7 +4,7 @@ HOST: https://api.lightrail.com/v1/
 # Lightrail API
 
 Welcome to the Lightrail API documentation.  Lightrail is an extremely powerful and flexible platform, designed to be rapidly adopted and built into.
-This document is part of that experience; In addition to being a fully interactive REST reference, it is designed to minimize implementation time by elaborating on common
+This document is part of that experience; in addition to being a fully interactive REST reference, it is designed to minimize implementation time by elaborating on common
 use cases, explaining the relevant portions of the Lightrail system and giving common API calls and examples for each.  
 
 Contact us anytime at hello@lightrail.com - we are here to help you solidify your use case and implementation.
@@ -73,8 +73,6 @@ The following sections dive into Lightrail's most common use cases. Feel free to
 Also note, the ability to incentivize your users or recipients through Lightrail Card Promotions is available for both Gift Cards and Account Cards. 
 Detailed information for Card Promotions and how it can be applied to either use case can be found in the following [Supercharge your Branded Currency: Promotions](http://docs.giftbitcurrencyapi19.apiary.io/#introduction/supercharge-your-branded-currency:-promotions) section. 
 
-Looking to import your existing codes into the Lightrail system? We support that. Please let us know to find out more. 
-
 ### Use Case 1: Powering Your Gift Card Program
  
 A common use case for the Lightrail API is one in which Lightrail powers your gift cards. 
@@ -86,6 +84,8 @@ When completing the purchase you would create a Transaction using the customer e
 
 Is your store is running on an established e-commerce platform? 
 Lightrail supports popular e-commerce platforms and has dedicated integrations teams here to support you.
+
+Looking to import your existing codes into the Lightrail system? We support that. Please let us know to find out more. 
 
 Lightrail enables fine-grained control of the rules for which Gift Cards can be issued using Gift Card Programs.
 
@@ -921,7 +921,7 @@ Contacts can be attached to Cards to help you keep track of who is interacting w
 ## Transactions [/cards/{cardId}/transactions]
 A feature the Lightrail API supports is the ability to create Pending Transactions. 
 This means the value required for the Pending Transaction will be unavailable to be used for other Transactions. 
-A pending Transaction can either be captured, which confirms the Transaction, or they can be voided, freeing up their associated value. 
+A Pending Transaction can either be captured, which confirms the Transaction, or it can be voided, freeing up their associated value. 
 
 ### List Card Transactions [GET /cards/{cardId}/transactions]
 + Parameters
