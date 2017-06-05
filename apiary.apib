@@ -125,14 +125,14 @@ As a customer earns or spends value, you would add or subtract value by creating
 
 #### Common Requests in Account Credits or Points Program
 
-| Action                             | Type   | Body                                                                                               | Endpoint                                                               | 
-|:-----------------------------------|--------|----------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
-| Create Contact                     | `POST` | `{'userSuppliedId':'ct1', 'email':'name@example.com'}`                                             | `/v1/contacts`                                                      | 
-| Create Account Card                | `POST` | `{'userSuppliedId':'ac1', 'cardType':'ACCOUNT_CARD', 'contactId':'contact-123', 'currency':'XXX'}` | `/v1/cards`                                                         | 
-| Check Balance                      | `GET`  |                                                                                                    | `/v1/cards/<cardId>/balance`                                        |
-| Create Transaction                 | `POST` | `{'userSuppliedId':'tx1', 'value':-10, 'currency':'XXX'}`                                          | `/v1/cards/<cardId>/transactions`                                   | 
-| Retrieve Transaction History       | `GET`  |                                                                                                    | `/v1/cards/<cardId>/transactions`                                   | 
-| Retrieve Account Card from Contact | `GET`  |                                                                                                    | `/v1/cards?contactId=<contactId>&currency=XXX&cardType=ACCOUNT_CARD`|
+| Action                             | Type   | Body                                                                                               | Endpoint                                                                 | 
+|:-----------------------------------|--------|----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| Create Contact                     | `POST` | `{'userSuppliedId':'ct1', 'email':'name@example.com'}`                                             | `/v1/contacts`                                                           | 
+| Create Account Card                | `POST` | `{'userSuppliedId':'ac1', 'cardType':'ACCOUNT_CARD', 'contactId':'contact-123', 'currency':'XXX'}` | `/v1/cards`                                                              | 
+| Check Balance                      | `GET`  |                                                                                                    | `/v1/cards/<cardId>/balance`                                             |
+| Create Transaction                 | `POST` | `{'userSuppliedId':'tx1', 'value':-10, 'currency':'XXX'}`                                          | `/v1/cards/<cardId>/transactions`                                        | 
+| Retrieve Transaction History       | `GET`  |                                                                                                    | `/v1/cards/<cardId>/transactions`                                        | 
+| Retrieve Account Card from Contact | `GET`  |                                                                                                    | `/v1/cards?contactId=<contactId>&currency=<currency>&cardType=ACCOUNT_CARD`|
 
 Note, in these example calls, the currency is set to `XXX` to represent points although `USD` or any other valid currency code could be used if you wanted to track a dollar figure.
 Also, in this sort of use case, we recommend storing the Account Card's `cardId` with your customer's account within your application. 
