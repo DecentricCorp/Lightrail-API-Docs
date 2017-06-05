@@ -919,6 +919,9 @@ Contacts can be attached to Cards to help you keep track of who is interacting w
             }
             
 ## Transactions [/cards/{cardId}/transactions]
+A feature the Lightrail API supports is the ability to create Pending Transactions. 
+This means the value required for the Pending Transaction will be unavailable to be used for other Transactions. 
+A pending Transaction can either be captured, which confirms the Transaction, or they can be voided, freeing up their associated value. 
 
 ### List Card Transactions [GET /cards/{cardId}/transactions]
 + Parameters
@@ -1010,10 +1013,6 @@ Contacts can be attached to Cards to help you keep track of who is interacting w
             }
 
 ### Create Transaction [POST /cards/{cardId}/transactions]
-A feature the Lightrail API supports is the ability to create pending Transactions. 
-This means the value required for the pending Transaction will be unavailable to be used from other Transactions. 
-A pending Transaction can either be captured, which confirms the Transaction, or they can be voided, removing the lock on the required funds. 
-
 + Parameters
     + cardId (string, required)
 
