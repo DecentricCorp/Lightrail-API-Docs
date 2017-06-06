@@ -3,165 +3,206 @@ HOST: https://api.lightrail.com/v1/
 
 # Lightrail API
 
-Building into Lightrail's RESTful API gives you a complete and powerful e-commerce value
-solution for your business to easily power gift cards, promotions, credits, points programs and more.
+Welcome to the Lightrail API documentation.  Lightrail is an extremely powerful and flexible platform, designed to be rapidly adopted and built into.
+This document is part of that experience; in addition to being a fully interactive REST reference, it is designed to minimize implementation time by elaborating on common
+use cases, explaining the relevant portions of the Lightrail system and giving common API calls and examples for each.  
 
-Contact Lightrail anytime at `hello@lightrail.com` for technical, use case exploration, or general 
-assistance - we are here to help you build the right solution.
+Contact us anytime at hello@lightrail.com - we are here to help you solidify your use case and implementation.
 
-## Reporting Errors or Suggestions
-
-This interactive documentation will provide full code samples in many popular languages and let you 
-try out all functionality.
+### A Note on the Documentation
+This interactive documentation will provide full code samples in many popular languages and let you try out all functionality.
 
 The API Blueprint file that produces this documentation is in GitHub at https://github.com/Giftbit/Lightrail-API-Docs. 
 If you find a mistake or have a suggestion for improvement, please submit it directly via pull request.
 
-## API Base URL
+### Common Use Cases
+This documentation will explore in detail the most common use cases of the Lightrail API. 
+Generally, our users are looking to implement either of the following programs:
+<ol>
+    <li>A gift card program</li>
+    <li>A customer account credit or points program </li>
+</ol>
+
+Note that this is not an exhaustive list and some use cases will require a combination of the two. 
+Lightrail is designed to power and enhance any use case of stored value.  We are here to work with you.
+
+In each scenario, the power of Lightrail Promotions allows you to incentivize and motivate your users. Lightrail also provides a rich statistical interface which will give you more insight into your programs.
+
+## Getting Started
+
+### API Base URL
 
 The base URL for Lightrail's API is <em>https://api.lightrail.com/v1/</em>.
 
-## Account Creation and Authorization
+### Lightrail User Creation and Authorization
 
-You'll need your test or production `access_token` from your Lightrail account details page 
-to use the API. If you don't already have an account, you can contact us to request a demo
-<em><a href="http://info.giftbit.com/currency/request-a-demo" target="_blank">here</a></em>. 
-Be sure to store your production `access_token` extremely securely in your production configurations.
+You'll need your test or production `access_token` from your Lightrail user details page to use the API. If you don't already have a user account, you can <em><a href="https://www.lightrail.com/#gform" target="_blank">contact us to request a demo</a></em>. Be sure to store your production `access_token` extremely securely in your production configurations.
 
-Note in your account settings you can toggle to a test mode which provides you with a test `access_token`. 
-This allows you to make calls to the API without affecting your Cards or the calculated statistics in live mode.
-Emails sent from test mode will be labeled as such.
+Note that in your user settings you can toggle to a test mode which provides you with a test `access_token`. This allows you to make calls to the API without affecting your Cards or the calculated statistics in live mode. Emails sent from test mode will be labeled as such.
 
-You authenticate with your `access_token` by including your token prefixed by the word ‘Bearer’ (case sensitive) 
-and a space in the Authorization HTTP header. For example `Authorization: Bearer {access_token}`.
+You authenticate with your `access_token` by including your token prefixed by the word ‘Bearer’ (case sensitive) and a space in the Authorization HTTP header. For example `Authorization: Bearer {access_token}`.
 
-## Understanding the API: The Relationship Between Programs, Cards, and Codes
+## The Lightrail Object Model
+The full API object model is here for your reference. Depending on your use case, you may not need to use every object/endpoint. Read on for use case elaboration
 
-### Programs
+![Lightrail Object Model](http://resources.giftbit.com/api/embeddedimages/Lightrail_Object_Model_(stacked).png)
 
-Programs define a set of rules from which a Card can be created. 
-They are created within the <a href="https://www.lightrail.com/app/#/programs" target="_blank">Programs</a> section of the Lightrail web application. 
-Programs are used to structure and organize related Cards, and also improve tracking of activity within your account. 
-Cards created in a Program follow the rules of the Program including details such as currency, permitted denominations or range of value, and card lifespan. 
-Use of Programs is required in order to create Cards.
+### Lightrail Cards: The Core Object
 
+The Card is a fundamental object in the Lightrail API and provides the functionality for managing branded currency. 
+The concept of a Card can represent any sort of value that your business wishes to issue. 
+Simply stated, a Card is a device for which value can be attached and transacted against. 
 
-Programs also provide the flexibility to add integrators. 
-Adding integrators allows you to lend permission so another party can create and issue Cards according to the rules of your Program. 
-When an integrator is added to a Program it creates an additional `access_token` which your integrator  will use in API requests to Lightrail. 
-An Integrator's access is restricted to a Program. The integrator’s activity is tracked and managed through Lightrail.
+There are two types of Cards: Gift Cards and Account Cards. These are both represented as a Card but with a different `cardType` attribute. 
 
-### Cards and Codes
+#### Gift Cards
 
-The API is structured around two main endpoints and their corresponding concepts: Cards and Codes. 
+Gift Cards, as you might guess, are used when implementing a gift card program. Gift Cards have a `fullcode` which is a unique and unguessable alpha-numeric code that can be distributed to a recipient. 
+In a standard gift card program, the recipient would manually enter the `fullcode` during the checkout process.
 
-A Card represents a unique gift card, promotional code, credit, or other type of value that your business wishes 
-to issue. A Card is the object that your system will interact with following your implementation 
-(creation, retrieval, listing, statistics, etc).
+#### Account Cards
 
-A Code is the unique financial device associated with a Card. 
-A Code has a `fullcode` that is a unique and unguessable alpha-numeric code that can be distributed to a recipient. 
-A Code also has a balance, an optional expiry and metadata. Transactions and adjustments of the balance are associated with the Code. 
-Your consumer-facing functionality (checkout, balance check, transaction history for a code) interacts with the _/code_ endpoint.
+Account Cards represent value that is attached to a Contact. 
+They are used when implementing a customer account credit or points program and can be thought of as a customer's account.
+Since Account Cards do not have a `fullcode`, their value is interacted with using the Card object. 
 
-There is a 1-1 relationship between a Card and a Code. You specify the details of the Code when you create the 
-Card and must supply the `programId` as a field of the Code object in the request. 
-Lightrail plans to add extensive functionality to Card including automated delivery mechanisms, templating, 
-external integrations, and more - hence the separation from Code.
+## Use Case Exploration
 
-## Common Use Cases
+The following sections dive into Lightrail's most common use cases. Feel free to skip to the section relevant to you. If you're not sure which applies to you, please don't hesitate to ask!
 
-### Creating and Accepting Codes in Your Checkout
+Also note, the ability to incentivize your users or recipients through Lightrail Card Promotions is available for both Gift Cards and Account Cards. 
+Detailed information for Card Promotions and how it can be applied to either use case can be found in the following [Supercharge your Branded Currency: Promotions](http://docs.giftbitcurrencyapi19.apiary.io/#introduction/supercharge-your-branded-currency:-promotions) section. 
 
-A common use case for this API is one in which Lightrail powers your gift cards. 
-You would create one or more Programs which define the rules for the creation of your gift cards.
-Then you would create a Card with an attached Code, which contains the value which you wish to send as well as the date you would 
-like the code to expire (if applicable). You would then deliver the `fullcode` associated with this Code to 
-your recipient, and allow the recipient to redeem value against this Code in one or more transactions. You 
-can also allow the user to see the usage history or balance remaining on their Code at any time.
+Looking to import your existing codes into the Lightrail system? We support that. Please let us know to find out more. 
 
-The steps and API calls you would take in this use case are: 
-- Create a Program through your Lightrail account.
-- If you want to create Cards on demand via the API:
-    - Create one or more new Card(s) with associated Code(s) (POST _/cards_). Make sure you keep the returned 
-      `cardId`(s).
-    - Retrieve the `fullcode` for each code using the `cardId` to deliver to your recipient 
-      (GET _/cards/{cardId}/code/fullcode_).
-- Accept the fullcode in your checkout, and create a Transaction on the Code 
-  (POST _/codes/{fullcode}/transactions_).
-- Check the remaining value associated with the `fullcode` and display to your recipient 
-  (GET _/codes/{fullcode}/balance_).
+### Use Case 1: Powering Your Gift Card Program
+ 
+A common use case for the Lightrail API is one in which Lightrail powers your gift cards. 
 
-#### High level architecture diagram
+For example, suppose your business is an online e-commerce platform and you want to enable your customers to purchase gift cards.
+When a customer purchases a gift card, you would create a Gift Card in the Lightrail API. You would retrieve the Gift Card's `fullcode` and deliver it to the customer.
+Your store's checkout process would need to allow customers the opportunity to enter the `fullcode` of any gift cards they have.
+When completing the purchase you would create a Transaction using the customer entered `fullcode`, redeeming the required value from the Gift Card, completing the transaction. 
 
-![High level architecture](http://resources.giftbit.com/api/embeddedimages/lightrail-api-high-level-architecture-diagram.png)
+Is your store is running on an established e-commerce platform? 
+Lightrail supports popular e-commerce platforms and has dedicated integrations teams here to support you.
 
-### Building a Points Accumulation System for Your Users
-Another common use case for this API is to power a points/rewards accumulation system for your user/application 
-ecosystem.  In this example, you are not distributing or making use of Codes at all, but rather using the Cards 
-endpoint exclusively to maintain points for your users.
+Lightrail enables fine-grained control of the rules for which Gift Cards can be issued using Gift Card Programs.
 
-The steps and API calls you would take in this use case are:  
-- Create a Program though your Lightrail account which will represent your points accumulation system.
-- Create a new Contact (POST _/contacts_) with your user's details. Make sure you keep the returned `contactId`.
-- Create a new Card (POST _/cards_), including the `contactId` from above to associate that Card with your Contact. 
-  Make sure you keep the returned `cardId` for future transactions.
-- Every time you wish to adjust the user's points or permit redemption of points, create an appropriate transaction 
-  (POST _cards/{cardId}/code/transactions_).
-- Check the remaining value associated with the `cardId` and display to your recipient 
-  (GET _/cards/{cardId}/code/balance_).
+#### Lightrail Gift Card Programs
 
-Note that in this example, you do everything through the `cardId` and do not need to use the Code endpoint.
+A Gift Card Program describes the rules and restrictions that apply to the Gift Cards created from that Program. 
+For example, a Gift Card Program might declare that all Gift Cards are issued in USD, with an `initialValue` in the range of $5 - 100, and never expire. 
 
-If this use case fits your need, a great way to reward your users for appropriate points milestones is to 
-send them gift cards to top brands through <a href="https://www.giftbit.com" target="_blank">Giftbit’s Rewards API.</a>
+To create a Gift Card, it must be created using a Gift Card Program. 
+You may create Gift Card Programs within the <a href="https://www.lightrail.com/app/#/programs" target="_blank">Gift Card</a> section of the Lightrail web application. 
+Gift Card Programs are also used to structure and organize related Gift Cards, and also improve tracking of activity within your account. 
 
-## Coding for Idempotency and the UserSuppliedId Field
+Gift Card Programs also provide the flexibility to add integrators. Adding integrators allows you to lend permission so another party can create and issue Gift Cards from your Gift Card Program. 
+For more information on this functionality, please contact `hello@giftbit.com`.
 
-The API is fully idempotent on the `userSuppliedId` field, which is a required parameter for all endpoint 
-operations that result in a change of state on the Lightrail side (POST, PUT, PATCH).  Therefore, in the case 
-of a non-received response from the API or other unknown condition, it is safe and recommended to retry the 
-request with the same `userSuppliedId`.
+#### Common Requests in Gift Card Integration
 
-For example, your customer is using a Code in your checkout.  You POST to the _/codes/{fullcode}/transactions_ 
-endpoint to mark the use, but get a network timeout and are unable to process the response. As a result, your 
-system doesn't know if Lightrail successfully received your POST and recorded the transaction.  With idempotency, 
-you do not need any lookups or other complicated error handling to see if the original API call succeeded. 
-You can simply retry the same call (as many times as needed) with the same `userSuppliedId`, and get the same 
-200 response upon success whether or not a previous request went through. Our server will do the operation once
-and only once for that `userSuppliedId`.
+| Action                        | Type   | Body                                                                                                                | Endpoint                               | 
+|:------------------------------|--------|---------------------------------------------------------------------------------------------------------------------|----------------------------------------|
+| Create Gift Card              | `POST` | `{'userSuppliedId':'gc1', 'cardType':'GIFT_CARD', 'programId':'program-123', 'initialValue':500, 'currency':'USD'}` | `/v1/cards`                         | 
+| Retrieve `fullcode`           | `GET`  |                                                                                                                     | `/v1/cards/<cardId>/fullcode`       |
+| Check Balance                 | `GET`  |                                                                                                                     | `/v1/codes/<fullcode>/card/balance`      |
+| Create Transaction            | `POST` | `{'userSuppliedId':'tx1', 'value':-10, 'currency':'USD'}`                                                           | `/v1/codes/<fullcode>/transactions` | 
+| Retrieve Transaction History  | `GET`  |                                                                                                                     | `/v1/codes/<fullcode>/transactions` | 
 
-Given the above, it is important you think about how to structure your `userSuppliedId`'s and error handling so 
-that you are always sending a unique value for different logical requests, but the same one for any retries.  
+Note, there may be additional endpoints you'd need to use depending on your use-case. 
+
+### Use Case 2: Power an Account Credits or Points Program
+
+Another common use case is one in which Lightrail manages value attached to your customers. 
+
+For example, suppose you'd like to enable your users to earn points within your platform.
+Once a user has earned enough points perhaps you'd like to allow them to spend their points and choose a reward.
+In this use case, you would create a Contact in the Lightrail API followed by creating an Account Card for that Contact.
+This Account Card would be used to track the customer's points. 
+As a customer earns or spends value, you would add or subtract value by creating Transactions against the Account Card in the Lightrail API.
+
+#### Common Requests in Account Credits or Points Program
+
+| Action                             | Type   | Body                                                                                               | Endpoint                                                                 | 
+|:-----------------------------------|--------|----------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| Create Contact                     | `POST` | `{'userSuppliedId':'ct1', 'email':'name@example.com'}`                                             | `/v1/contacts`                                                           | 
+| Create Account Card                | `POST` | `{'userSuppliedId':'ac1', 'cardType':'ACCOUNT_CARD', 'contactId':'contact-123', 'currency':'XXX'}` | `/v1/cards`                                                              | 
+| Check Balance                      | `GET`  |                                                                                                    | `/v1/cards/<cardId>/balance`                                             |
+| Create Transaction                 | `POST` | `{'userSuppliedId':'tx1', 'value':-10, 'currency':'XXX'}`                                          | `/v1/cards/<cardId>/transactions`                                        | 
+| Retrieve Transaction History       | `GET`  |                                                                                                    | `/v1/cards/<cardId>/transactions`                                        | 
+| Retrieve Account Card from Contact | `GET`  |                                                                                                    | `/v1/cards?contactId=<contactId>&currency=<currency>&cardType=ACCOUNT_CARD`|
+
+Note, in these example calls, the currency is set to `XXX` to represent points although `USD` or any other valid currency code could be used if you wanted to track a dollar figure.
+Also, in this sort of use case, we recommend storing the Account Card's `cardId` with your customer's account within your application. 
+This will remove an unnecessary lookup each time you want to update a customer's points.
+
+If this use case fits your need for points, a great way to reward your customers is offer them gift cards from top brands through <a href="https://www.giftbit.com" target="_blank">Giftbit’s Rewards API.</a>
+
+## Supercharge your Branded Currency: Promotions
+
+In addition to the many capabilities Lightrail provides out of the box, Lightrail gives you the ability to attach Promotions to Cards, allowing you to incentivize and motivate your users or recipients. 
+Promotions work by adding temporary value to your cards with special redemption rules. 
+Promotions can be used in both the gift card and account credit use cases. 
+
+Promotions are created from a Promotion Program which can be created from the <a href="https://www.lightrail.com/app/#/promotions" target="_blank">Promotions</a> section of the Lightrail web application. 
+Similar to a Gift Card Program, they enable you to restrict promotion properties such the allowed value ranges, currency, and custom expiry. 
+A Card is always created with a `PRINCIPAL` ValueStore. When promotions are attached, they are represented as `ATTACHED` ValueStores.
+
+#### How Promotions Fit Into the Lightrail Object Model
+
+For example, suppose you've created a $10 USD Card. It could be either a Gift Card or an Account Card. Below is a model of the newly created objects.
+
+![Promotion Object Model Part1](http://resources.giftbit.com/api/embeddedimages/Lightrail_Promitions_Object_Model_p1.png)
+
+Perhaps you want to add a $5 promotion that will be valid for the next 10 days to incentivize the recipient to spend their value. As you can see below, a new ValueStore is attached to Card. 
+
+![Promotion Object Model Part2](http://resources.giftbit.com/api/embeddedimages/Lightrail_Promitions_Object_Model_p2.png)
+
+Suppose the recipient spends $8 USD within the 10-day limit. Below you can see how the balances of the ValueStore and in turn the balance of the Card is affected.
+
+![Promotion Object Model Part3](http://resources.giftbit.com/api/embeddedimages/Lightrail_Promitions_Object_Model_p3.png)
+
+This example illustrates that when Transactions are created against Cards that have multiple ValueStores, any valid ValueStore will be transacted against in order of expiry. 
+As you can see, Lightrail automatically handles the complexity of taking value from the correct ValueStore.
+
+## Implementation Details
+
+### Coding for Idempotency and the `userSuppliedId` Field
+
+The API is fully idempotent on the `userSuppliedId` field, which is a required parameter for all endpoint operations that result in a change of state on the Lightrail side (POST, PUT, PATCH).  
+Therefore, in the case of a non-received response from the API or other unknown condition, it is safe and recommended to retry the request with the same `userSuppliedId`.
+
+For example, your customer is using a `fullcode` in your checkout.  
+You POST to the _/codes/{fullcode}/transactions_ endpoint to mark the use, but get a network timeout and are unable to process the response. 
+As a result, your system doesn't know if Lightrail successfully received your POST and recorded the transaction. 
+With idempotency, you do not need any lookups or other complicated error handling to see if the original API call succeeded. 
+
+You can simply retry the same call (as many times as needed) with the same `userSuppliedId`, and get the same 200 response upon success whether or not a previous request went through. 
+Our server will do the operation once and only once for that `userSuppliedId`.
+
+Given the above, it is important you think about how to structure your `userSuppliedId`s and error handling so that you are always sending a unique value for different logical requests, but the same one for any retries.  
 
 Attempting to reuse a `userSuppliedId` but providing different request parameters will result in a 409 error.
 
-Note that `userSuppliedId`'s are considered per endpoint and do not need to be unique across different endpoints.
+### About Currency Value, Currency Type, and No-Currency Use (Such as Points)
+Where currency type (eg. USD, CDN, AUD) is required or returned, the API expects/uses 3 character uppercase codes conforming to the ISO-4217 standard. 
+Lightrail does not do any currency conversion nor does currency influence internal behavior; rather, currency allows you to issue and track cards in different currencies as you choose.
 
-## Contacts
+In all cases where value is concerned, you need to provide the amount in the smallest currency unit. 
+For most, this is the amount in cents (or pence, penny, or similarly named unit). For example, to create a Card for USD1.00, you would set the initialValue=100 (100 cents).
 
-A Contact represents a recipient of one of your Cards.
-Contacts can be attached to Cards to improve tracking and to enable targeting of promotions based on customer behavior.
-Use of Contacts is optional.
+For zero-decimal currencies or use with non-currency applications such as points, use the regular whole denomination. 
+For example, for ¥1, you should set initialValue=1 (1 JPY), since ¥1 is the smallest currency unit.
 
-A Contact has an email address, an optional first and/or last name and optional identifiers such as your system’s customer ID. 
+### About Dates
+The API expects all dates in request parameters to conform to the ISO-8601 format, specifically "yyyy-MM-dd'T'HH:mm:ss.SSSZ".  You can see examples in this documentation.
 
+This allows you to control things such as Code expiry in fine granularity to the time zone of your choosing. 
+All responses will always be given in this same format.
 
-## The Category Field on Card
-
-A Category is an identifier that can be attached in a many-to-many relationship with Cards. A Category 
-consists of key-value pair of strings. For example, one category might be `{"campaign": "first campaign"}`. 
-All of the statistics that Lightrail tracks are grouped by Category, so setting good Categories on your Cards 
-will ensure you get the stats you are looking for. Suppose you wanted to compare statistics across 
-campaigns. You could set a `{"campaign": "first campaign"}` Category on one group of Cards, and a 
-`{"campaign": "second campaign"}` on another. Each would have their own set of statistics calculated for them.
-
-You'll notice Lightrail automatically adds several reserved Categories during Card creation such as `giftbit_order` and `giftbit_program`.
-The Category `giftbit_order` is the default grouping of Cards, and is assigned either through the web portal or the _/cards_ endpoint; in this 
-document, an Order refers to a group of Cards that are attached to the same `{"giftbit_order": "order name"}`
-Category. These categories are added to provide statistics for aggregate groupings of cards.
-
-## Handling Error Responses
+### Handling Error Responses
 
 Clients should always check the HTTP status code of the response and act accordingly if the response is not a 200.
 
@@ -170,72 +211,20 @@ Error response JSON will be in the following format:
 - message: (string, optional) - a descriptive error message if one is available
 - code: (string, optional) - a code that can be provided to Lightrail support if troubleshooting help is needed
 
-Example error responses:
-### 400 (bad request)
-        {
-            "status": 400,
-            "message": "Failed to create card due to error during code creation. 
-                        Response from code creation: Bad Request. Missing Required Parameter 'initialValue'."
-        }
+#### Example error responses:
+| Status | Description         | Message                                                                                                                                          | 
+|:-------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| `400`  | bad request         | Failed to create card due to error during code creation. Response from code creation: Bad Request. Missing Required Parameter 'initialValue'.    | 
+| `401`  | unauthorized        | Unauthorized.                                                                                                                                    |
+| `409`  | idempotency failure | A different transaction with the same userSuppliedId already exists.                                                                             |
+| `429`  | throttled failure   | Too many requests.                                                              
 
-### 401 (unauthorized)
-        {
-            "status": 401,
-            "message": "Unauthorized",
-            "code": "CREDENTIALS_INVALID"
-        }
-        
-### 409 (idempotency failure)
-        {
-            "status": 409,
-            "message": "A different transaction with the same userSuppliedId already exists."
-        }
-
-
-## A Note on Security and Fullcodes
-
-A fullcode is the property of a Code object that represents real value in your checkout. We have some 
-recommended best practices around creating and accessing them:
- - Only retrieve the fullcode as returned by /cards/{cardId}/code/fullcode endpoint when you absolutely 
-   need it, such as when you will distribute it to your recipient.  No other API calls will return the fullcode.
- - There is no need to ever store fullcodes in your system and we strongly recommend against doing so.  
-   You should store the corresponding cardId upon creation for future reference and API calls.  All functionality only requires you to pass the fullcode through your system in a transient manner.
-
-Note that Lightrail is a PCI compliant platform and we use all modern best practices around cryptography and 
-access control to keep your codes safe.
-
-## About Dates
-The API expects all dates in request parameters to conform to the ISO-8601 format, specifically 
-"yyyy-MM-dd'T'HH:mm:ss.SSSZ".  You can see examples in this documentation.
-This allows you to control things such as Code expiry in fine granularity to the timezone of your choosing.
-All responses will always be given in this same format converted to the UTC timezone (+0000)
-
-## About Currency Value, Currency Type, and No-Currency Use (Such as Points)
-Where currency type (eg. USD, CDN, AUD) is required or returned, the API expects/uses 3 character uppercase 
-codes conforming to the ISO-4217 standard. Lightrail does not do any currency conversion nor does currency 
-influence internal behaviour; rather, currency allows you to issue and track cards in different currencies 
-as you choose.
-
-In all cases where value is concerned, you need to provide the amount in the smallest currency unit. For most, 
-this is the amount in cents (or pence, penny, or similarly named unit). For example, to create a Card for 
-USD1.00, you would set the initialValue=100 (100 cents).
-
-For zero-decimal currencies, or use with non-currency applications such as points, use the regular whole 
-denomination. For example, for ¥1, you should set initialValue=1 (1 JPY), since ¥1 is the smallest currency unit.
-
-### Using the API for points programs or similar non-currency applications.
-
-If you wish to represent non-currency amounts in cards, use value of 'XXX' when currency is required. 
-'XXX' is used in ISO-4217 to denote a transaction involving non-currency and our API supports this concept.
-
-## Legal Responsibilities
-The Lightrail API provides flexibility to implement multiple currency solutions (gift cards, unique 
-promo codes, credit refunds, etc). It is the responsibility of the API user and their organization to 
-understand and follow the jurisdictions and laws that govern all aspects of their implementation.
+### Legal Responsibilities
+The Lightrail API provides flexibility to implement multiple currency solutions (gift cards, unique promo codes, credit refunds, etc). 
+It is the responsibility of the API user and their organization to understand and follow the jurisdictions and laws that govern all aspects of their implementation.
 
 ## Ping and Health Check [/ping]
-Use the /ping endpoint to check that your authorization is working correctly or to healthcheck the API. 
-
+Use the /ping endpoint to check that your authorization is working correctly or to health check the API. 
 
 ### Ping [GET]
 + Request (application/json)
@@ -244,7 +233,10 @@ Use the /ping endpoint to check that your authorization is working correctly or 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
 + Response 200
-    + Attributes (Healthcheck)
+    + Attributes
+        + username (string) - The email address associated with the credentials provided.
+        + servertime (string) - The current time on the server (ISO 8601 format).
+        + mode (string) - String indicating whether the credentials provided are for TEST or LIVE mode.
         
     + Body
     
@@ -266,209 +258,87 @@ Use the /ping endpoint to check that your authorization is working correctly or 
         }
 
 ## Cards [/cards/]
-The _/cards_ endpoint is for use by your system to create and manage your Cards and Codes.
-Cards represent a gift card, promotional offer, credit, or other means of eCommerce currency relevant to your 
-business.  Every Card is created with a corresponding Code automatically.  You access details on both your 
-Cards and your Codes through the cardId, which eliminates the need to ever store a fullcode.
+The _/cards_ endpoint is for use by your system to create and manage your Gift Cards and Account Cards.
+The `cardId` should be stored as it's used in many subsequent requests - such as transaction against a Card. 
+In use cases where the recipient requires a gift code, the `fullcode` should be supplied. 
 
-### Create a Card and its Code [POST]
-
-Create a Card and its corresponding Code.  Note that `cardId` on response should be persisted to lookup or 
-interact with the Code. The Code is not returned as part of the response. The currency and expiry will automatically
-be set from the Program that the card belongs to.
-
-+ Request (application/json)
-The categories object is optional. If provided, it will attach the given Category objects to the Card, 
-creating any that do not exist already. The contactId string is also optional; it must correspond to one 
-of your Contacts' contactId fields.
-
-    + Headers
-
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    + Attributes (CardRequest)
-
-    + Body
-    
-            {
-                "userSuppliedId": "12345678",
-                "code":
-                {
-                    "initialValue":5000,
-                    "programId":"program-a0d2fda60d13448fba0efdd61733c412",
-                },
-                "categories":
-                {
-                    "giftbit_order": "My Order",
-                    "My Custom Category Key": "My Custom Category Value"
-                },
-                "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d48"
-            }
-        
-+ Response 200
-    + Attributes
-        + Card (CardResponse)
-        
-    + Body
-            
-            {
-                "card":{
-                    "userSuppliedId" : "1234",
-                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
-                    "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d49",
-                    "dateCreated": "2016-09-01T23:47:02.000+0000",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-8b3b5f3e502a43d789fd6d88296c4a22",
-                                "key": "giftbit_program",
-                                "value": "program-6cb2f3b117b44eb5986ac8cf36b59125"
-                            }
-                        ]
-                }
-            }
-    
-
-### List Cards [GET /cards/{?limit}{?offset}{?categoryKey}{?categoryValue}{?contactId}]
-
-Retrieve your created Cards.  Results are returned in descending order of creation (newest first).
+### List Cards [GET /cards/{?limit}{?offset}{?categoryKey}{?categoryValue}{?contactId}{?cardType}{?currency}{?userSuppliedId}]
 + Request (application/json)
     + Headers
     
              Authorization: Bearer <YOUR_ACCESS_TOKEN>
    
-+ Parameter 
++ Parameter
     + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
     + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
-    + categoryKey (string, optional) - A key to a Category. Will return all Cards attached to Categories with 
-      this key if supplied.
-    + categoryValue (string, optional) - A value of a Category. Will return all Cards attached to Categories 
-      with this value if supplied. If both a categoryKey and a categoryValue are supplied, will return all 
-      Cards associated with the unique Category having that categoryKey and categoryValue.
+    + categoryKey (string, optional) - A key of a Category. 
+    + categoryValue (string, optional) - A value of a Category. 
     + contactId (string, optional) - A contactId to filter by.
+    + cardType (string, optional) - `ACCOUNT_CARD`, `GIFT_CARD`.
+    + currency (string, optional) - The 3 character ISO-4217 currency.
+    + userSuppliedId (string, optional)
 
 + Response 200
     + Attributes 
-        + cards (array[CardResponse])
+        + cards (array[Card])
 
     + Body
     
             {
-                "cards":[
+              "cards": [
+                {
+                  "cardId": "card-0a0ea9dc17cf4b1da661569d301007d9",
+                  "userSuppliedId": "giftcard1",
+                  "contactId": null,
+                  "dateCreated": "2017-05-19T22:25:53.511+0000",
+                  "categories": [
                     {
-                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
-                    "dateCreated": "2016-09-01T23:47:02.000+0000",
-                    "contactId": null,
-                    "userSuppliedId":"1234",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
+                      "categoryId": "category-d0f09aa94b0843a3a530d4be3ec26b50",
+                      "key": "giftbit_program",
+                      "value": "program-3298ee1b076a47efb2b3a987a1008afc"
                     },
                     {
-                    "cardId": "card-4e61aba2-5d5a-4e99-8574-6479cecce0dd",
-                    "dateCreated": "2016-09-01T23:42:35.000+0000",
-                    "contactId": null,
-                    "userSuppliedId":"1235",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
-                    },
-                    {
-                    "cardId": "card-3c83dc55-63e1-4148-8ed7-501bcf2aff5d",
-                    "dateCreated": "2016-09-01T23:42:23.000+0000",
-                    "contactId": null,
-                    "userSuppliedId":"1236",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
-                    },
-                    {
-                    "cardId": "card-c8dc87a7-7739-403f-8aa7-6c995d7a1d29",
-                    "dateCreated": "2016-09-01T23:42:17.000+0000",
-                    "contactId": null,
-                    "userSuppliedId":"1237",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
-                    },
-                    {
-                    "cardId": "card-56d23f04-64a8-452b-b3a1-3e758ebb6adc",
-                    "dateCreated": "2016-09-01T23:41:32.000+0000",
-                    "contactId": null,
-                    "userSuppliedId":"1238",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
+                      "categoryId": "category-8b7c420644c845d6b4c393333da4ea6e",
+                      "key": "giftbit_order",
+                      "value": "ordername"
                     }
-                ],
-                "pagination":{
-                    "count": 5,
-                    "limit": 100,
-                    "maxLimit": 1000,
-                    "offset": 0,
-                    "totalCount": 5
+                  ],
+                  "cardType": "GIFT_CARD",
+                  "currency": "USD"
+                },
+                {
+                  "cardId": "card-b8734ae818854278825c4cfc9dea1e0d",
+                  "userSuppliedId": "giftcard2",
+                  "contactId": null,
+                  "dateCreated": "2017-05-19T22:25:53.505+0000",
+                  "categories": [
+                    {
+                      "categoryId": "category-d0f09aa94b0843a3a530d4be3ec26b50",
+                      "key": "giftbit_program",
+                      "value": "program-3298ee1b076a47efb2b3a987a1008afc"
+                    },
+                    {
+                      "categoryId": "category-8b7c420644c845d6b4c393333da4ea6e",
+                      "key": "giftbit_order",
+                      "value": "ordername"
+                    }
+                  ],
+                  "cardType": "GIFT_CARD",
+                  "currency": "USD"
                 }
+              ],
+              "pagination": {
+                "count": 2,
+                "limit": 100,
+                "maxLimit": 1000,
+                "offset": 0,
+                "totalCount": 2
+              }
             }
-    
+
 ### Retrieve Card by cardId [GET /cards/{cardId}]
-
-Look up a single Card by by the Lightrail assigned cardId.
-
 + Parameters 
-    + cardId (string, required) - The Lightrail assigned cardId.
+    + cardId (string, required)
 
 + Request (application/json)
     + Headers
@@ -478,37 +348,171 @@ Look up a single Card by by the Lightrail assigned cardId.
 + Response 200
 
     + Attributes 
-        + card (CardResponse)
+        + card (Card)
 
     + Body
         
             {
-                "card":{
-                    "userSuppliedId" : "1234",
-                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
-                    "dateCreated": "2016-09-01T23:47:02.000+0000",
-                    "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
-                }
+              "card": {
+                "cardId": "card-0a0ea9dc17cf4b1da661569d301007d9",
+                "userSuppliedId": "giftcard1",
+                "contactId": null,
+                "dateCreated": "2017-05-19T22:25:53.511+0000",
+                "categories": [
+                  {
+                    "categoryId": "category-8b7c420644c845d6b4c393333da4ea6e",
+                    "key": "giftbit_order",
+                    "value": "ordername"
+                  },
+                  {
+                    "categoryId": "category-d0f09aa94b0843a3a530d4be3ec26b50",
+                    "key": "giftbit_program",
+                    "value": "program-3298ee1b076a47efb2b3a987a1008afc"
+                  }
+                ],
+                "cardType": "GIFT_CARD",
+                "currency": "USD"
+              }
             }
-            
-### Update Card by cardId [PATCH /cards/{cardId}]
 
-Update the contact on a Card by the Lightrail assigned cardId. The contactId must correspond to one of your 
-Contacts' contactIds. 
+### Create Account Card [POST /cards]
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    + Attributes 
+        + userSuppliedId (string, required)
+        + cardType (string, required) - ACCOUNT_CARD
+        + currency (string, required) - The 3 character ISO-4217 currency.
+        + initialValue (number, optional) - If not provided, will default to 0.
+        + categories (Category)  
+        + contactId (string, required) - Note, the Contact must be created before the request to create the card.
+        + expires (string, optional) - Defaults to never expires.
+        + startDate (string, optional) - The date for which the associated ValueStore will become useable.
+
+    + Body
+    
+            {
+                "userSuppliedId": "accountcard-2",
+                "cardType": "ACCOUNT_CARD",
+                "contactId": "contact-babda3a527914929b2fb7b987b7d4dad",
+                "currency": "USD"
+            }
+        
++ Response 200
+    + Attributes
+        + card (Card)
+        
+    + Body
+            
+            {
+              "card": {
+                "cardId": "card-5737daabe19e40f5bf586ee6565a48e7",
+                "userSuppliedId": "accountcard-2",
+                "contactId": "contact-babda3a527914929b2fb7b987b7d4dad",
+                "dateCreated": "2017-06-02T00:34:38.736+0000",
+                "categories": [
+                  {
+                    "categoryId": "category-e7712b71809444d694584aac6ea31f2c",
+                    "key": "giftbit_order",
+                    "value": "2017-06-02"
+                  },
+                  {
+                    "categoryId": "category-5524e3037d7142d79de040b2795b42cb",
+                    "key": "giftbit_program",
+                    "value": "program-account-USD-user-5022fccf827647ee9cfb63b779d62193"
+                  }
+                ],
+                "cardType": "ACCOUNT_CARD",
+                "currency": "USD"
+              }
+            }
+
+### Create Gift Card [POST /cards]
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    + Attributes 
+        + userSuppliedId (string, required)
+        + cardType (string, required) - GIFT_CARD
+        + initialValue (number, optional) - If not provided, will default to 0.
+        + currency (string) - The 3 character ISO-4217 currency.
+        + programId (string, required)
+        + categories (Category)  
+        + contactId (string, required) - Note, the Contact must be created before the request to create the card.
+        + expires (string, optional) - Defaults to never expires.
+        + startDate (string, optional) - The date for which the ValueStore will become useable.
+        + inactive (boolean, optional) - If `true` the Card's `PRINCIPAL` ValueStore will have an `INACTIVE` balance.
+
+    + Body
+    
+            {
+                "userSuppliedId": "giftcard-1",
+                "cardType": "GIFT_CARD",
+                "programId": "program-3298ee1b076a47efb2b3a987a1008afc",
+                "initialValue": 500
+            }
+        
++ Response 200
+    + Attributes
+        + card (Card)
+        
+    + Body
+            
+            {
+              "card": {
+                "cardId": "card-62ec23f22cd14b4d912d93999083b6b6",
+                "userSuppliedId": "giftcard-1",
+                "contactId": null,
+                "dateCreated": "2017-06-02T00:27:02.910+0000",
+                "categories": [
+                  {
+                    "categoryId": "category-e7712b71809444d694584aac6ea31f2c",
+                    "key": "giftbit_order",
+                    "value": "2017-06-02"
+                  },
+                  {
+                    "categoryId": "category-d0f09aa94b0843a3a530d4be3ec26b50",
+                    "key": "giftbit_program",
+                    "value": "program-3298ee1b076a47efb2b3a987a1008afc"
+                  }
+                ],
+                "cardType": "GIFT_CARD",
+                "currency": "USD"
+              }
+            }
+
+### Retrieve fullcode [GET /cards/{cardId}/fullcode]
+
 
 + Parameters 
-    + cardId (string, required) - The Lightrail assigned cardId.
+    + cardId (string) - Must be Card with cardType: `GIFT_CARD`.
+    
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
++ Response 200
+    + Attributes 
+        + fullcode (Fullcode)
+
+    + Body
+    
+            {
+                "fullcode":{
+                    "code" : "GFBT-ABCDE-FGHIJK-LMNOP-12345"
+                }
+            }
+
+### Update Contact on Card [PATCH /cards/{cardId}]
+
++ Parameters 
+    + cardId (string, required) 
 
 + Request (application/json)
     + Headers
@@ -521,409 +525,204 @@ Contacts' contactIds.
     + Body
     
             {
-                "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d49"
+                "contactId": "contact-592941d2335d402e9dc3d6a981bc3896"
             }
 
 + Response 200
 
     + Attributes 
-        + card (CardResponse)
+        + card (Card)
 
     + Body
         
+            {
+              "card": {
+                "cardId": "card-2235b727f65a46648138429b95fdaa7b",
+                "userSuppliedId": "testCategoryCreation10-19",
+                "contactId": "contact-592941d2335d402e9dc3d6a981bc3896",
+                "dateCreated": "2017-05-16T16:49:33.027+0000",
+                "categories": [
+                  {
+                    "categoryId": "category-48ecc24b16944b40a1218e319facd24a",
+                    "key": "giftbit_order",
+                    "value": "testCategoryCreationId9"
+                  }
+                ],
+                "cardType": "GIFT_CARD",
+                "currency": "USD"
+              }
+            }
+
+### Activate Card [POST /cards/{cardId}/activate]
+
++ Parameters
+    + cardId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    + Attributes
+        + userSuppliedId (string, required)
+        
+    + Body 
+    
+            {
+                "userSuppliedId":"activate_123"
+            }
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+    + Body
+
+            {
+                "transaction":{
+                    "transactionId": "transaction-dad500e4a5fe452c98f5b4f1ae22006c",
+                    "value": 50,
+                    "userSuppliedId": "activate_123",
+                    "dateCreated": "2017-06-02T19:23:19.238+0000",
+                    "transactionType": "ACTIVATE",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 50,
+                    "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                    "codeLastFour": "VHK9",
+                    "cardId": "card-071558e0e5d946289a9179caa47797d6",
+                    "currency": "XXX"
+                }
+            }
+
+### Freeze Card [POST /cards/{cardId}/freeze]
++ Parameters
+    + cardId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    + Attributes
+        + userSuppliedId (string, required)
+    + Body 
+    
+            {
+                "userSuppliedId":"freezecard-1"
+            }
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+    + Body
+
+            
+            {
+                "transaction":{
+                    "transactionId": "transaction-8729d3233a824d568ed60e984c2d92c1",
+                    "value": -50,
+                    "userSuppliedId": "freezecard-1",
+                    "dateCreated": "2017-06-02T19:34:41.338+0000",
+                    "transactionType": "FREEZE",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 0,
+                    "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                    "codeLastFour": "VHK9",
+                    "cardId": "card-071558e0e5d946289a9179caa47797d6",
+                    "currency": "XXX"
+                }
+            }          
+
+### Unfreeze Card [POST /cards/{cardId}/unfreeze]
++ Parameters
+    + cardId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    + Attributes
+        + userSuppliedId (string, required)
+    + Body 
+    
+            {
+                "userSuppliedId":"unfreeze-1"
+            }
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+    + Body
+
+            {
+                "transaction":{
+                    "transactionId": "transaction-99557161bed947028d0b5906cdd58bae",
+                    "value": 50,
+                    "userSuppliedId": "unfreeze-1",
+                    "dateCreated": "2017-06-02T19:36:23.023+0000",
+                    "transactionType": "UNFREEZE",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 50,
+                    "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                    "codeLastFour": "VHK9",
+                    "cardId": "card-071558e0e5d946289a9179caa47797d6",
+                    "currency": "XXX"
+                }
+            }
+
+### Cancel Card [POST /cards/{cardId}/cancel]
++ Parameters
+    + cardId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
+    + Attributes
+        + userSuppliedId (string, required)
+    
+    + Body
+            
+            {
+                "userSuppliedId": "cancel-1"
+            }
+    
++ Response 200
+
+    + Body
+
             {
                 "card":{
-                    "userSuppliedId" : "1234",
-                    "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
-                    "contactId": "contact-1d14ea54dbfd40c6a33476c7dbac2d49",
-                    "dateCreated": "2016-09-01T23:47:02.000+0000",
+                    "cardId": "card-071558e0e5d946289a9179caa47797d6",
+                    "userSuppliedId": "gift_card_1",
+                    "contactId": null,
+                    "dateCreated": "2017-06-02T19:21:40.224+0000",
                     "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            },
-                            {
-                                "categoryId": "category-8b3b5f3e502a43d789fd6d88296c4a22",
-                                "key": "giftbit_program",
-                                "value": "program-6cb2f3b117b44eb5986ac8cf36b59125"
-                            }
-                        ]
-                }
-            }
-            
-### Retrieve Card by userSuppliedId [GET /cards{?userSuppliedId}]
-
-Look up a single Card by the userSuppliedId.
-            
-+ Parameters 
-    + userSuppliedId (string) - The identifier that you supplied when you created the Card.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-
-+ Response 200
-    + Attributes 
-        + cards (array[CardResponse])
-        + pagination(PaginationResponse)
-        
-    + Body
-        
-            {
-                "cards":[
                     {
-                        "userSuppliedId" : "1234",
-                        "cardId": "card-8f893901-c143-4def-9124-bd0c25a0c3a8",
-                        "dateCreated": "2016-09-01T23:47:02.000+0000",
-                        "categories":[
-                            {
-                                "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                                "key": "someCategoryKey",
-                                "value": "someCategoryValue"
-                            }, 
-                            {
-                                "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                                "key": "giftbit_order",
-                                "value": "my order name"
-                            }
-                        ]
+                    "categoryId": "category-ac01a564749d4fd3b95e501ce5559f4c",
+                    "key": "giftbit_status",
+                    "value": "CANCELLED"
+                    },
+                    {
+                    "categoryId": "category-fc83a09880c44063903b1c034af02df7",
+                    "key": "giftbit_order",
+                    "value": "2017-06-02"
                     }
-                ]
-            }
-    
-
-### Retrieve Categories by cardId [GET /cards/{cardId}/categories]
-
-After creating a Card, use this endpoint to retrieve all Categories associated with that Card.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-        
-+ Response 200
-    + Attributes 
-        + cards (array[CategoryResponse])
-
-    + Body
-    
-            {
-                "categories":[
-                    {
-                        "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                        "key": "someCategoryKey",
-                        "value": "someCategoryValue"
-                    }, 
-                    {
-                        "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                        "key": "giftbit_order",
-                        "value": "my order name"
-                    }
-                ]
-            }
-            
-### Retrieve a fullcode by cardId [GET /cards/{cardId}/code/fullcode]
-
-After creating a Card, use this endpoint to retrieve the fullcode to give to your recipient.  This is the code worth value to your organization; do not store this code in your database or other parts of your system.  If you are tracking recipients, associate your recipient with the cardId.
-
-+ Parameters 
-    + cardId (string) - The identifier returned when the Card and Code were created.
-    
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-
-+ Response 200
-
-    + Body
-    
-            {
-                "fullcode":{
-                    "code" : "GFBT-ABCDE-FGHIJK-LMNOP-12345"
+                    ],
+                    "cardType": "GIFT_CARD",
+                    "currency": "XXX"
                 }
-            }
-
-### Retrieve a Code by cardId [GET /cards/{cardId}/code]
-
-Use this endpoint if your system or internal staff need to retrieve basic information about a Code. 
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-
-+ Parameters 
-    + cardId (string) - The identifier returned when the Card and Code were created.
-    
-+ Response 200
-    
-    + Attributes 
-        + code(CodeResponse)
-    
-    + Body
-    
-            {
-                "code":{
-                    "currency": "CAD",
-                    "initialValue": 5000,
-                    "codeLastFour": "WXYZ",
-                    "dateCreated": "2016-08-10T08:00:00.000+0000",
-                    "expires": "2017-03-03T08:00:00.000+0000"
-                }
-            }
-
-### Retrieve a Code balance by cardId [GET /cards/{cardId}/code/balance]
-
-Use this endpoint if your system or internal staff need to retrieve up-to-date balance information about a Code.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-
-+ Parameters 
-    + cardId (string) - The identifier returned when the Card and Code were created.
-    
-+ Response 200
-
-    + Body
-    
-            {
-                "balance":{
-                    "currentValue": 200
-                }
-            }
-
-### Retrieve Transactions for a Code by cardId [GET /cards/{cardId}/code/transactions/]
-
-Use this endpoint if your system or internal staff need to retrieve all the Transactions for a Code.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-
-+ Parameters 
-    + cardId (string) - The identifier returned when the Card and Code were created.
-    
-+ Response 200
-    + Attributes 
-        + transactions(array[TransactionResponse])
-        + pagination(PaginationResponse)
-
-    + Body
-        
-            {
-                "transactions":[
-                    {
-                        "transactionId": "transaction-86251f7b040b45d3b7364bae04c74870",
-                        "value": 500,
-                        "valueAvailableAfterTransaction": 500,
-                        "userSuppliedId": "someTransaction",
-                        "dateCreated": "2016-08-10T09:00:00.000+0000"
-                    }
-                ],
-                "pagination":{
-                    "count": 1,
-                    "limit": 100,
-                    "maxLimit": 1000,
-                    "offset": 0,
-                    "totalCount": 1
-                }
-            }
-    
-### Retrieve a single Transaction for a code by cardId and transactionId [GET /cards/{cardId}/code/transactions/{transactionId}]
-
-Use this endpoint if your system or internal staff need to retrieve all the Transactions for a Code.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-
-+ Parameters 
-    + cardId (string) - The identifier returned when the Card and Code were created.
-    + transactionId (string) - The identifier returned when the Transaction was created.
-    
-+ Response 200
-    + Attributes 
-        + transaction(TransactionResponse)
-        
-    + Body
-            
-            {
-                "transaction" {
-                    "transactionId": "transaction-86251f7b040b45d3b7364bae04c74870",
-                    "value": 500,
-                    "valueAvailableAfterTransaction": 500,
-                    "userSuppliedId": "someTransaction",
-                    "dateCreated": "2016-08-10T09:00:00.000+0000"
-                }
-            }
-    
-### Create a Transaction for a Code given the cardId [POST /cards/{cardId}/code/transactions]
-
-Use this endpoint if your system or internal staff need to create a Transaction for a Code, such as to mark 
-all or part of it as used or to add additional value to the Code. 
-
-To transact against the Code in your checkout or when a recipient presents their `fullcode`, see the 
-`Create a Transaction by Fullcode` below.
-
-+ Parameters 
-    + cardId (string) - The identifier returned when the Card and Code were created.
-    
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-
-    + Attributes (TransactionRequest)
-        
-    + Body
-    
-            {
-            "value": -250,
-            "currency": "CAD",
-            "userSuppliedId": "someTransaction"
-            }
-        
-+ Response 200
-
-    + Attributes 
-        + transaction(TransactionResponse)
-
-    + Body
-    
-            {
-                "transaction" {
-                    "transactionId": "transaction-86251f7b040b45d3b7364bae04c74870",
-                    "value": -250,
-                    "valueAvailableAfterTransaction": 4750,
-                    "userSuppliedId": "someTransaction",
-                    "dateCreated": "2016-08-10T09:00:00.000+0000"
-                }
-            }
-    
-
-## Categories [/categories/]
-
-A Category represents a grouping of Cards e.g. orders, types of cards, or any custom Category you wish to create.
-Most functions of Categories are closely tied to Cards.
-
-### List your existing Categories [GET /categories/{?categoryKey}{?categoryValue}{?limit}{?offset}]
-
-Retrieve a list of Categories that have been created.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-        
-+ Response 200
-    + Body
-    
-            {
-                "categories":[
-                    {
-                        "categoryId": "category-333c93e4cf1c46d1b830253b6c5780f1",
-                        "key": "someCategoryKey",
-                        "value": "someCategoryValue"
-                    }, 
-                    {
-                        "categoryId": "category-5f17d4f6b2924970a63877dbde6248fb",
-                        "key": "giftbit_order",
-                        "value": "my order name"
-                    }
-                ]
             }
 
 ## Contacts [/contacts]
 
-A Contact represents a recipient of one of your Cards or Codes. Contacts can be attached to Cards to help you 
-keep track of who is interacting with your Cards.
-
-### Create Contact [POST /contacts]
-
-Create a new Contact. Once created, a Contact can be attached to a Card.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    + Attributes (ContactRequest)
-            
-    + Body
-    
-            {
-                "userSuppliedId": "12345678",
-                "email": "noreply@giftbit.com"
-            }
-        
-
-    
-+ Response 200
-    + Attributes (Contact)
-
-    + Body
-    
-            {
-                "contact":
-                {
-                    "contactId": "contact-0f06b54b9fa44727a7ba7043de5365cf",
-                    "userSuppliedId": "12345678",
-                    "email": "noreply@giftbit.com",
-                    "firstName": null,
-                    "lastName": null,
-                    "dateCreated": "2016-12-09T00:06:00.000+0000"
-                }
-            }
-
-### Update Contact [PATCH /contacts/{contactId}/]
-
-Update a Contact. A Contact's email, firstName, or lastName can be updated.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-            
-    + Attributes (ContactRequest)
-            
-    + Body
-    
-            {
-                "firstName": "Jane",
-                "lastName": "Smith"
-            }
-    
-+ Response 200
-    + Attributes (Contact)
-
-    + Body
-    
-            {
-                "contact":
-                {
-                    "contactId": "contact-0f06b54b9fa44727a7ba7043de5365cf",
-                    "userSuppliedId": "12345678",
-                    "email": "noreply@giftbit.com",
-                    "firstName": "Jane",
-                    "lastName": "Smith",
-                    "dateCreated": "2016-12-09T00:06:00.000+0000"
-                }
-            }
+Contacts can be attached to Cards to help you keep track of who is interacting with your Cards.
 
 ### List Contacts [GET /contacts{?limit}{?offset}{?email}{?firstName}{?lastName}{?userSuppliedId}]
-
-Retrieve a list of your created Contacts.
 
 + Request (application/json)
     + Headers
@@ -932,22 +731,15 @@ Retrieve a list of your created Contacts.
             
 + Parameters 
     + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
-    + offset (number, optional) - For pagination. The offset of the first results in the total results. 
-      Default 0.
+    + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
     + email (string, optional)
     + firstName (string, optional)
     + lastName (string, optional)
-    + userSuppliedId (string, optional) - The unique ID supplied on Contact creation.
+    + userSuppliedId (string, optional)
     
 + Response 200
     + Attributes
-        + contactId (string, required) - Lightrail's unique identifier for this Contact. Be sure to persist 
-          this value for future operations.
-        + userSuppliedId (string, required) - The unique ID supplied on Contact creation.
-        + dateCreated(string, required) - Lightrail system time of the creation of the Contact. ISO-8601 format.
-        + email (string) - The provided email, if applicable.
-        + firstName (string) - The provided firstName, if applicable.
-        + lastName (string) - The provided lastName, if applicable.
+       + contact (Contact)
 
     + Body
     
@@ -974,25 +766,18 @@ Retrieve a list of your created Contacts.
 
 ### Show Contact [GET /contacts/{contactId}]
 
-Look up a Contact given its contactId.
++ Parameters
+    + contactId (string, required)
 
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
             
-+ Parameters 
-    + contactId (string, required) - The contactId provided on Contact creation.
     
 + Response 200
     + Attributes
-        + contactId (string, required) - Lightrail's unique identifier for this Contact. Be sure to persist 
-          this value for future operations.
-        + userSuppliedId (string, required) - The unique ID supplied on Contact creation.
-        + dateCreated(string, required) - Lightrail system time of the creation of the Contact. ISO-8601 format.
-        + email (string) - The provided email, if applicable.
-        + firstName (string) - The provided firstName, if applicable.
-        + lastName (string) - The provided lastName, if applicable.
+        + contact (Contact)
 
     + Body
     
@@ -1007,355 +792,1050 @@ Look up a Contact given its contactId.
                     "dateCreated": "2016-12-09T00:06:00.000+0000"
                 }
             }
+
+### Create Contact [POST /contacts]
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    + Attributes 
+        + userSuppliedId (string, required)
+        + email (string, optional) 
+        + firstName (string, optional)
+        + lastName (string, optional) 
             
-### Delete Contact [DELETE /contacts/{contactId}]
-
-Delete a Contact. Contact will not appear when listing Contacts.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-            
-+ Parameters 
-    + contactId (string, required) - The contactId provided on Contact creation.
-    
-+ Response 204
-
-## Codes [/codes/{fullcode}]
-
-A Code represents the financial device that is worth value to you and your store.  The fullcode is what is 
-distributed to your recipients. Your external-facing experience (balance checks, transaction history, and checkout/use of value) should interact with the Code and Code Transaction endpoints described here.  Only these endpoints accept fullcodes.
-
-You are never required to store the fullcode internally in your system, and we recommend for security that 
-you do not.  You may interact internally (for customer support) with a Code through its corresponding cardId 
-as described in the 'Card' reference.
-
-
-### Retrieve basic Code information [GET]
-
-Look up information about a code given the fullcode.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-+ Parameters 
-    + fullcode (string) - The code given to the customer.
-    
-+ Response 200
-    + Attributes
-        + Code (CodeResponse)
-
-    + Body
-    
-            {
-                "code":
-                {
-                    "codeLast4": "BF8Z",
-                    "currency":"USD",
-                    "initialValue":2500,
-                    "expires":"2020-08-06T08:00:00.000+0000",
-                    "dateCreated":"2016-08-10T08:00:00.000+0000"
-                }
-            }
-
-
-### Retrieve Code balance [GET /codes/{fullcode}/balance]
-
-Retrieve the balance of a Code considering all previous Transactions.  
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-
-+ Parameters 
-    + fullcode (string) - the fullcode associated with the Code object and value given to the customer.
-    
-+ Response 200
-
-    + Body
-    
-            {
-                "balance":{
-                    "currentValue": 200
-                }
-            }
-
-### Create a Transaction by Fullcode [POST /codes/{fullcode}/transactions] 
-
-Use some or all of the remaining value of the Code (create a Transaction on the Code). This endpoint is 
-useful when you are provided the `fullcode` by the recipient any they wish to use some or all of the Code's 
-value (eg. in your checkout).
-
-You can only reduce the balance of the Code when transacting by with `fullcode`. If you wish to add value 
-to the Code, create the transaction by the `cardId` as described above. 
-
-Attempting to use value for a Code that is expired or does not have enough remaining value will result in 
-400 response.
-
-+ Parameters 
-    + fullcode (string) - The gift code.
-    
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-
-    + Attributes
-        + value (number, required) - The amount the transaction will change the balance on the Code in the 
-          smallest currency unit (such as cents).  Must be a negative number. If the transaction amount would 
-          bring the Code balance below zero, a 400 response will be returned.
-        + currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must 
-          match the currency of code when it was created or an error will result.
-        + userSuppliedId (string, required) - A unique identifier for this transaction.
-
     + Body
     
             {
                 "userSuppliedId": "12345678",
-                "value": -165,
-                "currency": "USD"
-            }
-
-+ Response 200
-
-    + Attributes
-        + value (number) - The amount of the transaction in the smallest currency unit (such as cents). 
-          Equal to the value in the request.
-        + transactionId (string) - The unique Id for this transaction assigned by Lightrail at creation time.
-        + userSuppliedId (string) - Identifier of the transaction (should equal transactionId in the request).
-        + valueAvailableAfterTransaction (number) - The remaining balance of the Code as a result of the 
-          transaction, at the time of the transaction.
-        + dateCreated (string) - The Lightrail system time of the creation in ISO-8601 format.
-
-    + Body
-    
-            {
-                "transaction":{
-                    "userSuppliedId": "12345678",
-                    "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                    "value": -165,
-                    "dateCreated": "2016-08-10T08:00:00.000+0000",
-                    "valueAvailableAfterTransaction": 4835
-                    }
-                }
+                "email": "noreply@giftbit.com"
             }
         
-### Retrieve all Transactions for a Code [GET /codes/{fullcode}/transactions/{?limit}{?offset}]
 
-Retrieve all Transactions for a Code given the fullcode.  Useful if you'd like to show a recipient their 
-code usage history.  Results are returned in descending order of creation (newest first).
+    
++ Response 200
+    + Attributes 
+        + contact (Contact)
+
+    + Body
+    
+            {
+                "contact":
+                {
+                    "contactId": "contact-0f06b54b9fa44727a7ba7043de5365cf",
+                    "userSuppliedId": "12345678",
+                    "email": "noreply@giftbit.com",
+                    "firstName": null,
+                    "lastName": null,
+                    "dateCreated": "2016-12-09T00:06:00.000+0000"
+                }
+            }
+
+### Update Contact [PATCH /contacts/{contactId}/]
++ Parameters
+    + contactId (string, required)
+    
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
+    + Attributes
+        + email (string, optional) 
+        + firstName (string, optional)
+        + lastName (string, optional) 
+            
+    + Body
+    
+            {
+                "firstName": "Jane",
+                "lastName": "Smith"
+            }
+    
++ Response 200
+    + Attributes 
+        + contact (Contact)
+
+    + Body
+    
+            {
+                "contact":
+                {
+                    "contactId": "contact-0f06b54b9fa44727a7ba7043de5365cf",
+                    "userSuppliedId": "12345678",
+                    "email": "noreply@giftbit.com",
+                    "firstName": "Jane",
+                    "lastName": "Smith",
+                    "dateCreated": "2016-12-09T00:06:00.000+0000"
+                }
+            }
+
+### Delete Contact [DELETE /contacts/{contactId}]
++ Parameters 
+    + contactId (string, required) 
+    
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
++ Response 204
+
+### Retrieve Account Cards or Gift Cards for Contact [GET /cards{?contactId}{?cardType}{?currency}]
++ Parameters 
+    + contactId (string, required) 
+    + cardType (string, required) - `ACCOUNT_CARD`, `GIFT_CARD`
+    + currency (string, optional) - Only needed if your Contact has Account Cards in multiple currencies.
 
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
-   
-+ Parameter
-    + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
-    + offset (number, optional) - For pagination. The offset of the first results in the total results. 
-      Default 0.
+    
 + Response 200
+    + Attributes
+        + cards (array[Card])
 
     + Body
     
             {
-                "transactions":[
+                "cards":[
                     {
-                        "userSuppliedId": "12345",
-                        "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                        "value": -500,
-                        "dateCreated": "2016-08-11T08:32:00.000+0000",
-                        "valueAvailableAfterTransaction": 800
+                        "dateCreated": "2017-05-09T17:07:23.675+0000",
+                        "contactId": "contact-4ffe2b27f2e046179094b2c7828287d4",
+                        "cardId": "card-3809c739c532401d908ee7b2ea061276",
+                        "userSuppliedId": "account-XXX-contact-4ffe2b27f2e046179094b2c7828287d4-user-d74d948ab0524f63995322bfe4981942-TEST",
+                        "categories":[{"value": "program-account-XXX-user-d74d948ab0524f63995322bfe4981942-TEST", "categoryId": "category-049bfe85b3df46a8b55e0efd95355643",…]
                     },
                     {
-                        "userSuppliedId": "12344",
-                        "transactionId":"transaction-avji1b55-6gu7-4ke5-82s5-fd37edb5ju9a",
-                        "value": -700,
-                        "dateCreated": "2016-08-10T08:00:00.000+0000",
-                        "valueAvailableAfterTransaction": 1300
+                        "dateCreated": "2017-05-09T16:43:40.893+0000",
+                        "contactId": "contact-4ffe2b27f2e046179094b2c7828287d4",
+                        "cardId": "card-89d8e3196abd47c5951e025309e66c42",
+                        "userSuppliedId": "account-USD-contact-4ffe2b27f2e046179094b2c7828287d4-user-d74d948ab0524f63995322bfe4981942-TEST",
+                        "categories":[{"value": "account", "categoryId": "category-a1a37522f2634792b1e8ca7558235ace", "key": "giftbit_cardtype"…]
                     }
+                ]
+            }
+            
+## Transactions [/cards/{cardId}/transactions]
+A feature the Lightrail API supports is the ability to create Pending Transactions. 
+This means the value required for the Pending Transaction will be unavailable to be used for other Transactions. 
+A Pending Transaction can either be captured, which confirms the Transaction, or it can be voided, freeing up their associated value. 
+
+### List Card Transactions [GET /cards/{cardId}/transactions]
++ Parameters
+    + cardId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    + Attributes
+        + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
+        + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
+    
++ Response 200
+    + Attributes
+        + transactions (array[Transaction])
+
+    + Body
+    
+                {
+                    "transactions":[
+                    {
+                        "transactionId": "transaction-93ab4555d2c44b48b0d7c11877d7e7ce",
+                        "value": -50,
+                        "userSuppliedId": "gift_card_2-inactive",
+                        "dateCreated": "2017-06-02T21:19:03.110+0000",
+                        "transactionType": "INACTIVATE",
+                        "transactionAccessMethod": "CARDID",
+                        "valueAvailableAfterTransaction": 0,
+                        "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                        "codeLastFour": "95Q7",
+                        "cardId": "card-62029938e3394c629b2cec33b2bd280c",
+                        "currency": "XXX"
+                    },
+                    {
+                        "transactionId": "transaction-c5b2ac21d2c946b5bfd17f2ea9bcf6e6",
+                        "value": 50,
+                        "userSuppliedId": "gift_card_2",
+                        "dateCreated": "2017-06-02T21:19:03.088+0000",
+                        "transactionType": "INITIAL_VALUE",
+                        "transactionAccessMethod": "CARDID",
+                        "valueAvailableAfterTransaction": 50,
+                        "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                        "codeLastFour": "95Q7",
+                        "cardId": "card-62029938e3394c629b2cec33b2bd280c",
+                        "currency": "XXX"
+                    }
+                    ],
+                    "pagination":{
+                        "count": 2,
+                        "limit": 100,
+                        "maxLimit": 1000,
+                        "offset": 0,
+                        "totalCount": 2
+                    }
+                }
+
+### Show Transaction [GET /cards/{cardId}/transactions/{transactionId}]
++ Parameters
+    + cardId (string, required)
+    + transactionId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+    + Body
+
+            {
+                transaction":{
+                "transactionId": "transaction-93ab4555d2c44b48b0d7c11877d7e7ce",
+                "value": -50,
+                "userSuppliedId": "gift_card_2-inactive",
+                "dateCreated": "2017-06-02T21:19:03.110+0000",
+                "transactionType": "INACTIVATE",
+                "transactionAccessMethod": "CARDID",
+                "valueAvailableAfterTransaction": 0,
+                "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                "codeLastFour": "95Q7",
+                "cardId": "card-62029938e3394c629b2cec33b2bd280c",
+                "currency": "XXX"
+                }          
+            }
+
+### Create Transaction [POST /cards/{cardId}/transactions]
++ Parameters
+    + cardId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    + Attributes
+        + value (number, required) 
+        + currency (required) - The 3 character ISO-4217 currency code.  
+        + metadata (Metadata, optional)
+        + pending (boolean, optional) - If `true`, the required value will be locked, however in order to complete the transaction the pending transaction must be captured.
+        
+    + Body 
+    
+            {
+                  "userSuppliedId": "tx123",
+                  "currency": "USD",
+                  "value":-5
+            }
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+    + Body
+
+            {
+                "transaction":{
+                "transactionId": "transaction-5399fd535a1e4740aa3509547f78fa4d",
+                "value": 5,
+                "userSuppliedId": "tx123",
+                "dateCreated": "2017-06-02T22:46:04.269+0000",
+                "transactionType": "FUND",
+                "transactionAccessMethod": "CARDID",
+                "valueAvailableAfterTransaction": 5,
+                "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                "codeLastFour": "4JFC",
+                "cardId": "card-dd9f6a2cf32441859a1215e09fe3a984",
+                "currency": "USD"
+                }
+            }
+
+### Capture Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/capture]
++ Parameters
+    + cardId (string, required)
+    + transactionId (string, required) - Must be a pending Transaction.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+    + Body
+
+            {
+                transaction":{
+                    "transactionId": "transaction-d47cc836d3374ffa97bb1d567b7cb3ae",
+                    "value": -5,
+                    "userSuppliedId": "transaction-2ea0cd741b3c47c095bd7733f2b58a72-capture",
+                    "dateCreated": "2017-06-05T15:29:16.012+0000",
+                    "transactionType": "DRAWDOWN",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 0,
+                    "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                    "codeLastFour": "4JFC",
+                    "cardId": "card-dd9f6a2cf32441859a1215e09fe3a984",
+                    "currency": "USD",
+                    "metadata":{
+                        "giftbit_initial_transaction_id": "transaction-2ea0cd741b3c47c095bd7733f2b58a72"
+                    }
+                }
+            }
+
+### Void Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/void]
++ Parameters
+    + cardId (string, required)
+    + transactionId (string, required) - Must be a pending Transaction.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+        
+    + Body
+
+            {
+                "transaction":{
+                    "transactionId": "transaction-6dee56c48fad450c86701a8df4fa0224",
+                    "value": 55,
+                    "userSuppliedId": "transaction-8022ae1192c54dd381be73bdeb6c1821-reverse",
+                    "dateCreated": "2017-06-05T15:35:09.345+0000",
+                    "transactionType": "PENDING_VOID",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 500,
+                    "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                    "codeLastFour": "4JFC",
+                    "cardId": "card-dd9f6a2cf32441859a1215e09fe3a984",
+                    "currency": "USD",
+                    "metadata":{
+                        "giftbit_initial_transaction_id": "transaction-8022ae1192c54dd381be73bdeb6c1821"
+                    }
+                }
+            }
+
+### Refund Transaction [POST /cards/{cardId}/transactions/{transactionId}/refund]
+
++ Parameters
+    + cardId (string, required)
+    + transactionId (string, required) - Must be a Transaction with transactionType `DRAWDOWN`.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+        
+    + Body
+
+            {
+                "transaction":{
+                    "transactionId": "transaction-6095a1ed424e4830bb4222700553932b",
+                    "value": 1,
+                    "userSuppliedId": "transaction-c18f96a812ce4972b6c41d13979f2e36-reverse",
+                    "dateCreated": "2017-06-05T17:56:28.239+0000",
+                    "transactionType": "DRAWDOWN_REFUND",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 4,
+                    "giftbitUserId": "user-8c999f89a3874e43863d1b037b3459d9-TEST",
+                    "codeLastFour": "WXE2",
+                    "cardId": "card-844072e5247a4980b3a511c7db36cca0",
+                    "currency": "USD",
+                    "metadata":{
+                        "giftbit_initial_transaction_id": "transaction-c18f96a812ce4972b6c41d13979f2e36"
+                    }
+                }
+            }
+
+## Codes [/codes/{fullcode}/transactions]
+
+### List Transactions [GET /codes/{fullcode}/transactions]
++ Parameters
+    + fullcode (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Attributes
+        + transactions (array[Transaction])
+
+    + Body
+
+            {
+                "transactions":[
+                {
+                "transactionId": "transaction-3ec8ad2afea14c04906159ee8f1ad735",
+                "value": -50,
+                "userSuppliedId": "gift_card_4-inactive",
+                "dateCreated": "2017-06-05T15:39:25.411+0000",
+                "transactionType": "INACTIVATE",
+                "transactionAccessMethod": "CARDID",
+                "valueAvailableAfterTransaction": 0,
+                "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                "codeLastFour": "S9X5",
+                "cardId": "card-9991e39b4526401f85a889cb20b1a465",
+                "currency": "XXX"
+                },
+                {
+                "transactionId": "transaction-8d8522890156451e9ddac45e96167f04",
+                "value": 50,
+                "userSuppliedId": "gift_card_4",
+                "dateCreated": "2017-06-05T15:39:25.395+0000",
+                "transactionType": "INITIAL_VALUE",
+                "transactionAccessMethod": "CARDID",
+                "valueAvailableAfterTransaction": 50,
+                "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                "codeLastFour": "S9X5",
+                "cardId": "card-9991e39b4526401f85a889cb20b1a465",
+                "currency": "XXX"
+                }
                 ],
                 "pagination":{
-                    "count": 2,
-                    "limit": 100,
-                    "maxLimit": 1000,
-                    "offset": 0,
-                    "totalCount": 2
+                "count": 2,
+                "limit": 100,
+                "maxLimit": 1000,
+                "offset": 0,
+                "totalCount": 2
                 }
             }
-    
-### Retrieve a single Transaction for a Code using the transactionId [GET /codes/{fullcode}/transactions/{transactionId}]
 
-Retrieve a Transaction for a Code given the fullcode and the transactionId.
+### Show Transaction [GET /codes/{fullcode}/transactions/{transactionId}]
++ Parameters
+    + fullcode (string, required)
+    + transactionId (string, required)
 
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
 + Response 200
-    + Attributes 
-        + transaction(TransactionResponse)
+    + Attributes
+        + transaction (Transaction)
+        
+    + Body 
     
+            {
+                transaction":{
+                    "transactionId": "transaction-3ec8ad2afea14c04906159ee8f1ad735",
+                    "value": -50,
+                    "userSuppliedId": "gift_card_4-inactive",
+                    "dateCreated": "2017-06-05T15:39:25.411+0000",
+                    "transactionType": "INACTIVATE",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 0,
+                    "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                    "codeLastFour": "S9X5",
+                    "cardId": "card-9991e39b4526401f85a889cb20b1a465",
+                    "currency": "XXX"
+                }
+            }
+
+### Create Transaction [POST /codes/{fullcode}/transactions]
++ Parameters
+    + fullcode (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    + Attributes
+        + value (number, required) 
+        + currency (required) - The 3 character ISO-4217 currency code.  
+        + metadata (Metadata, optional)
+        + pending (boolean, optional) - If `true`, the required value will be locked, however in order to complete the transaction the pending transaction must be captured.
+        
+    + Body 
+    
+            {
+                  "userSuppliedId": "tx123",
+                  "currency": "USD",
+                  "value":-5
+            }
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
     + Body
-    
+
             {
                 "transaction":{
-                    "userSuppliedId": "12345678",
-                    "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                    "value": -165,
-                    "dateCreated": "2016-08-10T08:00:00.000+0000",
-                    "valueAvailableAfterTransaction": 4835
-                    }
+                "transactionId": "transaction-5399fd535a1e4740aa3509547f78fa4d",
+                "value": 5,
+                "userSuppliedId": "tx123",
+                "dateCreated": "2017-06-02T22:46:04.269+0000",
+                "transactionType": "FUND",
+                "transactionAccessMethod": "CARDID",
+                "valueAvailableAfterTransaction": 5,
+                "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                "codeLastFour": "4JFC",
+                "cardId": "card-dd9f6a2cf32441859a1215e09fe3a984",
+                "currency": "USD"
                 }
             }
 
-### Retrieve a single Transaction for a Code using the userSuppliedId [GET /codes/{fullcode}/transactions?userSuppliedId={userSuppliedId}]
 
-Retrieve a Transaction for a Code given the fullcode and the userSuppliedId.
+## ValueStores: Managing Promotions [/cards/{cardId}/valueStores/]
+
+### List ValueStores [GET /cards/{cardId}/valueStores]
++ Parameters
+    + cardId (string, required)
 
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
 + Response 200
-    + Attributes 
-        + transaction(TransactionResponse)
+    + Attributes
+        + valueStores (array[ValueStore])
 
     + Body
+
+            {
+                "valueStores":[
+                {
+                    "cardId": "card-9991e39b4526401f85a889cb20b1a465",
+                    "valueStoreId": "value-0ff47ca176eb4708b08a8bb010584704",
+                    "valueStoreType": "PRINCIPAL",
+                    "currency": "XXX",
+                    "dateCreated": "2017-06-05T15:39:25.392+0000",
+                    "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72"
+                }
+                ],
+                "pagination":{
+                "count": 1,
+                "limit": 100,
+                "maxLimit": 1000,
+                "offset": 0,
+                "totalCount": 1
+                }          
+            }
+
+### Show ValueStore [GET /cards/{cardId}/valueStores/{valueStoreId}]
++ Parameters
+    + cardId (string, required)
+    + valueStoreId (string, required)
+
++ Request (application/json)
+    + Headers
     
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    
++ Response 200
+    + valueStore (ValueStore)
+
+    + Body
+
+            {
+                "valueStore":{
+                    "cardId": "card-9991e39b4526401f85a889cb20b1a465",
+                    "valueStoreId": "value-0ff47ca176eb4708b08a8bb010584704",
+                    "valueStoreType": "PRINCIPAL",
+                    "currency": "XXX",
+                    "dateCreated": "2017-06-05T15:39:25.392+0000",
+                    "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72"
+                }
+            }
+
+### Create ValueStore [POST /cards/{cardId}/valueStores]
++ Parameters
+    + cardId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    + Attributes
+        + userSuppliedId (string, required)
+        + currency (string, required) - The 3 character ISO-4217 currency.
+        + programId (string, required) - The unique id of the Promotion Program.
+        + expires (string, optional) - Defaults to lifespan set by program.
+        + startDate (string, optional) - The date for which the ValueStore will become useable.
+        + initialValue (number, optional) 
+        + metadata (Metadata, optional)
+        
+    + Body 
+    
+            {
+            "userSuppliedId":"promo1",
+            "currency": "XXX",
+            "programId":"program-d0c6328cacde469ba3b28105e9d89c04",
+            "initialValue":150
+            }
+    
++ Response 200
+    + Attributes
+        + valueStore (ValueStore)
+
+    + Body
+
+            {
+                "valueStore":{
+                    "cardId": "card-9991e39b4526401f85a889cb20b1a465",
+                    "valueStoreId": "value-806116e736854136867d17fbfb959382",
+                    "valueStoreType": "ATTACHED",
+                    "currency": "XXX",
+                    "dateCreated": "2017-06-05T16:14:58.314+0000",
+                    "programId": "program-d0c6328cacde469ba3b28105e9d89c04",
+                    "expires": "2017-06-13T06:59:59.000+0000"
+                }   
+            }
+
+### Activate ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/actiave]
++ Parameters
+    + cardId (string, required)
+    + valueStoreId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    + Attributes
+        + userSuppliedId (string, required)
+        
+    + Body 
+    
+            {
+                "userSuppliedId":"activateValueStore-1"
+            }
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+    + Body
+
             {
                 "transaction":{
-                    "userSuppliedId": "12345678",
-                    "transactionId":"transaction-d7yc1b55-6de6-49e5-82d5-fd37edb5f8ea",
-                    "value": -165,
-                    "dateCreated": "2016-08-10T08:00:00.000+0000",
-                    "valueAvailableAfterTransaction": 4835
-                    }
+                    "transactionId": "transaction-b0bfc060af384962bcb19b85f55906eb",
+                    "value": 50,
+                    "userSuppliedId": "activateValueStore-1",
+                    "dateCreated": "2017-06-05T16:34:55.210+0000",
+                    "transactionType": "ACTIVATE",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 50,
+                    "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                    "codeLastFour": "NKNA",
+                    "cardId": "card-fb8e53946e784280a2bc8273dcbb0fda",
+                    "currency": "XXX"
                 }
             }
-            
-            
-## Programs [/programs/{programId}]
 
-The _/programs_ endpoint can be used to retrieve the details of your Programs. 
-As an integrator this endpoint can be used to view the details of the Programs you have access to.
-
-### Retrieve by programId [GET /programs/{programId}]
-
-Retrieve Program details by the `programId`.
+### Freeze ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/freeze]
++ Parameters
+    + cardId (string, required)
+    + valueStoreId (string, required)
 
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
-+ Parameter
-    + programId (string, required) - The `programId` of the Program you want to retrieve.
-            
-+ Response 200
-
-    + Body
+    + Attributes
+        + userSuppliedId (string, required)
+        
+    + Body 
     
             {
-               "program":{
-                  "programId":"program-3c582fbbf3b34031a5894e4f2c2bfcc6",
-                  "userSuppliedId":"5dcc0933-72d18da0-767a497b",
-                  "name":"My Program!",
-                  "active":true,
-                  "currency":"USD",
-                  "dateCreated":"2017-01-05T23:53:35.000+0000",
-                  "programExpiresDate":null,
-                  "programStartDate":"2017-01-05T23:52:57.000+0000",
-                  "codeActivePeriodInDays":30,
-                  "codeValueMin":100,
-                  "codeValueMax":1000000,
-                  "fixedCodeValues":null,
-                  "metadata":{
-                     "giftbit_description":""
-                  }
-               }
+                "userSuppliedId":"freeze-valuestore-1"
             }
-            
-            
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+
+    + Body
+
+            {
+                "transaction":{
+                    "transactionId": "transaction-3f96b36c9b2845e2b3e61e3d74d955e1",
+                    "value": -50,
+                    "userSuppliedId": "freeze-valueStore-1",
+                    "dateCreated": "2017-06-05T16:36:56.321+0000",
+                    "transactionType": "FREEZE",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 0,
+                    "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                    "codeLastFour": "NKNA",
+                    "cardId": "card-fb8e53946e784280a2bc8273dcbb0fda",
+                    "currency": "XXX"
+                }
+            }
+
+### Unfreeze ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/unfreeze]
++ Parameters
+    + cardId (string, required)
+    + valueStoreId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    + Attributes
+        + userSuppliedId (string, required)
+        
+    + Body 
+    
+            {
+                "userSuppliedId":"unfreeze-valuestore-1"
+            }
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+    + Body
+
+            {
+                "transaction":{
+                "transactionId": "transaction-f7726f6b6d52412980544ee217894c82",
+                "value": 50,
+                "userSuppliedId": "unfreeze-valueStore-1",
+                "dateCreated": "2017-06-05T16:37:57.218+0000",
+                "transactionType": "UNFREEZE",
+                "transactionAccessMethod": "CARDID",
+                "valueAvailableAfterTransaction": 50,
+                "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                "codeLastFour": "NKNA",
+                "cardId": "card-fb8e53946e784280a2bc8273dcbb0fda",
+                "currency": "XXX"
+                }
+            }
+
+### Cancel ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/cancel]
++ Parameters
+    + cardId (string, required)
+    + valueStoreId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+
+    + Attributes
+        + userSuppliedId (string, required)
+        
+    + Body 
+    
+            {
+                "userSuppliedId":"cancel-valuestore-1"
+            }
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+    + Body
+
+            {
+                "transaction":{
+                "transactionId": "transaction-7f9c5dea0be24f57a902568a23a11c89",
+                "value": -50,
+                "userSuppliedId": "cancel-valueStore-1",
+                "dateCreated": "2017-06-05T16:39:06.679+0000",
+                "transactionType": "CANCELLATION",
+                "transactionAccessMethod": "CARDID",
+                "valueAvailableAfterTransaction": 0,
+                "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
+                "codeLastFour": "NKNA",
+                "cardId": "card-fb8e53946e784280a2bc8273dcbb0fda",
+                "currency": "XXX"
+                }
+            }
+
+## Balances [/cards/{cardId}/balance/]
+
+### Get Balance by cardId [GET /cards/{cardId}/balance]
++ Parameters
+    + cardId (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Attributes (Balance)
+
+    + Body
+
+            {
+                "balance":{
+                "principal":{
+                "currentValue": 150,
+                "state": "ACTIVE",
+                "expires": null,
+                "startDate": null,
+                "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72",
+                "valueStoreId": "value-18638d4486ad4feaab125a61f5df3079"
+                },
+                "attached":[
+                ],
+                "currency": "USD",
+                "cardType":"GIFT_CARD",
+                "balanceDate": "2017-06-05T17:11:36.999+0000"
+                }
+            }
+
+### Get Balance by fullcode [GET /codes/{fullcode}/card/balance]
++ Parameters
+    + fullcode (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Attributes (Balance)
+
+    + Body
+
+            {
+                "balance":{
+                "principal":{
+                "currentValue": 150,
+                "state": "ACTIVE",
+                "expires": null,
+                "startDate": null,
+                "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72",
+                "valueStoreId": "value-18638d4486ad4feaab125a61f5df3079"
+                },
+                "attached":[
+                ],
+                "currency": "USD",
+                "cardType":"GIFT_CARD",
+                "balanceDate": "2017-06-05T17:11:36.999+0000"
+                }
+            }
+
+### Get Balance by fullcode (Deprecated) [GET /codes/{fullcode}/balance]
+Note, this endpoint is deprecated and should no longer be used. 
++ Parameters
+    + fullcode (string, required)
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Body
+
+            {
+                balance":{
+                "currentValue": 150,
+                "fundedValue": 0,
+                "drawdownValue": 0,
+                "cancellationValue": 0,
+                "initialValue": 150,
+                "frozenValue": 0,
+                "inactiveValue": 0,
+                "pendingValue": 0,
+                "currency": "USD"
+                }
+            }
+
+## Categories [/categories/]
+
+### List Categories [GET /categories]
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Attributes
+        + categories (array[Category])
+
+    + Body
+
+            {
+                "categories":[
+                {
+                "categoryId": "category-46f7808dffa54c8ba0da83d448ead415",
+                "key": "giftbit_program",
+                "value": "program-dedccd921d074f1eb6c0f75fc5ebee72"
+                },
+                {
+                "categoryId": "category-da55afb0c007420e9417e38bc47ca8d9",
+                "key": "giftbit_order",
+                "value": "2017-06-05"
+                }
+                ],
+                "pagination":{
+                "count": 2,
+                "limit": 100,
+                "maxLimit": 1000,
+                "offset": 0,
+                "totalCount": 2
+                }
+            }
+
+### List Categories on Card [GET /cards/{cardId}/categories]
++ Parameters
+    + cardId (string, required)
+    
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Attributes
+        + categories (array[Category])
+
+    + Body
+
+            {
+                "categories":[
+                    {
+                    "categoryId": "category-46f7808dffa54c8ba0da83d448ead415",
+                    "key": "giftbit_program",
+                    "value": "program-dedccd921d074f1eb6c0f75fc5ebee72"
+                    },
+                    {
+                    "categoryId": "category-da55afb0c007420e9417e38bc47ca8d9",
+                    "key": "giftbit_order",
+                    "value": "2017-06-05"
+                    }
+            }
+
+## Programs [/programs/]
+
 ### List Programs [GET /programs]
-
-Used to list Program details. This endpoint can be used to lookup a `programId` rather than copying it from within your Lightrail account.
-
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
-            
+    
 + Response 200
 
     + Body
-    
+
             {
-               "programs":[
-                  {
-                     "program":{
-                        "programId":"program-3c582fbbf3b34031a5894e4f2c2bfcc6",
-                        "userSuppliedId":"5dcc0933-72d18da0-767a497b",
-                        "name":"My Program!",
-                        "active":true,
-                        "currency":"USD",
-                        "dateCreated":"2017-01-05T23:53:35.000+0000",
-                        "programExpiresDate":null,
-                        "programStartDate":"2017-01-05T23:52:57.000+0000",
-                        "codeActivePeriodInDays":30,
-                        "codeValueMin":100,
-                        "codeValueMax":1000000,
-                        "fixedCodeValues":null,
-                        "metadata":null
-                     }
-                  },
-                  {
-                     "program":{
-                        "programId":"program-58510e126d084b6ba645c500ac6e8d81",
-                        "userSuppliedId":"5b218ea7-57e5a730-64a1d258",
-                        "name":"My Program!",
-                        "active":true,
-                        "currency":"CAD",
-                        "dateCreated":"2016-10-05T23:53:35.000+0000",
-                        "programExpiresDate":null,
-                        "programStartDate":"2016-10-05T23:53:35.000+0000",
-                        "codeActivePeriodInDays":365,
-                        "codeValueMin":100,
-                        "codeValueMax":50000,
-                        "fixedCodeValues":null,
-                        "metadata":null
-                     }
-                  }
-               ],
-               "pagination":{
-                  "count":2,
-                  "limit":100,
-                  "maxLimit":1000,
-                  "offset":0,
-                  "totalCount":2
-               }
+                "programs":[
+                {
+                "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72",
+                "userSuppliedId": "568fa33b-5cb34b3c-5c2bccf2",
+                "name": "Gift Card Program 2017",
+                "active": true,
+                "currency": "USD",
+                "dateCreated": "2017-06-05T17:09:10.000+0000",
+                "programExpiresDate": null,
+                "programStartDate": "2017-06-05T15:51:35.000+0000",
+                "codeActivePeriodInDays": null,
+                "codeValueMin": 100,
+                "codeValueMax": 50000,
+                "fixedCodeValues": null,
+                "codeEngine": "SIMPLE_STORED_VALUE",
+                "codeConfig": "GFBT",
+                "valueStoreType": "PRINCIPAL",
+                "metadata": null,
+                "timeZone": "PST",
+                "cardType": null
+                },
+                {
+                "programId": "program-d0c6328cacde469ba3b28105e9d89c04",
+                "userSuppliedId": "527650f4-6b903ce9-4c792cf6",
+                "name": "Spring Promotion 2017",
+                "active": true,
+                "currency": "XXX",
+                "dateCreated": "2017-06-05T16:14:46.000+0000",
+                "programExpiresDate": null,
+                "programStartDate": "2017-06-05T15:51:35.000+0000",
+                "codeActivePeriodInDays": 7,
+                "codeValueMin": 1,
+                "codeValueMax": 5000,
+                "fixedCodeValues": null,
+                "codeEngine": "SIMPLE_STORED_VALUE",
+                "codeConfig": "GFBT",
+                "valueStoreType": "ATTACHED",
+                "metadata": null,
+                "timeZone": "PST",
+                "cardType": null
+                }
+                ],
+                "pagination":{
+                "count": 2,
+                "limit": 100,
+                "maxLimit": 1000,
+                "offset": 0,
+                "totalCount": 2
+                }
             }
-            
-            
-            
+
 # Data Structures
+
+## IdempotentObject (object)
++ userSuppliedId (string, required) - The unique identifier provided when this call was made. 
+
+## Card (object)
++ cardId (string) 
++ userSuppliedId (string) 
++ contactId (string) 
++ dateCreated (string) - Lightrail system time of the creation in ISO-8601 format.
++ categories (Category) 
++ cardType (string) - `ACCOUNT_CARD`, `GIFT_CARD`.
+
+## ValueStore (object)
++ cardId (string)
++ valueStoreId (string)
++ valueStoreType (string) - `PRINCIPAL`, `ATTACHED`
++ currency (string) - The 3 character ISO-4217 currency.
++ dateCreated (string) - Lightrail system time of the creation in ISO-8601 format.
++ programId (string)
++ expires (string)
++ startDate (string, optional) - The date for which the ValueStore will become useable.
+
+## Fullcode (object)
++ code (string, required)
++ pin (string, optional)
+
+## Transaction (object)
++ transactionId (string)
++ value (number)
++ userSuppliedId (string)
++ dateCreated (string) - Lightrail system time of the creation in ISO-8601 format.
++ transactionType (string) - `DRAWDOWN, FUND, INITIAL_VALUE, CANCELLATION, INACTIVATE, ACTIVATE, FREEZE, UNFREEZE, PENDING_CREATE, PENDING_VOID, PENDING_CAPTURE, DRAWDOWN_REFUND`.
++ transactionAccessMethod (string)
++ valueAvailableAfterTransaction (string)
++ giftbitUserId (string)
++ codeLastFour (string, optional) - Only present for Card with cardType `GIFT_CARD`.
++ cardId (string)
++ currency (string) - The 3 character ISO-4217 currency.
++ metadata (object) - A collection of key/value pairs of additional information about the transaction. The `giftbit_*` namespace for keys is reserved.
 
 ## Pagination (object)
 + limit (number, optional) - The maximum number of results to return at once. Default 100.
 + offset (number, optional) - The offset of the first results in the total results. Default 0.
-
-## PaginationResponse (Pagination) ]
-+ count (number, required)
-+ limit  (number, required)
-+ maxLimit  (number, required)
-+ offset  (number, required)
-+ totalCount  (number, required)
-
-## IdempotentObject (object)
-+ userSuppliedId (string, required) - The unique identifier provided when this call was made. 
 
 ## Code (object)
 + currency (string, required) - The 3 character ISO-4217 currency.
@@ -1369,70 +1849,25 @@ Used to list Program details. This endpoint can be used to lookup a `programId` 
 + metadata (object) - A collection of key/value pairs of additional information about the code. 
   The `giftbit_*` namespace for keys is reserved. 
 
-## CodeResponse (Code)
-+ codeLast4 (string) - The last 4 characters of the Code.
-+ dateCreated (string) - The Lightrail system time of the creation in ISO-8601 format.
-+ expires (string) - The code's expiry date and time.  This field will be ommitted 
-  if the code was not created with an expiry.  ISO-8601 format.
+## ValueStoreBalance (object)
++ currentValue (number)
++ state (string) - `CANCELLED`, `EXPIRED`, `FROZEN`, `INACTIVE`, `ACTIVE`
++ expires (string, optional)
++ startDate (string, optional) - The date for which the ValueStore will become useable.
++ programId (string)
++ valueStoreId (string)
 
-## CodeRequest
-+ initialValue (number) - the starting value of the code, in the smallest currency unit (such as cents).
-+ startDate (string) - The code's optional start date and time.  ISO-8601 format.
-+ programId (string) - The id of the Program for which the code will be created from.
-
-## Card (IdempotentObject)
-
-## CardRequest (Card)
-+ userSuppliedId (string, required)
-+ code (CodeRequest, required)
-+ categories (Category)
-+ contactId (string) - Lightrail's unique identifier for the Contact. Note, the Contact must be created before the request to create the card.
-
-## CardResponse (Card)
-+ cardId (string, required) - Lightrail's unique identifier for this Card. Be sure to persist this 
-  value for future operations.
-+ userSuppliedId (string, required) - The userSuppliedId provided at Card creation.
-+ contactId (string)
-+ dateCreated (string, required) - The Lightrail system time of the creation in ISO-8601 format.
-+ categories (object) - The Categories associated with this Card. 
-
-## Transaction (IdempotentObject)
-+ value (number, required) - The amount of the transaction in the smallest currency unit (such as cents). 
-  A transaction cannot reduce the code balance below 0
-+ currency  (string, required) The 3 character ISO-4217 currency code.  The supplied currency must match 
-  the currency of code when it was created.
-+ metadata (object) - A collection of key/value pairs of additional information about the transaction. 
-  The `giftbit_*` namespace for keys is reserved.
-
-## TransactionRequest (Transaction) 
-
-## TransactionResponse (Transaction) 
-+ dateCreated(string, required) - Lightrail system time of the creation of the transaction. ISO-8601 format.
-+ valueAvailableAfterTransaction(number, required) - The remaining balance of the `Code` as a result of 
-  the transaction in the smallest currency unit (such as cents).
+## Balance (object)
++ principal (ValueStoreBalance)
++ attached (array[ValueStoreBalance])
++ currency (string) - The 3 character ISO-4217 currency.
++ cardType (string) - `ACCOUNT_CARD`, `GIFT_CARD`.
++ balanceDate (string) - The time the balance was checked.
 
 ## Category (object)
 + categoryKey (string) - The key of the category. Examples: "giftbit_order", "city"
 + categoryValue (string) - The value of the category. Examples: "My Order", "san francisco"
 
-## CategoryResponse (object)
-+ categoryId (string) - Lightrail's unique identifier for this Category
-+ key (string) - The key of the category.
-+ value (string) - The value of the category.
-
-## BalanceResponse (object)
-+ currentValue (number) - The current balance of the Code.
-
-## Healthcheck (object)
-+ username (string) - The email address associated with the credentials provided.
-+ servertime (string) - The current time on the server (ISO 8601 format).
-+ mode (string) - String indicating whether the credentials provided are for TEST or LIVE mode.
-
-## ContactRequest (object)
-+ userSuppliedId (string, required) - This must be unique.
-+ email (string) - Optional.
-+ firstName (string) - Optional.
-+ lastName (string) - Optional.
 
 ## Contact (object)
 + contactId (string, required) - Lightrail's unique identifier for this Contact. Be sure to persist this value for future operations.
@@ -1441,3 +1876,6 @@ Used to list Program details. This endpoint can be used to lookup a `programId` 
 + email (string) - The provided email, if applicable.
 + firstName (string) - The provided firstName, if applicable.
 + lastName (string) - The provided lastName, if applicable.
+
+## Metadata (object)
++ A collection of key/value pairs of additional information about the transaction. The `giftbit_*` namespace for keys is reserved.
