@@ -99,7 +99,7 @@ You may create Gift Card Programs within the <a href="https://www.lightrail.com/
 Gift Card Programs are also used to structure and organize related Gift Cards, and also improve tracking of activity within your account. 
 
 Gift Card Programs also provide the flexibility to add integrators. Adding integrators allows you to lend permission so another party can create and issue Gift Cards from your Gift Card Program. 
-For more information on this functionality, please contact `hello@giftbit.com`.
+For more information on this functionality, please contact hello@lightrail.com.
 
 #### Common Requests in Gift Card Integration
 
@@ -140,7 +140,7 @@ This will remove an unnecessary lookup each time you want to update a customer's
 
 If this use case fits your need for points, a great way to reward your customers is offer them gift cards from top brands through <a href="https://www.giftbit.com" target="_blank">Giftbit’s Rewards API.</a>
 
-## Supercharge your Branded Currency: Promotions
+## Create and Attach Promotions
 
 In addition to the many capabilities Lightrail provides out of the box, Lightrail gives you the ability to attach Promotions to Cards, allowing you to incentivize and motivate your users or recipients. 
 Promotions work by adding temporary value to your cards with special redemption rules. 
@@ -386,7 +386,7 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
         + cardType (string, required) - ACCOUNT_CARD
         + currency (string, required) - The 3 character ISO-4217 currency.
         + initialValue (number, optional) - If not provided, will default to 0.
-        + categories (Category)  
+        + categories (object, optional) - An object of key-value pairs. For example: `'categories': {'city':'Seattle', 'country':'USA'}`.
         + contactId (string, required) - Note, the Contact must be created before the request to create the card.
         + expires (string, optional) - Defaults to never expires.
         + startDate (string, optional) - The date for which the associated ValueStore will become useable.
@@ -397,7 +397,11 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
                 "userSuppliedId": "accountcard-2",
                 "cardType": "ACCOUNT_CARD",
                 "contactId": "contact-babda3a527914929b2fb7b987b7d4dad",
-                "currency": "USD"
+                "currency": "USD",
+                "categories": {
+                  "city":"Seattle",
+                  "country":"USA"
+                }
             }
         
 + Response 200
@@ -422,6 +426,16 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
                     "categoryId": "category-5524e3037d7142d79de040b2795b42cb",
                     "key": "giftbit_program",
                     "value": "program-account-USD-user-5022fccf827647ee9cfb63b779d62193"
+                  },
+                  {
+                    "categoryId": "category-34ae33434d7142d79de040b27945sedg",
+                    "key": "city",
+                    "value": "Seattle"
+                  },
+                  {
+                    "categoryId": "category-45376834f45d5e6f7e040b2795b426rd",
+                    "key": "country",
+                    "value": "USA"
                   }
                 ],
                 "cardType": "ACCOUNT_CARD",
@@ -442,8 +456,8 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
         + initialValue (number, optional) - If not provided, will default to 0.
         + currency (string) - The 3 character ISO-4217 currency.
         + programId (string, required)
-        + categories (Category)  
-        + contactId (string, required) - Note, the Contact must be created before the request to create the card.
+        + categories (object, optional) - An object of key-value pairs. For example: `'categories': {'city':'Seattle', 'country':'USA'}`.
+        + contactId (string, optional) - Note, the Contact must be created before the request to create the card.
         + expires (string, optional) - Defaults to never expires.
         + startDate (string, optional) - The date for which the ValueStore will become useable.
         + inactive (boolean, optional) - If `true` the Card's `PRINCIPAL` ValueStore will have an `INACTIVE` balance.
@@ -454,7 +468,11 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
                 "userSuppliedId": "giftcard-1",
                 "cardType": "GIFT_CARD",
                 "programId": "program-3298ee1b076a47efb2b3a987a1008afc",
-                "initialValue": 500
+                "initialValue": 500,
+                "categories": {
+                  "city":"Seattle",
+                  "country":"USA"
+                }
             }
         
 + Response 200
@@ -479,6 +497,16 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
                     "categoryId": "category-d0f09aa94b0843a3a530d4be3ec26b50",
                     "key": "giftbit_program",
                     "value": "program-3298ee1b076a47efb2b3a987a1008afc"
+                  },
+                  {
+                    "categoryId": "category-34ae33434d7142d79de040b27945sedg",
+                    "key": "city",
+                    "value": "Seattle"
+                  },
+                  {
+                    "categoryId": "category-45376834f45d5e6f7e040b2795b426rd",
+                    "key": "country",
+                    "value": "USA"
                   }
                 ],
                 "cardType": "GIFT_CARD",
