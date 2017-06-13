@@ -1193,9 +1193,10 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
 
 ## Codes [/codes/{fullcode}/transactions]
 
-### List Transactions [GET /codes/{fullcode}/transactions]
+### List Transactions [GET /codes/{fullcode}/transactions{?pin}]
 + Parameters
     + fullcode (string, required)
+    + pin (string, optional) - This is required if the fullcode has a pin.
 
 + Request (application/json)
     + Headers
@@ -1246,10 +1247,12 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                 }
             }
 
-### Show Transaction [GET /codes/{fullcode}/transactions/{transactionId}]
+### Show Transaction [GET /codes/{fullcode}/transactions/{transactionId}{?pin}]
 + Parameters
-    + fullcode (string, required)
     + transactionId (string, required)
+    + fullcode (string, required)
+    + pin (string, optional) - This is required if the fullcode has a pin.
+    
 
 + Request (application/json)
     + Headers
@@ -1278,9 +1281,10 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                 }
             }
 
-### Create Transaction [POST /codes/{fullcode}/transactions]
+### Create Transaction [POST /codes/{fullcode}/transactions{?pin}]
 + Parameters
     + fullcode (string, required)
+    + pin (string, optional) - This is required if the fullcode has a pin.
 
 + Request (application/json)
     + Headers
@@ -1600,10 +1604,10 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
 
 ## Balances [/cards/{cardId}/balance/]
 
-### Get Balance by cardId [GET /cards/{cardId}/balance]
+### Get Balance by cardId [GET /cards/{cardId}/balance{?asAtDate}]
 + Parameters
     + cardId (string, required)
-
+    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
 + Request (application/json)
     + Headers
     
@@ -1632,9 +1636,11 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                 }
             }
 
-### Get Balance by fullcode [GET /codes/{fullcode}/card/balance]
+### Get Balance by fullcode [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
 + Parameters
     + fullcode (string, required)
+    + pin (string, optional) - This is required if the fullcode has a pin.
+    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
 
 + Request (application/json)
     + Headers
@@ -1664,10 +1670,12 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                 }
             }
 
-### Get Balance by fullcode (Deprecated) [GET /codes/{fullcode}/balance]
+### Get Balance by fullcode (Deprecated) [GET /codes/{fullcode}/balance{?asAtDate}{?pin}]
 Note, this endpoint is deprecated and should no longer be used. 
 + Parameters
     + fullcode (string, required)
+    + pin (string, optional) - This is required if the fullcode has a pin.
+    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
 
 + Request (application/json)
     + Headers
