@@ -303,19 +303,19 @@ metadata.cart.exists(item => item.category == 'coffee' && item.size == 'medium')
 #### Buy 4 coffees
 
 ```javascript
-metadata.cart.filter(item => item.category == 'coffee').count() >= 4
+metadata.cart.filter(item => item.category == 'coffee').size() >= 4
 ```
 
 #### Buy 4 coffees and pickup in store
 
 ```javascript
-metadata.cart.filter(item => item.category == 'coffee').count() >= 4 && metadata.delivery.pickup
+metadata.cart.filter(item => item.category == 'coffee').size() >= 4 && metadata.delivery.pickup
 ```
 
 #### Buy any 4 items (of value > $1.00)
 
 ```javascript
-metadata.cart.filter(item => item.value > 100).count() >= 4
+metadata.cart.filter(item => item.value > 100).size() >= 4
 ```
 
 ### Concert tees examples
