@@ -4,7 +4,7 @@
 
 ## Evaluation
 
-Redemption rules are set for a promotion and evaluated using variables from the submitted draw down transaction.  They are single statements that evaluate to a single value, not a full script to be executed.  If the rule evaluates to `true` then the promotion can be applied to the transaction.  If the rule evaluates to `false` then the promotion cannot be applied to the transaction.
+Redemption rules are set for a promotion and evaluated using variables from the submitted drawdown transaction.  They are single statements that evaluate to a single value, not a full script to be executed.  If the rule evaluates to `true` then the promotion can be applied to the transaction.  If the rule evaluates to `false` then the promotion cannot be applied to the transaction.
 
 Here's an example of a not particularly useful redemption rule:
 
@@ -28,7 +28,7 @@ The four variables of a transaction that can be used for a rule are:
 - `currency`: a string for the ISO code of the currency of the transaction
 - `metadata`: a map of arbitrary data that can be sent with the transaction
 
-These variables are exactly as they are passed in to the REST endpoint that created the transaction.  `metadata` is by far the most useful, and gets its own section.
+These variables are exactly as they are passed into the REST endpoint that created the transaction.  `metadata` is by far the most useful, and gets its own section.
 
 ## Metadata
 
@@ -403,7 +403,7 @@ For the developer short on time and long on experience:
 
 - rules are evaluated using `value`, `currency`, `balance` and `metadata` of the transaction JSON
 - rules are evaluated to a single value which is then coerced to a boolean
-- if the final value is true the transaction can draw down on the promotion
+- if the final value is true the transaction can drawdown on the promotion
 - syntax is modeled on EcmaScript
 - types are dynamic with coercion following EcmaScript's rules
 - there is no assignment, no looping, no recursion, no null pointer exception
