@@ -65,8 +65,7 @@ The detailed logic and API calls for handling this use-case is discussed below. 
 
 The following sequence diagram summarizes these steps.
 
-![Alt text](redemption sequence diagram)
-<img src="https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/use-cases/assets/redemption-seq-diagram.svg">
+![Alt text](https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/use-cases/assets/redemption-seq-diagram.svg)
 
 ## API Endpoints
 
