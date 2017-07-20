@@ -65,7 +65,7 @@ The detailed logic and API calls for handling this use-case is discussed below. 
 
 The following sequence diagram summarizes these steps.
 
-![redemption-seq-diagram](assets/redemption-seq-diagram.svg)
+![redemption-seq-diagram](https://giftbit.github.io/Lightrail-API-Docs/use-cases/assets/redemption-seq-diagram.svg)
 
 ## API Endpoints
 
