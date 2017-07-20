@@ -118,10 +118,10 @@ Response sample:
 ```JSON
 {
     "balance": {
-        "currency" : "USD",
-        "cardType" : "GIFT_CARD",
-        "balanceDate" : "2017-07-11T00:40:52.104Z"
-        "principal" : {
+        "currency": "USD",
+        "cardType": "GIFT_CARD",
+        "balanceDate": "2017-07-11T00:40:52.104Z"
+        "principal": {
             "currentValue": 541,
             "state": "ACTIVE",
             "expires": null,
@@ -129,7 +129,7 @@ Response sample:
             "programId": "program-1d",
             "valueStoreId": "value-2f"
         },
-        "attached" : [
+        "attached": [
             {
                 "currentValue": 500,
                 "state": "ACTIVE",
@@ -166,10 +166,10 @@ Request Sample:
 ```JSON
 POST https://api.lightrail.com/v1/codes/{giftCode}/transactions
 {
-  "currency" : "USD",
-  "value" : -101
-  "pending" : true,
-  "userSuppliedId" : "072f0701-0e68-4676-9472-c24a96f88571",
+  "currency": "USD",
+  "value": -101
+  "pending": true,
+  "userSuppliedId": "072f0701-0e68-4676-9472-c24a96f88571",
 }
 ```
 
@@ -177,17 +177,17 @@ Response Sample:
 
 ```json
 {
-    "transaction" : {
-        "transactionId" : "transaction-b4",
-        "value" : -101,
-        "userSuppliedId" : "072f0701-0e68-4676-9472-c24a96f88571",
-        "dateCreated" : "2017-07-10T23:36:28.078Z",
-        "transactionType" : "PENDING_CREATE",
-        "transactionAccessMethod" : "RAWCODE",
-        "giftbitUserId" : "user-08",
-        "cardId" : "card-6d",
-        "currency" : "USD",
-        "codeLastFour" : "7KKT"
+    "transaction": {
+        "transactionId": "transaction-b4",
+        "value": -101,
+        "userSuppliedId": "072f0701-0e68-4676-9472-c24a96f88571",
+        "dateCreated": "2017-07-10T23:36:28.078Z",
+        "transactionType": "PENDING_CREATE",
+        "transactionAccessMethod": "RAWCODE",
+        "giftbitUserId": "user-08",
+        "cardId": "card-6d",
+        "currency": "USD",
+        "codeLastFour": "7KKT"
     }
 }
 ```

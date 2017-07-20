@@ -65,33 +65,8 @@ The detailed logic and API calls for handling this use-case is discussed below. 
 
 The following sequence diagram summarizes these steps.
 
-```mermaid
-sequenceDiagram
-participant YourOrderManager
-note left of YourOrderManager: determine orderBalance
-note left of YourOrderManager: grab gift code
-YourOrderManager->>Lightrail:get balance (giftCode)
-Lightrail-->>YourOrderManager:giftCodeValue
-alt giftCodeValue >= orderBalance
-YourOrderManager->>Lightrail: charge (giftCode, orderBalance)
-Lightrail-->>YourOrderManager: result
-note left of YourOrderManager: mark order as complete
-else giftCodeValue < orderBalance
-note left of YourOrderManager: determine giftCodeShare
-YourOrderManager->>Lightrail: charge(giftCode, giftCodeShare, pending=true)
-Lightrail-->> YourOrderManager :transactionId, cardId 
-YourOrderManager->>PaymentGateway: charge (orderBalance - giftCodeShare)
-PaymentGateway-->>YourOrderManager: result
-alt third-party payment successful
-YourOrderManager->>Lightrail: capture charge (cardId, transactionId)
-else third-party payment failed
-YourOrderManager->>Lightrail: void charge (cardId, transactionId)
-note left of YourOrderManager: order payment failed.
-end
-end
-```
-
-
+![Alt text](redemption sequence diagram)
+<img src="https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/use-cases/assets/redemption-seq-diagram.svg">
 
 ## API Endpoints
 
@@ -118,10 +93,10 @@ Response sample:
 ```JSON
 {
     "balance": {
-        "currency" : "USD",
-        "cardType" : "GIFT_CARD",
-        "balanceDate" : "2017-07-11T00:40:52.104Z"
-        "principal" : {
+        "currency": "USD",
+        "cardType": "GIFT_CARD",
+        "balanceDate": "2017-07-11T00:40:52.104Z"
+        "principal": {
             "currentValue": 541,
             "state": "ACTIVE",
             "expires": null,
@@ -129,7 +104,7 @@ Response sample:
             "programId": "program-1d",
             "valueStoreId": "value-2f"
         },
-        "attached" : [
+        "attached": [
             {
                 "currentValue": 500,
                 "state": "ACTIVE",
@@ -166,10 +141,10 @@ Request Sample:
 ```JSON
 POST https://api.lightrail.com/v1/codes/{giftCode}/transactions
 {
-  "currency" : "USD",
-  "value" : -101
-  "pending" : true,
-  "userSuppliedId" : "072f0701-0e68-4676-9472-c24a96f88571",
+  "currency": "USD",
+  "value": -101
+  "pending": true,
+  "userSuppliedId": "072f0701-0e68-4676-9472-c24a96f88571",
 }
 ```
 
@@ -177,17 +152,17 @@ Response Sample:
 
 ```json
 {
-    "transaction" : {
-        "transactionId" : "transaction-b4",
-        "value" : -101,
-        "userSuppliedId" : "072f0701-0e68-4676-9472-c24a96f88571",
-        "dateCreated" : "2017-07-10T23:36:28.078Z",
-        "transactionType" : "PENDING_CREATE",
-        "transactionAccessMethod" : "RAWCODE",
-        "giftbitUserId" : "user-08",
-        "cardId" : "card-6d",
-        "currency" : "USD",
-        "codeLastFour" : "7KKT"
+    "transaction": {
+        "transactionId": "transaction-b4",
+        "value": -101,
+        "userSuppliedId": "072f0701-0e68-4676-9472-c24a96f88571",
+        "dateCreated": "2017-07-10T23:36:28.078Z",
+        "transactionType": "PENDING_CREATE",
+        "transactionAccessMethod": "RAWCODE",
+        "giftbitUserId": "user-08",
+        "cardId": "card-6d",
+        "currency": "USD",
+        "codeLastFour": "7KKT"
     }
 }
 ```
