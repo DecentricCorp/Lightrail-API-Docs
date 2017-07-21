@@ -8,8 +8,7 @@ This document is a quick guide to adding gift code redemption at the order check
 
 Redemption at the checkout is perhaps the most common use-case for a gift code. After creating an order, a customer who has previously received a gift code can redeem it at the checkout so that the value of the gift code can pay for part, or all of the order balance.
 
-The common flow for this is to provide the customer with a space to enter the gift code at the checkout page, determine the value of the gift code, and adjust the order balance accordingly. If the gift code value is sufficient for covering the entire order balance, the balance is charged to the gift code and the checkout will be complete. If the gift code value is not enough, the gift code is charged with as much as it can contribute, usually its entire available value, and the remainder is paid using a third-party payment method such as a credit card.
-
+The common flow for this is to provide the customer with a space to enter the gift code at the checkout page and determine the value of the gift code. Once the order is confirmed the gift code is charged up to its full value and any remainder is paid using a third-party payment method such as a credit card.
 ### High-Level Flow
 
 Based on this, the high-level steps to implement this use-case are as follows:
@@ -19,42 +18,17 @@ Based on this, the high-level steps to implement this use-case are as follows:
 - Charge the gift code and complete the order payment if the gift code has enough value to cover the whole order.
 - Otherwise, follow an auth-capture protocol: first post a pending charge on the gift code, then attempt to charge the third-party payment method for the remainder. If the third-party payment is successful, collect the pending transaction on the gift code and complete the order payment. If the third-party payment fails, cancel the pending transaction on the gift code and declare failure for the order payment.
 
-### Common Error Cases
-
-The following situations should lead to an error:
-
-- In cases where the gift code value is not enough to pay for the entire order and there is a third-party payment method, payment failure from the third-party payment method is an error. In this case, aside from notifying the customer, you should also cancel the pending transaction on the gift code.
-- If the gift code value has a different currency than that of the order, the user should receive an error message. Note that Lightrail does not support currency exchange.
-- If the gift code value is zero or it is inactive the customer should be notified of this as an error.
-- Since some third-party payment methods have a restriction on the minimum transaction value, there is an edge case where the gift code value is too small to pay for the entire order, but also the order balance is so small that the remaining balance after taking out the gift code value will be too small for the third-party transaction. In these rare cases, the customer should be notified that the gift code value is too small for that transaction.
-
 ## Detailed Flow
 
 The detailed logic and API calls for handling this use-case are discussed below. More details for each API endpoint and sample requests/responses are provided in the next section but for a complete reference and further details, check out  [Lightrail API docs](https://www.lightrail.com/docs/).
 
 1. Determine `orderBalance` and `orderCurrency` for the order at hand and collect the `giftCode` from the customer.
 
-2. Use the [Balance API endpoint](#balance-endpoint) to determine the available value of the code (`giftCodeValue`), its `state`, and its `currency`. Prompt the user with an error if:
-   - The gift code `state` is not `ACTIVE`, 
-   - its value is zero, or
-   - its currency does not match `orderCurrency`.
+2. Use the [Balance API endpoint](#balance-endpoint) to determine the available value of the code (`giftCodeValue`).
 
 3. **If `giftCodeValue >= orderBalance`** , meaning the gift code value is enough to pay for the entire order, use the [Code Transaction API endpoint](#code-transaction-endpoint)  to charge the code with `orderBalance`. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If there is an error with this transaction, notify the customer that the checkout was not successful. 
 
-4. **If `giftCodeValue < orderBalance`**, meaning the gift code value is not enough to pay for the entire order, the gift code will pay for part of the balance (`giftCodeShare`) and the remainder (i.e. `orderBalance - giftCodeShare`) will be paid via another payment method.
-
-   Usually, `giftCodeShare` is the value of the gift code, i.e. the maximum it can pay. However, in the edge case that the remainder is too small and would not meet the minimum-transaction-value requirements of the third-party payment method, you need to adjust the split a little bit to make sure the remainder is payable by the third-party payment method. Here is a code snippet based on our [Stripe Integration](https://github.com/Giftbit/lightrail-stripe-java) for handling this logic:
-
-   ```java
-   giftCodeShare = Math.min(orderBalance, giftCodeValue);
-   int stripeShare = orderBalance - giftCodeShare;
-   if (stripeShare > 0 && stripeShare < STRIPE_MINIMUM_TRANSACTION_VALUE) {
-     int differential = STRIPE_MINIMUM_TRANSACTION_VALUE - stripeShare;
-     giftCodeShare -= differential;
-     if (giftCodeShare < 0)
-       throw new InsufficientValueException("This gift code value is too small for this transaction.");
-    }
-   ```
+4. **If `giftCodeValue < orderBalance`**, meaning the gift code value is not enough to pay for the entire order, the gift code will pay for part of the balance (`giftCodeShare`) and the remainder (i.e. `orderBalance - giftCodeShare`) will be paid via another payment method. Usually, `giftCodeShare` is the value of the gift code, i.e. the maximum it can pay.
 
    After determining the `giftCodeShare`, proceed with the following steps: 
 
@@ -66,6 +40,29 @@ The detailed logic and API calls for handling this use-case are discussed below.
 The following sequence diagram summarizes these steps.
 
 ![redemption-seq-diagram](https://giftbit.github.io/Lightrail-API-Docs/use-cases/assets/redemption-seq-diagram.svg)
+
+### Errors and Edge Cases
+
+- **Step 2:** At the time of checking the value of the gift code, read its `state`, and its `currency` from the response object and prompt the user with an error if:
+
+  - The gift code `state` is not `ACTIVE`, 
+  - its currency does not match `orderCurrency`, or
+  - its available value is zero.
+
+-  **Step 3:** For most transactions, when the gift code value is not enough to pay for the entire order, the `giftCodeShare` is its value, i.e. the maximum it can pay. However, since some third-party payment methods have a restriction on the minimum transaction value, if the remainder is too small, it will lead to a failure in the third-party payment. In the edge case that the remainder is too small and would not meet the minimum-transaction-value requirements of the third-party payment method, you need to adjust the split a little bit to make sure the remainder is payable by the third-party payment method. Here is a code snippet based on our [Stripe Integration](https://github.com/Giftbit/lightrail-stripe-java) for handling this logic:
+
+  ```PHP
+  $giftCodeShare = min($orderBalance, $giftCodeValue);
+  $stripeShare = $orderBalance - $giftCodeShare;
+  if ($stripeShare > 0 && $stripeShare < STRIPE_MINIMUM_TRANSACTION_VALUE) {
+    $differential = STRIPE_MINIMUM_TRANSACTION_VALUE - stripeShare;
+    $giftCodeShare -= $differential;
+    if ($giftCodeShare < 0)
+      throw new Exception("This gift code value is too small for this transaction");
+  }
+  ```
+
+  Note that there is a narrower edge case where the gift code value is too small to pay for the entire order, but also the order balance is so small that the remaining balance after taking out the gift code value will be too small for the third-party transaction. In these rare cases, the customer should be notified that the gift code value is too small for that transaction.
 
 ## API Endpoints
 
@@ -129,7 +126,7 @@ Response sample:
 
 This endpoint enables posting a transaction to withdraw some value from a gift code. The value should be expressed as an integer, representing the amount in the smallest unit for the currency, e.g. cents.
 
-The `userSuppliedId` is a per-endpoint unique idempotency key, i.e. client-side transaction identifier which is used to guarantee repeating a request, such as a request for a charge, will not repeat the corresponding operation if it has already been invoked once. For further details on this, see [Lightrail API docs](https://www.lightrail.com/docs/). Usually, you can generate a [Universally Unique Identifier (UUID)](https://en.wikipedia.org/wiki/Universally_unique_identifier) and use it as the `userSuppliedId`.
+The `userSuppliedId` is a per-endpoint ID, used to ensure idempotence. Ensuring idempotence means that if the same request is issued more than once, it will not result in repeated actions. In the use-case redeeming a gift code at checkout, we recommend using the unique order ID from your system. For further details on this, see [Lightrail API docs](https://www.lightrail.com/docs/). 
 
 If `pending` is set to `true` in the request body, the transaction will be considered a pre-authorized transaction, and will have to be captured or voided later. 
 
