@@ -9,7 +9,7 @@ This document is a quick guide to adding gift code redemption at the order check
 Redemption at the checkout is perhaps the most common use-case for a gift code. After creating an order, a customer who has previously received a gift code can redeem it at the checkout so that the value of the gift code can pay for part, or all of the order balance.
 
 The common flow for this is to provide the customer with a space to enter the gift code at the checkout page and determine the value of the gift code. Once the order is confirmed the gift code is charged up to its full value and any remainder is paid using a third-party payment method such as a credit card.
-### High-Level Flow
+## High-Level Flow
 
 Based on this, the high-level steps to implement this use-case are as follows:
 
@@ -22,20 +22,20 @@ Based on this, the high-level steps to implement this use-case are as follows:
 
 The detailed logic and API calls for handling this use-case are discussed below. More details for each API endpoint and sample requests/responses are provided in the next section but for a complete reference and further details, check out  [Lightrail API docs](https://www.lightrail.com/docs/).
 
-1. Determine `orderBalance` and `orderCurrency` for the order at hand and collect the `giftCode` from the customer.
+**Step 1:** Determine `orderBalance` and `orderCurrency` for the order at hand and collect the `giftCode` from the customer.
 
-2. Use the [Balance API endpoint](#balance-endpoint) to determine the available value of the code (`giftCodeValue`).
+**Step 2:** Use the [Balance API endpoint](#balance-endpoint) to determine the available value of the code (`giftCodeValue`).
 
-3. **If `giftCodeValue >= orderBalance`** , meaning the gift code value is enough to pay for the entire order, use the [Code Transaction API endpoint](#code-transaction-endpoint)  to charge the code with `orderBalance`. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If there is an error with this transaction, notify the customer that the checkout was not successful. 
+**Step 3:** If `giftCodeValue >= orderBalance` , meaning the gift code value is enough to pay for the entire order, use the [Code Transaction API endpoint](#code-transaction-endpoint)  to charge the code with `orderBalance`. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If there is an error with this transaction, notify the customer that the checkout was not successful. 
 
-4. **If `giftCodeValue < orderBalance`**, meaning the gift code value is not enough to pay for the entire order, the gift code will pay for part of the balance (`giftCodeShare`) and the remainder (i.e. `orderBalance - giftCodeShare`) will be paid via another payment method. Usually, `giftCodeShare` is the value of the gift code, i.e. the maximum it can pay.
+**Step 4:** If `giftCodeValue < orderBalance`, meaning the gift code value is not enough to pay for the entire order, the gift code will pay for part of the balance (`giftCodeShare`) and the remainder (i.e. `orderBalance - giftCodeShare`) will be paid via another payment method. Usually, `giftCodeShare` is the value of the gift code, i.e. the maximum it can pay.
 
-   After determining the `giftCodeShare`, proceed with the following steps: 
+After determining the `giftCodeShare`, proceed with the following steps: 
 
-   - Use the [Code Transaction API endpoint](#code-transaction-endpoint) to create a `pending` charge on the gift code with the value of `giftCodeShare`. Save the `transactionId` and the `cardId` from the response object.
-   - Attempt to charge the third-party payment method with the remainder of the order balance, i.e.`orderBalance - giftCodeShare`.
-   - If the the third-party payment is successful, use the [Card Transaction API endpoint](#card-transaction-endpoint) to capture the pending charge on the gift code. You need to provide the `cardId` and the original `transactionId` from the response to the pending transaction in this step.
-   - If the third-party payment fails, use the [Card Transaction API endpoint](#card-transaction-endpoint) to cancel the pending charge on the gift code.  You need to provide the `cardId` and the original `transactionId` from the response to the pending transaction in this step.
+- Use the [Code Transaction API endpoint](#code-transaction-endpoint) to create a `pending` charge on the gift code with the value of `giftCodeShare`. Save the `transactionId` and the `cardId` from the response object.
+- Attempt to charge the third-party payment method with the remainder of the order balance, i.e.`orderBalance - giftCodeShare`.
+- If the the third-party payment is successful, use the [Card Transaction API endpoint](#card-transaction-endpoint) to capture the pending charge on the gift code. You need to provide the `cardId` and the original `transactionId` from the response to the pending transaction in this step.
+- If the third-party payment fails, use the [Card Transaction API endpoint](#card-transaction-endpoint) to cancel the pending charge on the gift code.  You need to provide the `cardId` and the original `transactionId` from the response to the pending transaction in this step.
 
 The following sequence diagram summarizes these steps.
 
@@ -43,26 +43,26 @@ The following sequence diagram summarizes these steps.
 
 ### Errors and Edge Cases
 
-- **Step 2:** At the time of checking the value of the gift code, read its `state`, and its `currency` from the response object and prompt the user with an error if:
+**Step 2:**  At the time of checking the value of the gift code, read its `state`, and its `currency` from the response object and prompt the user with an error if:
 
-  - The gift code `state` is not `ACTIVE`, 
-  - its currency does not match `orderCurrency`, or
-  - its available value is zero.
+- The gift code `state` is not `ACTIVE`, 
+- its currency does not match `orderCurrency`, or
+- its available value is zero.
 
--  **Step 3:** For most transactions, when the gift code value is not enough to pay for the entire order, the `giftCodeShare` is its value, i.e. the maximum it can pay. However, since some third-party payment methods have a restriction on the minimum transaction value, if the remainder is too small, it will lead to a failure in the third-party payment. In the edge case that the remainder is too small and would not meet the minimum-transaction-value requirements of the third-party payment method, you need to adjust the split a little bit to make sure the remainder is payable by the third-party payment method. Here is a code snippet based on our [Stripe Integration](https://github.com/Giftbit/lightrail-stripe-java) for handling this logic:
+**Step 3:** For most transactions, when the gift code value is not enough to pay for the entire order, the `giftCodeShare` is its value, i.e. the maximum it can pay. However, since some third-party payment methods have a restriction on the minimum transaction value, if the remainder is too small, it will lead to a failure in the third-party payment. In the edge case that the remainder is too small and would not meet the minimum-transaction-value requirements of the third-party payment method, you need to adjust the split a little bit to make sure the remainder is payable by the third-party payment method. Here is a code snippet based on our [Stripe Integration](https://github.com/Giftbit/lightrail-stripe-java) for handling this logic:
 
-  ```PHP
-  $giftCodeShare = min($orderBalance, $giftCodeValue);
-  $stripeShare = $orderBalance - $giftCodeShare;
-  if ($stripeShare > 0 && $stripeShare < STRIPE_MINIMUM_TRANSACTION_VALUE) {
-    $differential = STRIPE_MINIMUM_TRANSACTION_VALUE - stripeShare;
-    $giftCodeShare -= $differential;
-    if ($giftCodeShare < 0)
-      throw new Exception("This gift code value is too small for this transaction");
-  }
-  ```
+```Php
+$giftCodeShare = min($orderBalance, $giftCodeValue);
+$stripeShare = $orderBalance - $giftCodeShare;
+if ($stripeShare > 0 && $stripeShare < STRIPE_MINIMUM_TRANSACTION_VALUE) {
+  $differential = STRIPE_MINIMUM_TRANSACTION_VALUE - stripeShare;
+  $giftCodeShare -= $differential;
+  if ($giftCodeShare < 0)
+    throw new Exception("The gift code value is too small for this transaction");
+}
+```
 
-  Note that there is a narrower edge case where the gift code value is too small to pay for the entire order, but also the order balance is so small that the remaining balance after taking out the gift code value will be too small for the third-party transaction. In these rare cases, the customer should be notified that the gift code value is too small for that transaction.
+Note that there is a narrower edge case where the gift code value is too small to pay for the entire order, but also the order balance is so small that the remaining balance after taking out the gift code value will be too small for the third-party transaction. In these rare cases, the customer should be notified that the gift code value is too small for that transaction.
 
 ## API Endpoints
 
@@ -71,10 +71,10 @@ The following sequence diagram summarizes these steps.
 This endpoint provides a detailed breakdown of the gift code balance, as well as its currency and state, i.e. whether it is active. Usually, the balance of the gift code is returned in its `principal` value store, but if you are using gift codes with attached promotions (e.g. temporary promotional offers), these additional values are returned in the `attached` objects in the response. In such cases, the effective value of a gift code is the available value in its `principal` value store, plus the sum of all `attached` values that are currently active. So, in order to get the effective available value of a gift code you need to use the following logic:
 
 ```Php
-giftCodeValue = balance.principal.currentValue;
-foreach (balance.attached as attachedValue) {
-  if (attachedValue.state === 'ACTIVE')
-  	giftCodeValue += attachedValue.currentValue;
+$giftCodeValue = $response['balance']['principal']['currentValue'];
+foreach ($response['balance']['attached'] as $attachedValue) {
+  if ($attachedValue['state'] === 'ACTIVE')
+  	$giftCodeValue += $attachedValue['currentValue'];
 }
 ```
 
