@@ -82,7 +82,7 @@ The high-level flow for redeeming a value from a customer's account credits is v
 
 **Step 1:** Determine `orderBalance` and `orderCurrency` for the order at hand and determine the Lightrail `contactId` corresponding to the the customer. Usually the customer must be logged in for this to be possible.
 
-**Step 2:** Use the [Card Search API endpoint](#card-search-endpoint) to retrieve the account Card `cardId` corresponding to the customer and the `orderCurrency`. 
+**Step 2:** Use the [Card Search API endpoint](#card-search-endpoint) to retrieve the account Card `cardId` corresponding to the customer and the `orderCurrency`. Note that since account credits are currency-specific, you need to find the account that corresponds to the currency of the checkout. If there are no account cards for this currency, then the customer has no account value compatible to the order in question. 
 
 **Step 3:** Use the [Card Balance API endpoint](#card-balance-endpoint) to determine the available balance of the account.
 
