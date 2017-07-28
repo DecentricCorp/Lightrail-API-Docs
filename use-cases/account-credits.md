@@ -1,21 +1,23 @@
-# Implementing Account Credits Powered by Lightrail
+# Account Credits Powered by Lightrail
 
 ## Introduction
 
-This document is a quick guide to implementing account credits . The focus of this document is implementing these use-cases by directly calling the Lightrail API. If you are looking for client libraries specific to a language or technology, check out our [integration projects](https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/Integrations.md).
+This document is a quick guide to implementing account credits powered by Lightrail. The focus of this document is implementing these use-cases by directly calling the Lightrail API. If you are looking for client libraries specific to a language or technology, check out our [integration projects](https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/Integrations.md).
 
 ## Concepts
 
-Account credits are values attached to a customer and are commonly used for customer rewards and account credit programs. Lightrail account credits are based on two concepts:
+Many business use-cases such as rewards programs require tracking values attached to a customer in the form of an account. This could be in the form of real currency values or virtual values such as points. Lightrail supports this by introducing two inter-connected concepts:
 
-- **Contact**: A contact represents a customer to whom account credits are associated. 
-- **Account Card**: A virtual card which represents an account belonging to a Contact.
+- **Contact** which represents a customer to whom the values are associated. 
+- **Account Card** which represents an account, with a specific currency, which belongs to a specific Contact.
 
-Since Lightrail does not support currency exchange, different currency values should each be stored a separate account. Therefore, a Contact may have many Account Cards for different currencies, but no more than one Account Card per currency. 
+Cards provide a vehicle for implementing an account. Account creation, balanc-checking, and transacting against a customer account is, therefore, simply done by interacting with the Card. By associating different account Cards to a Contact, multiple accounts can be assigned to a given customer.
 
-For example, a Contact may have three different accounts for `USD`, `CAD`, and reward points (for which the standard currency symbol is `XXX`), each of which is represented by an Account Card associated with that Contact.
+Each account Card has a fixed currency which is specified at the time of its creation. Since Lightrail does not support currency exchange, different currency values should each be stored in a separate account Card. Therefore, a Contact may have many Account Cards for different currencies —but no more than one account Card per currency. 
 
-Balanc-checking and transacting against account credits is simply done by interacting with the corresponding Card for that currency.  
+For example, a Contact may have two different accounts for `USD` and `CAD` values, as well as a points account (for which the standard currency symbol is `XXX`) to track reward points. Each of these accounts is represented by an account Card associated with that Contact.
+
+
 
 ## Use-Cases
 
