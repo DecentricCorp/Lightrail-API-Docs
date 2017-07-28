@@ -75,8 +75,8 @@ Account credits are values associated with a customer; the customer usually earn
 The high-level flow for redeeming a value from a customer's account credits is very similar to the gift-code flow discussed above. 
 
 - On the order checkout page, the balance of the customer's account is displayed. The customer is provided with the option to decide whether or not they would like to redeem their account balance towards paying for the order. 
-- Additionally, sometimes the customer is also given the option to select how much of the balance they would like to spend at the checkout. For example, if the customer has accrued $25 of rewards in their account, they may be give the choice to indicate they will only use $10 of it for the order checkout at hand.
-- Once the the share of the account credit is determined, it is charged to the account. If the value charged to the account is not sufficient to cover the entire order balance, charging the account should take place by following the authorize-capture flow: first post a pending charge to the account, then attempt charging the remainder on a third-party payment method. If the third-party payment was successful capture the pending transaction on the account, otherwise void it.
+- Additionally, sometimes the customer is also given the option to select how much of the balance they would like to spend at the checkout. For example, if the customer has accrued $25 of rewards in their account, they may be given the choice to indicate they will only use $10 of it for the order checkout at hand.
+- Once the share of the account credit in the payment is determined, this value is charged to the account. If there is any remainder, charging the account should take place by following the authorize-capture flow: first post a pending charge to the account, then attempt charging the remainder on a third-party payment method. If the third-party payment was successful capture the pending transaction on the account, otherwise void it.
 
 ### Detailed Flow
 
