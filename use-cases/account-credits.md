@@ -55,7 +55,7 @@ Charging an account is similarly done by posting a transaction against its corre
 
 #### Creating a New Contact
 
-To create a new contact, you need to at least provide a client-side unique identifier for the contact as the `userSuppliedId`. The `userSuppliedId` is a per-endpoint unique identifier, used to ensure idempotence. Ensuring idempotence means that if the same request is issued more than once, it will not result in repeated actions. Optionally, you can also provide an `email`, `firstName`, and `lastName`. Here is a sample request:
+To create a new contact, you need to at least provide a client-side unique identifier known as the `userSuppliedId`. The `userSuppliedId` is a per-endpoint unique identifier, used to ensure idempotence. Ensuring idempotence means that if the same request is issued more than once, it will not result in repeated actions. Optionally, you can also provide an `email`, `firstName`, and `lastName`. Here is a sample request:
 
 ```json
 POST https://www.lightrail.com/v1/contacts
@@ -126,7 +126,7 @@ Although the response to this call is a search result object with an array of `c
 
 #### Creating a New Account Card
 
-For creating a new account card, you need to provide the `contactId` of the Contact with whom the card will be associated and specify the card `currency`. Note that since gift cards use the same endpoint, you have to also specify the `cardType` as  `ACCOUNT_CARD`.
+For creating a new account Card, you need to provide the `contactId` of the Contact with whom the card will be associated and specify the card `currency`. Note that since gift cards use the same endpoint, you have to also specify the `cardType` as  `ACCOUNT_CARD`.
 
 ```json
 POST https://api.lightrail.com/v1/cards
@@ -138,7 +138,7 @@ POST https://api.lightrail.com/v1/cards
 }
 ```
 
-The response objects will include both the `userSuppliedId` and a server-generated `cardId` which you can persist and use to retrieve the Account Card later.
+The response objects will include both the `userSuppliedId` and a server-generated `cardId` which you can persist and use to retrieve the account Card later.
 
 ```json
 {
@@ -167,7 +167,7 @@ The response objects will include both the `userSuppliedId` and a server-generat
 
 #### Retrieving a Contact's Cards
 
-You can call the Cards Endpoint as a search to retrieve a Contact's Cards:
+You can call the Cards Endpoint as a search to retrieve all the account Cards beloging to a Contact:
 
 ```json
 GET https://api.lightrail.com/v1/cards?cardType=ACCOUNT_CARD&contactId={contactId}
@@ -217,7 +217,7 @@ GET https://api.lightrail.com/v1/cards?cardType=ACCOUNT_CARD&currency=USD&contac
 
 ### Cards Balance Endpoint
 
-You can use the card balance endpoint to check the available value of an account card by providing  account `cardId`. If you do not have the `cardId` you can find it by based on the customer's  `contactId`  using the [Cards API Endpoint](#cards-endpoint), as discussed above.
+You can use the card balance endpoint to check the available value of an account Card by providing the account `cardId`. If you do not have the `cardId` you can retrieve it by based on the customer's `contactId` using the [Cards API Endpoint](#cards-endpoint), as discussed above.
 
 ```json
 GET https://api.lightrail.com/v1/cards/{cardId}/balance
@@ -247,7 +247,7 @@ The balance is returned in the `currentValue` field of the `principal` object.
 
 You can transact against an account by providing the corresponding account `cardId`, the transaction `value`, and its `currency`, as well as a `userSuppliedId`. The `userSuppliedId` is a per-endpoint unique identifier, used to ensure idempotence. Ensuring idempotence means that if the same request is issued more than once, it will not result in repeated actions. 
 
-If you do not have the `cardId` you can find it by based on the customer's  `contactId`  using the [Cards API Endpoint](#cards-endpoint), as discussed above.
+If you do not have the `cardId` you can retrieve it by based on the customer's `contactId` using the [Cards API Endpoint](#cards-endpoint), as discussed above.
 
 ```json
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions
