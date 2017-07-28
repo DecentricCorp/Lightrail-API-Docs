@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document is a quick guide to adding Lightrail value (e.g. a gift code or a customer account credit) redemption at the order checkout. We discuss the main flow based on gift codes; using a Lightrail account credit instead of a the gift code is straightforwardly similar and will be briefly discussed [at the end](#using-account-credits).   
+This document is a quick guide to processing Lightrail value redemption (e.g. gift codes or customer account credits) at the order checkout. We discuss the main flow based on gift codes; using a Lightrail account credit instead of a gift code is straightforwardly similar and will be briefly discussed [at the end](#using-account-credits).   
 
 The focus of this document is implementing this use-case by directly calling the Lightrail API. If you are looking for client libraries specific to a language or technology, check out our [integration projects](https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/Integrations.md).
 
