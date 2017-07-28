@@ -55,7 +55,7 @@ The following sequence diagram summarizes these steps.
 $giftCodeShare = min($orderBalance, $giftCodeValue);
 $stripeShare = $orderBalance - $giftCodeShare;
 if ($stripeShare > 0 && $stripeShare < STRIPE_MINIMUM_TRANSACTION_VALUE) {
-  $differential = STRIPE_MINIMUM_TRANSACTION_VALUE - stripeShare;
+  $differential = STRIPE_MINIMUM_TRANSACTION_VALUE - $stripeShare;
   $giftCodeShare -= $differential;
   if ($giftCodeShare < 0)
     throw new Exception("The gift code value is too small for this transaction");
