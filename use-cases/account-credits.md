@@ -217,7 +217,7 @@ GET https://api.lightrail.com/v1/cards?cardType=ACCOUNT_CARD&currency=USD&contac
 
 ### Cards Balance Endpoint
 
-You can use the card balance endpoint to check the available value of an account Card by providing the account `cardId`. If you do not have the `cardId` you can retrieve it by based on the customer's `contactId` using the [Cards API Endpoint](#cards-endpoint), as discussed above.
+You can use the card balance endpoint to check the available value of an account Card by providing the account `cardId`. If you do not have the `cardId` you can retrieve it based on the customer's `contactId` using the [Cards API Endpoint](#cards-endpoint), as discussed above.
 
 ```json
 GET https://api.lightrail.com/v1/cards/{cardId}/balance
@@ -247,7 +247,7 @@ The balance is returned in the `currentValue` field of the `principal` object.
 
 You can transact against an account by providing the corresponding account `cardId`, the transaction `value`, and its `currency`, as well as a `userSuppliedId`. The `userSuppliedId` is a per-endpoint unique identifier, used to ensure idempotence. Ensuring idempotence means that if the same request is issued more than once, it will not result in repeated actions. 
 
-If you do not have the `cardId` you can retrieve it by based on the customer's `contactId` using the [Cards API Endpoint](#cards-endpoint), as discussed above.
+If you do not have the `cardId` you can retrieve it based on the customer's `contactId` using the [Cards API Endpoint](#cards-endpoint), as discussed above.
 
 ```json
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions
@@ -278,7 +278,7 @@ The returned object includes both the `userSuppliedId` and a server-generated `t
 
 #### Authorize-Capture 
 
-If the transaction is a charge, i.e. its value is negative, you can follow a authorize-capture flow by specifying that the transaction is `pending`:
+If the transaction is a charge, i.e. its value is negative, you can follow an authorize-capture flow by specifying that the transaction is `pending`. A pending transaction can be captured or voided later:
 
 ```json
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions
@@ -306,7 +306,7 @@ POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{transactionId}/ca
 }
 ```
 
-The response object to these calls will be a new `transaction` object with its own `transactionId`. The original pending `transactionId` is included as `metadata` in the response object:
+The response object from these calls will be a new `transaction` object with its own `transactionId`. The original pending `transactionId` is included as `metadata` in the response object, for the record:
 
 ```json
 {
