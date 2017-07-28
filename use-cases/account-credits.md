@@ -222,7 +222,17 @@ You can use the card balance endpoint to check the available value of an account
 ```json
 GET https://api.lightrail.com/v1/cards/{cardId}/balance
 ```
-The balance is returned in the `currentValue` field of the `principal` object.
+Usually, the balance is returned in the `currentValue` field of the `principal` object. If you are using attached promotions (e.g. temporary promotional values), these additional values are returned in the attached objects in the response. In such cases, the effective balance is the available value in its principal value store, plus the sum of all attached values that are currently active. So, in order to get the effective available balance of the account you need to use the following logic:
+
+```php
+    $accountBalance = $response['balance']['principal']['currentValue'];
+    foreach ($response['balance']['attached'] as $attachedValue) {
+      if ($attachedValue['state'] === 'ACTIVE')
+      	$accountBalance += $attachedValue['currentValue'];
+    }
+```
+
+Here is a sample response from this endpoint:
 
 ```json
 {
@@ -237,8 +247,25 @@ The balance is returned in the `currentValue` field of the `principal` object.
     },
     "currency": "USD",
     "cardType": "ACCOUNT_CARD",
-    "balanceDate": "2017-07-27T23:26:06.079Z"
-    "attached":[],
+    "balanceDate": "2017-07-27T23:26:06.079Z",
+    "attached": [
+            {
+                "currentValue": 500,
+                "state": "ACTIVE",
+                "expires": "2017-07-14T20:05:34.331Z",
+                "startDate": null,
+                "programId": "program-dd",
+                "valueStoreId": "value-26"
+            },
+            {
+                "currentValue": 0,
+                "state": "ACTIVE",
+                "expires": "2017-07-11T21:12:50.344Z",
+                "startDate": null,
+                "programId": "program-cc",
+                "valueStoreId": "value-bb"
+            }
+        ]
    }
 }
 ```
