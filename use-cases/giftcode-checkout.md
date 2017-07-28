@@ -270,7 +270,7 @@ Response Sample:
 
 ### Card Search Endpoint
 
-You can call the Cards Endpoint as a search to retrieve the account Card belonging to a Contact for a particular currency:
+You can call the Cards Endpoint with search parameters to retrieve the account Card belonging to a Contact for a particular currency:
 
 ```json
 GET https://api.lightrail.com/v1/cards?cardType=ACCOUNT_CARD&currency={currency}&contactId={contactId}
