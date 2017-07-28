@@ -18,37 +18,36 @@ Each account Card has a fixed currency which is specified at the time of its cre
 For example, a Contact may have two different accounts for `USD` and `CAD` values, as well as a points account (for which the standard currency symbol is `XXX`) to track reward points. Each of these accounts is represented by an account Card associated with that Contact.
 
 
-
 ## Use-Cases
 
 In this section we review the overall steps for common account credit use-cases. Details for each API endpoint and request/response examples are given in the next section.
 
 ### Creating Account Credits
 
-The first step to start an account credit is to create a new account. Based on your business workflows this is triggered by events such as signing up a new customer. After determining the currency for the new account, creating a new account requires the following steps: 
+The first step to start an account credit is to create a new account. Based on your business workflows this is triggered by events such as signing up a new customer. After determining the currency for the new account, proceed with the following steps: 
 
-- Creating a new Contact using the [Contacts API Endpoint](#contacts-endpoint) if one does not already exist. Generally, you should also specify some basic information about the Contact such as name and email.
-- Creating an Account Card for that Contact using the [Cards API Endpoint](#cards-endpoint). You need to provide the contact ID and specify the currency. Optionally, you can also specify an initial value for the card.
+- Create a new Contact using the [Contacts API Endpoint](#contacts-endpoint) if one does not already exist. Generally, you should specify some basic information about the Contact such as name and email.
+- Create an Account Card for that Contact using the [Cards API Endpoint](#cards-endpoint). You need to provide the contact ID and specify the currency. Optionally, you can also specify an initial value for the card.
 
-It is important to store the Contact ID after creating a Contact but you do not need to persist the Card IDs for the cards associated with the contact, as you can retrieve them using the API.  
+It is important to store the Contact ID after creating a Contact but you do not have to persist the IDs of the account Cards associated with the contact since you can retrieve them using the API.  
 
 ### Retrieving a Contact's Account Cards
 
-The [Cards API Endpoint](#cards-endpoint) allows searching for cards which can be used for retrieving all the account cards associated with a Contact. You can also request to find the Contact's card for a particular currency. 
+The [Cards API Endpoint](#cards-endpoint) allows searching for cards which can be used for retrieving all the account Cards associated with a Contact. You can also request to find the Contact's account Card for a particular currency. 
 
 ### Balance-Check
 
-As account credits are implemented as special virtual cards, checking the balance of an account is simply done by calling the [Card Balance API Endpoint](#cards-balance-endpoint). You will need to provide the account card ID to this endpoint in order to check the balance. 
+For checking the balance of an account you can simply call the [Card Balance API Endpoint](#cards-balance-endpoint) and provide the corresponding Card ID. 
 
-Usually, in your business flow, you have the customer ID and you need to check the balance of that customer's account. So, you need to retrieve the corresponding account ID based on the customer's Contact ID first as discussed above, and then use the card ID to check the account's balance.
+It is common for most business workflows to have the customer ID (e.g. from login information). In such cases, if you support multiple currencies, you need to determin the currency from the context of the workflow, e.g. the cart or the order currency. Then you can retrieve the corresponding account Card ID based on the customer's Contact ID and the currency in question as discussed above. Once you have the card ID, you can use it to check the customer's balance.
 
 ### Funding and Charging
 
-Transactions to fund or charge an account are posted to the corresponding card by providing its Card ID and using the [Cards Transaction API Endpoint](#cards-transaction). If you do not have the account card ID directly in your business flow, you need to retrieve it based on the Contact ID as discussed above.
+Transactions to fund or charge an account are posted to the corresponding account Card by providing its Card ID and using the [Cards Transaction API Endpoint](#cards-transaction-endpoint). If you do not have the account card ID directly in your business flow, you need to retrieve it based on the Contact ID as discussed above.
 
-Funding an account is basically posting a transaction with a positive value to the corresponding card. It usually takes place when the customer earn some reward based on some activity which depends on your business model, such as spending more than a certain threshold in the store.
+Funding an account is basically posting a transaction with a positive value to the corresponding account Card. Depending on your business model, this usually takes place when the customer earns some reward based on some activity, such as spending more than a certain amount at the store.
 
-Charging an account is similarly done by posting a transaction against its corresponding account card with a negative value. The most common use-case for charging an account is redeeming the accumulated value at the store checkout. For the details on the redemption use-case, check out our detailed document on [Redemption at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/use-cases/giftcode-checkout.md).
+Charging an account is similarly done by posting a transaction against its corresponding account Card with a negative value. The most common use-case for charging an account is redeeming the value at the store checkout. For the details on the redemption use-case, check out our detailed document on [Redemption at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/use-cases/giftcode-checkout.md).
 
 ## API Endpoints
 
