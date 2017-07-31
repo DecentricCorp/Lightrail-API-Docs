@@ -140,8 +140,9 @@ This will remove an unnecessary lookup each time you want to update a customer's
 
 If this use case fits your need for points, a great way to reward your customers is offer them gift cards from top brands through <a href="https://www.giftbit.com" target="_blank">Giftbit’s Rewards API.</a>
 
-## Create and Attach Promotions
 <a name="create-and-attach-promotions-anchor"></a>
+## Create and Attach Promotions
+
 In addition to the many capabilities Lightrail provides out of the box, Lightrail gives you the ability to attach Promotions to Cards, allowing you to incentivize and motivate your users or recipients. 
 Promotions work by adding temporary value to your cards with special redemption rules. 
 Promotions can be used in both the gift card and account credit use cases. 
@@ -419,16 +420,16 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
 
     + Body
     
-        {
-          "userSuppliedId":"accountCard1",
-          "cardType":"ACCOUNT_CARD",
-          "contactId":"contact-0cfafcd94b2d42a698771a7b63e37c86",
-          "currency":"USD",
-          "initialValue":500,
-          "categories": {
-            "city":"seattle"
-          }
-        }
+            {
+              "userSuppliedId":"accountCard1",
+              "cardType":"ACCOUNT_CARD",
+              "contactId":"contact-0cfafcd94b2d42a698771a7b63e37c86",
+              "currency":"USD",
+              "initialValue":500,
+              "categories": {
+                "city":"seattle"
+              }
+            }
         
 + Response 200
     + Attributes
@@ -481,15 +482,15 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
 
     + Body
     
-        {
-          "userSuppliedId":"giftcard1",
-          "cardType":"GIFT_CARD",
-          "currency":"USD",
-          "initialValue":500,
-          "categories": {
-            "city":"seattle"
-          }
-        }
+            {
+              "userSuppliedId":"giftcard1",
+              "cardType":"GIFT_CARD",
+              "currency":"USD",
+              "initialValue":500,
+              "categories": {
+                "city":"seattle"
+              }
+            }
         
 + Response 200
     + Attributes
