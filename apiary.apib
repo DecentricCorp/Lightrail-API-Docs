@@ -71,7 +71,7 @@ Since Account Cards do not have a `fullcode`, their value is interacted with usi
 The following sections dive into Lightrail's most common use cases. Feel free to skip to the section relevant to you. If you're not sure which applies to you, please don't hesitate to ask!
 
 Also note, the ability to incentivize your users or recipients through Lightrail Card Promotions is available for both Gift Cards and Account Cards. 
-Detailed information for Card Promotions and how it can be applied to either use case can be found in the following [Supercharge your Branded Currency: Promotions](http://docs.giftbitcurrencyapi19.apiary.io/#introduction/supercharge-your-branded-currency:-promotions) section. 
+Detailed information for Card Promotions and how it can be applied to either use case can be found in the following Create and Attach Promotions section. 
 
 Looking to import your existing codes into the Lightrail system? We support that. Please let us know to find out more. 
 
@@ -628,7 +628,6 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
             }
 
 ### Freeze Card [POST /cards/{cardId}/freeze]
-Freezing a Card prevents all transactions other than unfreeze from being performed. 
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
 
