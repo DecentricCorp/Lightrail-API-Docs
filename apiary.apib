@@ -173,7 +173,7 @@ As you can see, Lightrail automatically handles the complexity of taking value f
 The ability to set redemption rules is a powerful feature that Lightrail provides. These are extra conditions that can be placed on promotions. 
 A redemption rule is evaluated with the transaction data to determine if the promotion can be used for that transaction. 
 Redemption rules operate on standard Transaction properties along with the `metadata` field. The `metadata` field is flexible and can store any JSON data your organization wants to store.
-This unlocks powerful marketing promotions such as: “$5 off when you buy a red hat” or "$2 off if your cart contains 3 or items."
+This unlocks powerful marketing promotions such as: “$5 off when you buy a red hat” or "$2 off if your cart contains 3 or more items."
 
 Check out our extended <a href="https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules" target="_blank">redemption rules documentation</a> for more information.
 
@@ -1482,9 +1482,115 @@ Creates a transaction against a Card using the Gift Card's `fullcode`.
               }
             }
 
+## Balances [/cards/{cardId}/balance/]
+These endpoints are used to get the available balance assoicated with a Card.
+
+---
+### Get Balance by cardId [GET /cards/{cardId}/balance{?asAtDate}]
+Retrieve a Card's balance.
+
+---
++ Parameters
+    + cardId (string, required) - The Lightrail Card ID.
+    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Attributes (Balance)
+
+    + Body
+
+            {
+                "balance":{
+                "principal":{
+                "currentValue": 150,
+                "state": "ACTIVE",
+                "expires": null,
+                "startDate": null,
+                "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72",
+                "valueStoreId": "value-18638d4486ad4feaab125a61f5df3079"
+                },
+                "attached":[
+                ],
+                "currency": "USD",
+                "cardType":"GIFT_CARD",
+                "balanceDate": "2017-06-05T17:11:36.999Z"
+                }
+            }
+
+### Get Balance by fullcode [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
+Retreive a Card's balance using the Gift Card's `fullcode`.
+
+---
++ Parameters
+    + fullcode (string, required) - The unique unguessable gift code.
+    + pin (string, optional) - This is required if the fullcode has a pin.
+    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Attributes (Balance)
+
+    + Body
+
+            {
+                "balance":{
+                "principal":{
+                "currentValue": 150,
+                "state": "ACTIVE",
+                "expires": null,
+                "startDate": null,
+                "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72",
+                "valueStoreId": "value-18638d4486ad4feaab125a61f5df3079"
+                },
+                "attached":[
+                ],
+                "currency": "USD",
+                "cardType":"GIFT_CARD",
+                "balanceDate": "2017-06-05T17:11:36.999Z"
+                }
+            }
+
+### Get Balance by fullcode (Deprecated) [GET /codes/{fullcode}/balance{?asAtDate}{?pin}]
+Note, this endpoint is deprecated and should no longer be used. 
+
+---
++ Parameters
+    + fullcode (string, required)
+    + pin (string, optional) - This is required if the fullcode has a pin.
+    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
++ Response 200
+    + Body
+
+            {
+                balance":{
+                "currentValue": 150,
+                "fundedValue": 0,
+                "drawdownValue": 0,
+                "cancellationValue": 0,
+                "initialValue": 150,
+                "frozenValue": 0,
+                "inactiveValue": 0,
+                "pendingValue": 0,
+                "currency": "USD"
+                }
+            }
 
 ## ValueStores: Managing Promotions [/cards/{cardId}/valueStores/]
-These endpoints are used for managin Promotion Programs.
+These endpoints are used for managing Promotion Programs.
 
 ---
 ### List ValueStores [GET /cards/{cardId}/valueStores]
@@ -1568,7 +1674,7 @@ Adds a ValueStore from a Promotion Program to a Card.
     + Attributes
         + userSuppliedId (string, required) - Unique idempotency ID for the request.
         + currency (string, required) - The 3 character ISO-4217 currency.
-        + programId (string, required) - The unique id of the Promotion Program. Note the Program's `ValueStoreType` must equal `ATTACHED`.
+        + programId (string, required) - The unique id of the Promotion Program. Note the Program's `ValueStoreType` must be of type `ATTACHED`.
         + expires (string, optional) - Defaults to lifespan set by program.
         + startDate (string, optional) - The date for which the ValueStore will become useable.
         + initialValue (number, optional) - The initial value of the ValueStore.
@@ -1598,50 +1704,6 @@ Adds a ValueStore from a Promotion Program to a Card.
                     "programId": "program-d0c6328cacde469ba3b28105e9d89c04",
                     "expires": "2017-06-13T06:59:59.000Z"
                 }   
-            }
-
-### Activate ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/actiave]
-Activate a Card's ValueStore that was created as inactive.
-
----
-+ Parameters
-    + cardId (string, required) - The Lightrail Card ID. 
-    + valueStoreId (string, required) - The Lightrail ValueStore ID.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-
-    + Attributes
-        + userSuppliedId (string, required) - Unique idempotency ID for the request.
-        
-    + Body 
-    
-            {
-                "userSuppliedId":"activateValueStore-1"
-            }
-    
-+ Response 200
-    + Attributes
-        + transaction (Transaction)
-
-    + Body
-
-            {
-                "transaction":{
-                    "transactionId": "transaction-b0bfc060af384962bcb19b85f55906eb",
-                    "value": 50,
-                    "userSuppliedId": "activateValueStore-1",
-                    "dateCreated": "2017-06-05T16:34:55.210Z",
-                    "transactionType": "ACTIVATE",
-                    "transactionAccessMethod": "CARDID",
-                    "valueAvailableAfterTransaction": 50,
-                    "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
-                    "codeLastFour": "NKNA",
-                    "cardId": "card-fb8e53946e784280a2bc8273dcbb0fda",
-                    "currency": "XXX"
-                }
             }
 
 ### Freeze ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/freeze]
@@ -1774,111 +1836,6 @@ Permanently cancels a Card's ValueStore.
                 "codeLastFour": "NKNA",
                 "cardId": "card-fb8e53946e784280a2bc8273dcbb0fda",
                 "currency": "XXX"
-                }
-            }
-
-## Balances [/cards/{cardId}/balance/]
-These endpoints are used to get the available balance assoicated with a Card.
-
----
-### Get Balance by cardId [GET /cards/{cardId}/balance{?asAtDate}]
-Retrieve a Card's balance.
-
----
-+ Parameters
-    + cardId (string, required) - The Lightrail Card ID.
-    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    
-+ Response 200
-    + Attributes (Balance)
-
-    + Body
-
-            {
-                "balance":{
-                "principal":{
-                "currentValue": 150,
-                "state": "ACTIVE",
-                "expires": null,
-                "startDate": null,
-                "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72",
-                "valueStoreId": "value-18638d4486ad4feaab125a61f5df3079"
-                },
-                "attached":[
-                ],
-                "currency": "USD",
-                "cardType":"GIFT_CARD",
-                "balanceDate": "2017-06-05T17:11:36.999Z"
-                }
-            }
-
-### Get Balance by fullcode [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
-Retreive a Card's balance using the Gift Card's `fullcode`.
-
----
-+ Parameters
-    + fullcode (string, required) - The unique unguessable gift code.
-    + pin (string, optional) - This is required if the fullcode has a pin.
-    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    
-+ Response 200
-    + Attributes (Balance)
-
-    + Body
-
-            {
-                "balance":{
-                "principal":{
-                "currentValue": 150,
-                "state": "ACTIVE",
-                "expires": null,
-                "startDate": null,
-                "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72",
-                "valueStoreId": "value-18638d4486ad4feaab125a61f5df3079"
-                },
-                "attached":[
-                ],
-                "currency": "USD",
-                "cardType":"GIFT_CARD",
-                "balanceDate": "2017-06-05T17:11:36.999Z"
-                }
-            }
-
-### Get Balance by fullcode (Deprecated) [GET /codes/{fullcode}/balance{?asAtDate}{?pin}]
-Note, this endpoint is deprecated and should no longer be used. 
-+ Parameters
-    + fullcode (string, required)
-    + pin (string, optional) - This is required if the fullcode has a pin.
-    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    
-+ Response 200
-    + Body
-
-            {
-                balance":{
-                "currentValue": 150,
-                "fundedValue": 0,
-                "drawdownValue": 0,
-                "cancellationValue": 0,
-                "initialValue": 150,
-                "frozenValue": 0,
-                "inactiveValue": 0,
-                "pendingValue": 0,
-                "currency": "USD"
                 }
             }
 
