@@ -151,7 +151,7 @@ Promotions are created from a Promotion Program which can be created from the <a
 Similar to a Gift Card Program, they enable you to restrict promotion properties such the allowed value ranges, currency, and custom expiry. 
 A Card is always created with a `PRINCIPAL` ValueStore. When promotions are attached, they are represented as `ATTACHED` ValueStores.
 
-#### How Promotions Fit Into the Lightrail Object Model
+### How Promotions Fit Into the Lightrail Object Model
 
 For example, suppose you've created a $10 USD Card. It could be either a Gift Card or an Account Card. Below is a model of the newly created objects.
 
@@ -167,6 +167,16 @@ Suppose the recipient spends $8 USD within the 10-day limit. Below you can see h
 
 This example illustrates that when Transactions are created against Cards that have multiple ValueStores, any valid ValueStore will be transacted against in order of expiry. 
 As you can see, Lightrail automatically handles the complexity of taking value from the correct ValueStore.
+
+### Redemption Rules
+
+The ability to set redemption rules is a powerful feature that Lightrail provides. These are extra conditions that can be placed on Promotion Programs. 
+A redemption rule is evaluated with the transaction data to determine if the promotion can be used for that transaction. 
+Redemption rules operate on standard Transaction properties along with the `metadata` field. The `metadata` field is flexible and can store any JSON data your organization wants to store.
+This unlocks powerful marketing promotions such as: “$5 off when you buy a red hat” or "$2 off if your cart contains 3 or items."
+
+Check out our extended <a href="https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules" target="_blank">redemption rules documentation</a> for more information.
+
 
 ## Implementation Details
 
@@ -287,7 +297,11 @@ The _/cards_ endpoint is for use by your system to create and manage your Gift C
 The `cardId` should be stored as it's used in many subsequent requests - such as transaction against a Card. 
 In use cases where the recipient requires a gift code, the `fullcode` should be supplied. 
 
+---
 ### List Cards [GET /cards/{?limit}{?offset}{?categoryKey}{?categoryValue}{?contactId}{?cardType}{?currency}{?userSuppliedId}]
+Retrieve a paginated list of Cards.
+
+---
 + Request (application/json)
     + Headers
     
@@ -402,7 +416,9 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
             }
 
 ### Create Account Card [POST /cards]
+Create a Card of type `ACCOUNT_CARD` which is associated with an existing Contact.
 
+---
 + Request (application/json)
     + Headers
     
@@ -462,7 +478,9 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
             
 
 ### Create Gift Card [POST /cards]
+Create a Card of type `GIFT_CARD`.
 
+---
 + Request (application/json)
 
     + Headers
@@ -521,8 +539,10 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
               }
             }
 
-### Retrieve fullcode for GIFT_CARD [GET /cards/{cardId}/fullcode]
+### Retrieve fullcode for Gift Card [GET /cards/{cardId}/fullcode]
+Retrieves the `fullcode` associated with a Gift Card.
 
+---
 + Parameters 
     + cardId (string) - The Lightrail Card ID. Note, Card must have cardType = `GIFT_CARD`.
     
@@ -544,7 +564,9 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
             }
 
 ### Update Contact on Card [PATCH /cards/{cardId}]
+Update the Contact associated with a Card.
 
+---
 + Parameters 
     + cardId (string, required) - The Lightrail Card ID.
 
@@ -574,7 +596,7 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
                 "cardId": "card-2235b727f65a46648138429b95fdaa7b",
                 "userSuppliedId": "testCategoryCreation10-19",
                 "contactId": "contact-592941d2335d402e9dc3d6a981bc3896",
-                "dateCreated": "2017-05-16T16:49:33.027+0000",
+                "dateCreated": "2017-05-16T16:49:33.027Z",
                 "categories": [
                   {
                     "categoryId": "category-48ecc24b16944b40a1218e319facd24a",
@@ -588,7 +610,9 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
             }
 
 ### Activate Card [POST /cards/{cardId}/activate]
+Activate Cards that were created as inactive.
 
+---
 + Parameters
     + cardId (string, required) - The Card must have been created with `"inactive":true`.
 
@@ -629,6 +653,9 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
             }
 
 ### Freeze Card [POST /cards/{cardId}/freeze]
+Freeze a Card, preventing all transactions until unfrozen. 
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
 
@@ -668,6 +695,9 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
             }        
 
 ### Unfreeze Card [POST /cards/{cardId}/unfreeze]
+Unfreeze a frozen Card, re-enabling the creation of transactions.
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
 
@@ -707,6 +737,9 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
             }
 
 ### Cancel Card [POST /cards/{cardId}/cancel]
+Permanently cancels a Card.
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
 
@@ -757,11 +790,13 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
             }
 
 ## Contacts [/contacts]
-
 Contacts can be attached to Cards to help you keep track of who is interacting with your Cards.
 
+---
 ### List Contacts [GET /contacts{?limit}{?offset}{?email}{?firstName}{?lastName}{?userSuppliedId}]
+Retrieve a paginated list of Contacts.
 
+---
 + Request (application/json)
     + Headers
     
@@ -811,7 +846,6 @@ Contacts can be attached to Cards to help you keep track of who is interacting w
             }
 
 ### Show Contact [GET /contacts/{contactId}]
-
 + Parameters
     + contactId (string, required) - The Lightrail Contact ID.
 
@@ -839,7 +873,6 @@ Contacts can be attached to Cards to help you keep track of who is interacting w
             }
 
 ### Create Contact [POST /contacts]
-
 + Request (application/json)
     + Headers
     
@@ -874,7 +907,7 @@ Contacts can be attached to Cards to help you keep track of who is interacting w
                     "email": "noreply@giftbit.com",
                     "firstName": null,
                     "lastName": null,
-                    "dateCreated": "2016-12-09T00:06:00.000+0000"
+                    "dateCreated": "2016-12-09T00:06:00.000Z"
                 }
             }
 
@@ -913,11 +946,14 @@ Contacts can be attached to Cards to help you keep track of who is interacting w
                     "email": "noreply@giftbit.com",
                     "firstName": "Jane",
                     "lastName": "Smith",
-                    "dateCreated": "2016-12-09T00:06:00.000+0000"
+                    "dateCreated": "2016-12-09T00:06:00.000Z"
                 }
             }
 
 ### Retrieve Account Cards or Gift Cards for Contact [GET /cards{?contactId}{?cardType}{?currency}]
+Retrieve a paginated list of a Contact's Cards.
+
+---
 + Parameters 
     + contactId (string, required) - The Lightrail Contact ID.
     + cardType (string, required) - `ACCOUNT_CARD`, `GIFT_CARD`
@@ -973,6 +1009,9 @@ This means the value required for the Pending Transaction will be unavailable to
 A Pending Transaction can either be captured, which confirms the Transaction, or it can be voided, freeing up their associated value. 
 
 ### List Card Transactions [GET /cards/{cardId}/transactions]
+Retrieve a paginated list of a Card's Transactions.
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
 
@@ -1058,7 +1097,8 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
         + transaction (Transaction)
 
     + Body
-    
+
+            { "transaction": {
                 {
                   "transactionId":"transaction-622de8c7b5604808b7576985db59fe70",
                   "value":-500,
@@ -1083,7 +1123,12 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                     }
                   }
                 }
+            }
+
 ### Create Transaction [POST /cards/{cardId}/transactions]
+Creates a transaction against a Card. Transactions can be created as pending which locks the value required for the Transaction until it is either captured or voided. 
+
+---
 + Parameters
     + cardId (string, required)
 
@@ -1095,7 +1140,7 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
     + Attributes
         + value (number) - The value of the transaction. Can be negative or positive. Note, value is in the smallest unit for the currency. If USD, then value represents cents. If the Transaction represents a $50 USD redemption value = -5000.
         + currency (required) - The 3 character ISO-4217 currency code.  
-        + metadata (Metadata, optional) - A key-value object to store additional information about the transaction. Note Lightrail's Redemption Rules operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`. Also note, the `giftbit_*` namespace for keys is reserved.
+        + metadata (Metadata, optional) - A key-value object to store additional information about the transaction. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`. Also note, the `giftbit_*` namespace for keys is reserved.
         + pending (boolean, optional) - If `true`, the required value will be locked, however in order to complete the transaction the pending transaction must be captured.
         
     + Body 
@@ -1152,6 +1197,9 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
             }
 
 ### Capture Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/capture]
+Captures a pending Transaction. This locks in the value of the pending Transaction.
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card Id.
     + transactionId (string, required) - The Lightrail Transaction ID. Must be a pending Transaction.
@@ -1187,6 +1235,9 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
             }
 
 ### Void Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/void]
+Voids a pending Transaction. This makes the value of the pending Transaction available to be used by other Transactions.
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
     + transactionId (string, required) - The Lightrail Transaction ID. Must be a pending Transaction.
@@ -1222,7 +1273,9 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
             }
 
 ### Refund Transaction [POST /cards/{cardId}/transactions/{transactionId}/refund]
+Refund a Transaction, reverting its affects.
 
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
     + transactionId (string, required) -The Lightrail Transaction ID. Must be a Transaction with transactionType `DRAWDOWN`.
@@ -1258,8 +1311,13 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
             }
             
 ## Codes [/codes/{fullcode}/transactions]
+These endpoints are used when interacting directly with the `fullcode` of a Gift Card.
 
+---
 ### List Transactions [GET /codes/{fullcode}/transactions{?pin}]
+Retrieve a paginated list of a Card's Transactions using the Gift Card's `fullcode`.
+
+---
 + Parameters
     + fullcode (string, required) - The unique gift code.
     + pin (string, optional) - This is required if the fullcode has a pin.
@@ -1321,7 +1379,7 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
 ### Show Transaction [GET /codes/{fullcode}/transactions/{transactionId}{?pin}]
 + Parameters
     + transactionId (string, required) - The Lightrail Transaction ID.
-    + fullcode (string, required) - The 
+    + fullcode (string, required) - The unique unguessable gift code.
     + pin (string, optional) - This is required if the gift code has a pin.
     
 
@@ -1341,7 +1399,7 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                     "transactionId": "transaction-3ec8ad2afea14c04906159ee8f1ad735",
                     "value": -50,
                     "userSuppliedId": "gift_card_4-inactive",
-                    "dateCreated": "2017-06-05T15:39:25.411+0000",
+                    "dateCreated": "2017-06-05T15:39:25.411Z",
                     "transactionType": "INACTIVATE",
                     "transactionAccessMethod": "CARDID",
                     "valueAvailableAfterTransaction": 0,
@@ -1353,6 +1411,9 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
             }
 
 ### Create Transaction [POST /codes/{fullcode}/transactions{?pin}]
+Creates a transaction against a Card using the Gift Card's `fullcode`.
+
+---
 + Parameters
     + fullcode (string, required) - The unique gift code.
     + pin (string, optional) - This is required if the fullcode has a pin.
@@ -1365,7 +1426,7 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
     + Attributes
         + value (number) - The value of the transaction. Must be negative when transacting against the fullcode. Note, value is in the smallest unit for the currency. If USD, then value represents cents. If the Transaction represents a $50 USD redemption value = -5000.
         + currency (required) - The 3 character ISO-4217 currency code.  
-        + metadata (Metadata, optional) - A key-value object to store additional information about the transaction. Note Lightrail's Redemption Rules operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`. Also note, the `giftbit_*` namespace for keys is reserved.
+        + metadata (Metadata, optional) - A key-value object to store additional information about the transaction. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`. Also note, the `giftbit_*` namespace for keys is reserved.
         + pending (boolean, optional) - If `true`, the required value will be locked, however in order to complete the transaction the pending transaction must be captured.
         
     + Body 
@@ -1423,8 +1484,13 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
 
 
 ## ValueStores: Managing Promotions [/cards/{cardId}/valueStores/]
+These endpoints are used for managin Promotion Programs.
 
+---
 ### List ValueStores [GET /cards/{cardId}/valueStores]
+Retrieve a paginated list of a Card's ValueStores.
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
 
@@ -1447,7 +1513,7 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                     "valueStoreId": "value-0ff47ca176eb4708b08a8bb010584704",
                     "valueStoreType": "PRINCIPAL",
                     "currency": "XXX",
-                    "dateCreated": "2017-06-05T15:39:25.392+0000",
+                    "dateCreated": "2017-06-05T15:39:25.392Z",
                     "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72"
                 }
                 ],
@@ -1482,12 +1548,15 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                     "valueStoreId": "value-0ff47ca176eb4708b08a8bb010584704",
                     "valueStoreType": "PRINCIPAL",
                     "currency": "XXX",
-                    "dateCreated": "2017-06-05T15:39:25.392+0000",
+                    "dateCreated": "2017-06-05T15:39:25.392Z",
                     "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72"
                 }
             }
 
-### Create ValueStore [POST /cards/{cardId}/valueStores]
+### Add ValueStore [POST /cards/{cardId}/valueStores]
+Adds a ValueStore from a Promotion Program to a Card. 
+
+---
 + Parameters
     + cardId (string, required)
 
@@ -1499,7 +1568,7 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
     + Attributes
         + userSuppliedId (string, required) - Unique idempotency ID for the request.
         + currency (string, required) - The 3 character ISO-4217 currency.
-        + programId (string, required) - The unique id of the Promotion Program.
+        + programId (string, required) - The unique id of the Promotion Program. Note the Program's `ValueStoreType` must equal `ATTACHED`.
         + expires (string, optional) - Defaults to lifespan set by program.
         + startDate (string, optional) - The date for which the ValueStore will become useable.
         + initialValue (number, optional) - The initial value of the ValueStore.
@@ -1525,13 +1594,16 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                     "valueStoreId": "value-806116e736854136867d17fbfb959382",
                     "valueStoreType": "ATTACHED",
                     "currency": "XXX",
-                    "dateCreated": "2017-06-05T16:14:58.314+0000",
+                    "dateCreated": "2017-06-05T16:14:58.314Z",
                     "programId": "program-d0c6328cacde469ba3b28105e9d89c04",
-                    "expires": "2017-06-13T06:59:59.000+0000"
+                    "expires": "2017-06-13T06:59:59.000Z"
                 }   
             }
 
 ### Activate ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/actiave]
+Activate a Card's ValueStore that was created as inactive.
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID. 
     + valueStoreId (string, required) - The Lightrail ValueStore ID.
@@ -1561,7 +1633,7 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                     "transactionId": "transaction-b0bfc060af384962bcb19b85f55906eb",
                     "value": 50,
                     "userSuppliedId": "activateValueStore-1",
-                    "dateCreated": "2017-06-05T16:34:55.210+0000",
+                    "dateCreated": "2017-06-05T16:34:55.210Z",
                     "transactionType": "ACTIVATE",
                     "transactionAccessMethod": "CARDID",
                     "valueAvailableAfterTransaction": 50,
@@ -1573,6 +1645,9 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
             }
 
 ### Freeze ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/freeze]
+Freeze a Card's ValueStore, preventing all transactions against that ValueStore until unfrozen. 
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
     + valueStoreId (string, required) - The Lightrail ValueStore ID.
@@ -1603,7 +1678,7 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                     "transactionId": "transaction-3f96b36c9b2845e2b3e61e3d74d955e1",
                     "value": -50,
                     "userSuppliedId": "freeze-valueStore-1",
-                    "dateCreated": "2017-06-05T16:36:56.321+0000",
+                    "dateCreated": "2017-06-05T16:36:56.321Z",
                     "transactionType": "FREEZE",
                     "transactionAccessMethod": "CARDID",
                     "valueAvailableAfterTransaction": 0,
@@ -1615,6 +1690,9 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
             }
 
 ### Unfreeze ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/unfreeze]
+Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions against that ValueStore.
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
     + valueStoreId (string, required) - The Lightrail ValueStore ID.
@@ -1644,7 +1722,7 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                 "transactionId": "transaction-f7726f6b6d52412980544ee217894c82",
                 "value": 50,
                 "userSuppliedId": "unfreeze-valueStore-1",
-                "dateCreated": "2017-06-05T16:37:57.218+0000",
+                "dateCreated": "2017-06-05T16:37:57.218Z",
                 "transactionType": "UNFREEZE",
                 "transactionAccessMethod": "CARDID",
                 "valueAvailableAfterTransaction": 50,
@@ -1656,6 +1734,9 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
             }
 
 ### Cancel ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/cancel]
+Permanently cancels a Card's ValueStore.
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
     + valueStoreId (string, required) - The Lightrail ValueStore ID.
@@ -1685,7 +1766,7 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                 "transactionId": "transaction-7f9c5dea0be24f57a902568a23a11c89",
                 "value": -50,
                 "userSuppliedId": "cancel-valueStore-1",
-                "dateCreated": "2017-06-05T16:39:06.679+0000",
+                "dateCreated": "2017-06-05T16:39:06.679Z",
                 "transactionType": "CANCELLATION",
                 "transactionAccessMethod": "CARDID",
                 "valueAvailableAfterTransaction": 0,
@@ -1697,8 +1778,13 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
             }
 
 ## Balances [/cards/{cardId}/balance/]
+These endpoints are used to get the available balance assoicated with a Card.
 
+---
 ### Get Balance by cardId [GET /cards/{cardId}/balance{?asAtDate}]
+Retrieve a Card's balance.
+
+---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
     + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
@@ -1726,11 +1812,14 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                 ],
                 "currency": "USD",
                 "cardType":"GIFT_CARD",
-                "balanceDate": "2017-06-05T17:11:36.999+0000"
+                "balanceDate": "2017-06-05T17:11:36.999Z"
                 }
             }
 
 ### Get Balance by fullcode [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
+Retreive a Card's balance using the Gift Card's `fullcode`.
+
+---
 + Parameters
     + fullcode (string, required) - The unique unguessable gift code.
     + pin (string, optional) - This is required if the fullcode has a pin.
@@ -1760,7 +1849,7 @@ A Pending Transaction can either be captured, which confirms the Transaction, or
                 ],
                 "currency": "USD",
                 "cardType":"GIFT_CARD",
-                "balanceDate": "2017-06-05T17:11:36.999+0000"
+                "balanceDate": "2017-06-05T17:11:36.999Z"
                 }
             }
 
@@ -1794,7 +1883,9 @@ Note, this endpoint is deprecated and should no longer be used.
             }
 
 ## Categories [/categories/]
+These endpoints are used to retrieve information about your existing Categories.
 
+---
 ### List Categories [GET /categories]
 + Request (application/json)
     + Headers
@@ -1859,7 +1950,9 @@ Note, this endpoint is deprecated and should no longer be used.
             }
 
 ## Programs [/programs/]
+This endpoint can be used to retrieve information about your existing Gift Card and Promotion Programs.
 
+---
 ### List Programs [GET /programs]
 + Request (application/json)
     + Headers
@@ -1878,9 +1971,9 @@ Note, this endpoint is deprecated and should no longer be used.
                 "name": "Gift Card Program 2017",
                 "active": true,
                 "currency": "USD",
-                "dateCreated": "2017-06-05T17:09:10.000+0000",
+                "dateCreated": "2017-06-05T17:09:10.000Z",
                 "programExpiresDate": null,
-                "programStartDate": "2017-06-05T15:51:35.000+0000",
+                "programStartDate": "2017-06-05T15:51:35.000Z",
                 "codeActivePeriodInDays": null,
                 "codeValueMin": 100,
                 "codeValueMax": 50000,
@@ -1898,9 +1991,9 @@ Note, this endpoint is deprecated and should no longer be used.
                 "name": "Spring Promotion 2017",
                 "active": true,
                 "currency": "XXX",
-                "dateCreated": "2017-06-05T16:14:46.000+0000",
+                "dateCreated": "2017-06-05T16:14:46.000Z",
                 "programExpiresDate": null,
-                "programStartDate": "2017-06-05T15:51:35.000+0000",
+                "programStartDate": "2017-06-05T15:51:35.000Z",
                 "codeActivePeriodInDays": 7,
                 "codeValueMin": 1,
                 "codeValueMax": 5000,
@@ -1924,12 +2017,9 @@ Note, this endpoint is deprecated and should no longer be used.
 
 # Data Structures
 
-## IdempotentObject (object)
-+ userSuppliedId (string, required) - The unique identifier provided when this call was made. 
-
 ## Card (object)
 + cardId (string) - The Lightrail Card ID.
-+ userSuppliedId (string) - Supplied idempotencyId.
++ userSuppliedId (string) - Unique idempotency ID for the request.
 + contactId (string) - Lightrail assigned Contact identifier.
 + dateCreated (string) - Lightrail system time of creation in ISO-8601 format.
 + categories (Category) - A key-value object to store additional information about the Card. For example: `"categories": {"city": "san francisco", "special": "earlybird"}` 
