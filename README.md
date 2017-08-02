@@ -19,23 +19,23 @@ Instead, these documents serve as a step-by-step guide for a particular integrat
 Within this section, the documents dive into some of Lightrail's advanced features. Contents: 
 - The Lightrail [redemption rules](/feature-deep-dive/RedemptionRules.md) documents can be found here. 
 
-# Lightrail Integrations
+## Lightrail Integrations
 Looking to get started even faster? Lightrail's integrations can get you up and running in minutes. 
 
-## Languages
+### Languages
 
-### Java
+#### Java
 
 - [Lightrail Java Client](https://github.com/Giftbit/lightrail-client-java)
 - [Lightrail Stripe Integration for Java](https://github.com/Giftbit/lightrail-stripe-java)
 
-### PHP
+#### PHP
 
 - [Lightrail WooCommerce Plugin](https://wordpress.org/plugins/lightrail-for-woocommerce/)
 
-## Third-Party Platforms
+### Third-Party Platforms
 
-### Stripe
+#### Stripe
 
 - [Lightrail Stripe Integration for Java](https://github.com/Giftbit/lightrail-stripe-java)
 
