@@ -5,5 +5,6 @@ Content:
 
 - [Redeeming a Lightrail Value at Checkout](giftcode-checkout.md).
 - [Account Credits Powered by Lightrail](account-credits.md)
+- [Issuing Lightrail Gift Cards](gift-card.md)
 
 We're constantly looking to improve and expand our documentation. Please let us know if the use-case you are looking for is not here.
