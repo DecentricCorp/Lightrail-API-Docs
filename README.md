@@ -37,6 +37,6 @@ Looking to use an existing integration? Check out the following Lightrail integr
 
 - [Lightrail Stripe Integration for Java](https://github.com/Giftbit/lightrail-stripe-java)
 
-### WooCommerce
+#### WooCommerce
 
 - [Lightrail WooCommerce Plugin](https://wordpress.org/plugins/lightrail-for-woocommerce/)
