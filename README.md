@@ -1,4 +1,4 @@
-# Lightrail API
+# Lightrail API Resources
 
 For an overview and detailed summary of endpoints please visit our [interactive API docs](https://www.lightrail.com/docs). We recommend starting there.
 They cover an overview of common use-cases, introduce the Lightrail object model, and provide detailed breakdown of the Lightrail endpoints.
@@ -8,7 +8,7 @@ We love customer feedback and contributions, so please report any errors or sugg
   
 Outside of the primary api documentation, there are additional resources that are listed under the [use-cases](/use-cases) and [feature deep-dive](/feature-deep-dive) sections.
 
-Note these documents are available either through the [GitHub repository][https://github.com/Giftbit/Lightrail-API-Docs] or alternative viewable through the [GitHub pages](https://giftbit.github.io/Lightrail-API-Docs/).  
+Note these documents are available either through the [GitHub repository](https://github.com/Giftbit/Lightrail-API-Docs) or alternative viewable through the [GitHub pages](https://giftbit.github.io/Lightrail-API-Docs/).  
 
 ## Use-Cases
 The examples in this section are not an exhaustive list of use-cases for the Lightrail API. 
