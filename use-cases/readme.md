@@ -1,6 +1,9 @@
 ## Use-Cases
-The examples in this section are not an exhaustive list of use-cases for the Lightrail API. 
-Instead, these documents serve as a step-by-step guide for a particular integration. Contents:
-- Detailed overview of the [gift code checkout flow](giftcode-checkout.md).
+This section provides detailed documents on implementing some common e-commerce use-cases using the Lightrail API. We provide an overview of the use-case and provide a step-by-step guide to API calls required to implement it. 
 
-We're constantly looking to improve and expand our documentation. If the use-case you're looking for isn't here please let us know.
+Content:
+
+- [Redeeming a Lightrail Value at Checkout](giftcode-checkout.md).
+- [Account Credits Powered by Lightrail](account-credits.md)
+
+We're constantly looking to improve and expand our documentation. Please let us know if the use-case you are looking for is not here.
