@@ -3,19 +3,17 @@
 Welcome to Lightrail's API resources. For an overview and detailed summary of endpoints please visit our [interactive API docs](https://www.lightrail.com/docs). We recommend starting there.
 They cover an overview of common use-cases, introduce the Lightrail object model, and provide the full endpoint list of the Lightrail API.
   
-This repository hosts the API Blueprint file for the interactive documentation. Outside of those documents, there are additional resources that are listed under the [use-cases](/use-cases/readme.md) and [feature deep-dive](/feature-deep-dive/readme.md) sections.
-
-Note these documents are viewable either through the [GitHub repository](https://github.com/Giftbit/Lightrail-API-Docs) or through the [GitHub pages](https://giftbit.github.io/Lightrail-API-Docs/).
+This repository hosts the API Blueprint file for the interactive documentation. Outside of those documents, there are additional resources that are listed under the [use-cases](/use-cases/readme.md) and [feature deep-dive](/feature-deep-dive/readme.md) directories.
   
 We love customer feedback and contributions, so please report any errors or suggestions via a pull request.
 
 ## Use-Cases
-The examples in this section are not an exhaustive list of use-cases for the Lightrail API. 
+The examples in this directory are not an exhaustive list of use-cases for the Lightrail API. 
 Instead, these documents serve as a step-by-step guide for a particular integration. Contents:
 - Detailed overview of the [gift code checkout flow](/use-cases/giftcode-checkout.md).
     
 ## Feature Deep-Dive
-Within this section, the documents dive into some of Lightrail's advanced features. Contents: 
+Within this directory, the documents dive into some of Lightrail's advanced features. Contents: 
 - The Lightrail [redemption rules](/feature-deep-dive/RedemptionRules.md) documents can be found here. 
 
 
