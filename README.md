@@ -17,7 +17,7 @@ Within this directory, the documents dive into some of Lightrail's advanced feat
 - The Lightrail [redemption rules](/feature-deep-dive/RedemptionRules.md) documents can be found here. 
 
 
-## Lightrail Integrations
+## Client Libraries and Integrations
 Looking to use an existing integration? Check out the following Lightrail integrations.
 
 ### Languages
