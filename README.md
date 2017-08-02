@@ -11,14 +11,14 @@ They cover an overview of common use-cases, introduce the Lightrail object model
   
 Outside of the primary document, within this repo there are additional resources that are listed under the 'use-cases' and 'feature deep-dive' directories. 
 
-## Use-Cases Directory
+## Use-Cases
 The examples in this directory are not an exhaustive list of use-cases for the Lightrail API. 
 Instead, these documents serve as a step-by-step guide for a particular integration. Contents:
 - Detailed overview of the [gift code checkout flow](/use-cases/giftcode-checkout.md).
     
-## Feature Deep-Dive Directory
+## Feature Deep-Dive
 Within this directory, the documents dive into some of Lightrail's advanced features. Contents: 
-- The Lightrail[redemption rules](/feature-deep-dive/RedemptionRules.md) documents can be found here. 
+- The Lightrail [redemption rules](/feature-deep-dive/RedemptionRules.md) documents can be found here. 
 
 # Lightrail Integrations
 Looking to get started even faster? Lightrail's integrations can get you up and running in minutes. 
