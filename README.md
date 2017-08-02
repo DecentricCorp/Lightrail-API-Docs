@@ -6,7 +6,7 @@ This repository hosts the API Blueprint file for the interactive docs.
 
 We love customer feedback and contributions, so please report any errors or suggestions via a pull request.
   
-Outside of the primary api document, within there are additional resources that are listed under the [use-cases](/use-cases) and [feature deep-dive](/feature-deep-dive) sections.
+Outside of the primary api documentation, there are additional resources that are listed under the [use-cases](/use-cases) and [feature deep-dive](/feature-deep-dive) sections.
 
 Note these documents are available either through the [GitHub repository][https://github.com/Giftbit/Lightrail-API-Docs] or alternative viewable through the [GitHub pages](https://giftbit.github.io/Lightrail-API-Docs/).  
 
@@ -18,6 +18,7 @@ Instead, these documents serve as a step-by-step guide for a particular integrat
 ## Feature Deep-Dive
 Within this section, the documents dive into some of Lightrail's advanced features. Contents: 
 - The Lightrail [redemption rules](/feature-deep-dive/RedemptionRules.md) documents can be found here. 
+
 
 ## Lightrail Integrations
 Looking to get started even faster? Lightrail's integrations can get you up and running in minutes. 
