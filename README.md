@@ -18,7 +18,7 @@ Instead, these documents serve as a step-by-step guide for a particular integrat
     
 ## Feature Deep-Dive Directory
 Within this directory, the documents dive into some of Lightrail's advanced features. Contents: 
-- The Lightrail[redemption rules](/feature%20deep-dive/RedemptionRules.md) documents can be found here. 
+- The Lightrail[redemption rules](/feature-deep-dive/RedemptionRules.md) documents can be found here. 
 
 # Lightrail Integrations
 Looking to get started even faster? Lightrail's integrations can get you up and running in minutes. 
