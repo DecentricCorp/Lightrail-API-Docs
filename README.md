@@ -1,7 +1,7 @@
 # Lightrail API Resources
 
 Welcome to Lightrail's API resources. For an overview and detailed summary of endpoints please visit our [interactive API docs](https://www.lightrail.com/docs). We recommend starting there.
-They cover an overview of common use-cases, introduce the Lightrail object model, and provide detailed breakdown of the Lightrail endpoints.
+They cover an overview of common use-cases, introduce the Lightrail object model, and provide detailed breakdown of the Lightrail's endpoints.
   
 This repository hosts the API Blueprint file for the interactive documentation. Outside of those documents, there are additional resources that are listed under the [use-cases](/use-cases) and [feature deep-dive](/feature-deep-dive) sections.
 
