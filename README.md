@@ -1,14 +1,13 @@
 # Lightrail API Resources
 
-For an overview and detailed summary of endpoints please visit our [interactive API docs](https://www.lightrail.com/docs). We recommend starting there.
+Welcome to Lightrail's API resources. For an overview and detailed summary of endpoints please visit our [interactive API docs](https://www.lightrail.com/docs). We recommend starting there.
 They cover an overview of common use-cases, introduce the Lightrail object model, and provide detailed breakdown of the Lightrail endpoints.
-This repository hosts the API Blueprint file for the interactive docs.
-
-We love customer feedback and contributions, so please report any errors or suggestions via a pull request.
   
-Outside of the primary api documentation, there are additional resources that are listed under the [use-cases](/use-cases) and [feature deep-dive](/feature-deep-dive) sections.
+This repository hosts the API Blueprint file for the interactive documentation. Outside of those documents, there are additional resources that are listed under the [use-cases](/use-cases) and [feature deep-dive](/feature-deep-dive) sections.
 
-Note these documents are viewable either through the [GitHub repository](https://github.com/Giftbit/Lightrail-API-Docs) or alternative viewable through the [GitHub pages](https://giftbit.github.io/Lightrail-API-Docs/).  
+Note these documents are viewable either through the [GitHub repository](https://github.com/Giftbit/Lightrail-API-Docs) or alternative viewable through the [GitHub pages](https://giftbit.github.io/Lightrail-API-Docs/).
+  
+We love customer feedback and contributions, so please report any errors or suggestions via a pull request.
 
 ## Use-Cases
 The examples in this section are not an exhaustive list of use-cases for the Lightrail API. 
