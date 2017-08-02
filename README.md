@@ -18,7 +18,7 @@ Within this directory, the documents dive into some of Lightrail's advanced feat
 
 
 ## Lightrail Integrations
-Looking to get started even faster? Lightrail's integrations can get you up and running in minutes. 
+Looking to use an existing integration? Check out the following Lightrail integrations.
 
 ### Languages
 
@@ -40,10 +40,3 @@ Looking to get started even faster? Lightrail's integrations can get you up and 
 ### WooCommerce
 
 - [Lightrail WooCommerce Plugin](https://wordpress.org/plugins/lightrail-for-woocommerce/)
-
-
- 
-
-
-
-
