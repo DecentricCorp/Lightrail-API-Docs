@@ -6,7 +6,7 @@ This document is a quick guide to creating and distributing new Lightrail gift c
 
 ## Concepts
 
-A Lightrail gift card is a virtual device for issuing gift values. Each gift card belongs to a Lightrail Program which determine some of the general parameters for its value, such as currency and expiration date. Programs also provide a vehicle to organize gift cards into groups for the purposes of analysis and management. For example, you can check the redemption stats for all of the gift cards create as part of the Boxing-Day 2017 Sale program. You can set up programs using the [Lightrail web application]().
+A Lightrail gift card is a virtual device for issuing gift values. Each gift card belongs to a Lightrail Program which determine some of the general parameters for its value, such as currency and expiration date. Programs also provide a vehicle to organize gift cards into groups for analysis and management purposes. For example, you can check the redemption stats for all of the gift cards create as part of the Boxing-Day 2017 Sale program. You can set up programs using the [Lightrail web application]().
 
 Each gift card has:
 
