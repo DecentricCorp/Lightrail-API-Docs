@@ -8,9 +8,15 @@ This repository hosts the API Blueprint file for the interactive documentation. 
 We love customer feedback and contributions, so please report any errors or suggestions via a pull request.
 
 ## Use-Cases
-The examples in this directory are not an exhaustive list of use-cases for the Lightrail API. 
-Instead, these documents serve as a step-by-step guide for a particular integration. Contents:
-- Detailed overview of the [gift code checkout flow](/use-cases/giftcode-checkout.md).
+This section provides detailed documents on implementing some common e-commerce use-cases using the Lightrail API. We provide an overview of the use-case and provide a step-by-step guide to API calls required to implement it. 
+
+Content:
+
+- [Redeeming a Lightrail Value at Checkout](use-cases/giftcode-checkout.md).
+- [Account Credits Powered by Lightrail](use-cases/account-credits.md)
+- [Issuing Lightrail Gift Cards](use-cases/gift-card.md)
+
+We're constantly looking to improve and expand our documentation. Please let us know if the use-case you are looking for is not here.
     
 ## Feature Deep-Dive
 Within this directory, the documents dive into some of Lightrail's advanced features. Contents: 
