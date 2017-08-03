@@ -52,7 +52,7 @@ Retrieving the full code takes place by making a simple call to the [Full Code A
 
 ### Distribute the Gift Code
 
-Usually gift codes are sent to the recipient by email. If you are selling a gift code on your web site, you have to ask the customer who is purchasing the gift code to provide the gift recipient's email. 
+Usually gift codes are sent to the recipient by email. If you are selling a gift code on your web site, you have to ask the customer who is purchasing the gift code to provide the gift recipient's email address.
 
 For the contents of email, you should generally rely on a template and fill in the gift code and recipient's information, such as their name, to that template. 
 
