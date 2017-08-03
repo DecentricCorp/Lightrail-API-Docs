@@ -487,11 +487,11 @@ Create a Card of type `GIFT_CARD`.
 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
     + Attributes 
-        + userSuppliedId (string, required)
+        + userSuppliedId (string, required) - Unique idempotency ID for the request.
         + cardType (string, required) - GIFT_CARD
         + initialValue (number, optional) - If not provided, will default to 0.
         + currency (string) - The 3 character ISO-4217 currency.
-        + programId (string, required)
+        + programId (string, required) - The Lightrail Program ID.
         + categories (object, optional) - An object of key-value pairs. For example: `'categories': {'city':'Seattle', 'country':'USA'}`.
         + contactId (string, optional) - Note, the Contact must be created before the request to create the card.
         + expires (string, optional) - Defaults to never expires.
@@ -622,7 +622,7 @@ Activate Cards that were created as inactive.
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + userSuppliedId (string, required)
+        + userSuppliedId (string, required) 
         
     + Body 
     
@@ -1208,6 +1208,9 @@ Captures a pending Transaction. This locks in the value of the pending Transacti
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
+    + Attributes
+        + userSuppliedId (string, required) - Unique idempotency ID for the request.
 
 + Response 200
     + Attributes
@@ -1246,6 +1249,8 @@ Voids a pending Transaction. This makes the value of the pending Transaction ava
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    + Attributes
+        + userSuppliedId (string, required) - Unique idempotency ID for the request. 
     
 + Response 200
     + Attributes
@@ -1284,6 +1289,8 @@ Refund a Transaction, reverting its affects.
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    + Attributes
+        + userSuppliedId (string, required) - Unique idempotency ID for the request. 
     
 + Response 200
     + Attributes
