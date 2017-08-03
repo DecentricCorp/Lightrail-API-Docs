@@ -42,7 +42,7 @@ In order to programmatically create a new gift card, you can call the [Cards API
 Optionally, you can also specify the following information:
 
 - The `initialValue` for the card. If not specified this will default to zero.
-- The validity period of the card, if applicable, by specifying `startDate` and `expires`.
+- If applicable, the validity period of the card. This is specified by stating either or both of `startDate` and `expires` parameters.
 
 For the response of this call, you need to retain the `cardId` which is necessary for the following call.
 
