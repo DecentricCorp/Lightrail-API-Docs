@@ -37,7 +37,7 @@ Here are steps for issuing a new gift card:
 
 In order to programmatically create a new gift card, you can call the [Cards API Endpoint](#creating-a-new-gift-card). For this call, you need to determine the following information: 
 
-- The `programId` of the program to which the card will belong. You can find this ID for an existing or a new program by checking the program page in the Lightrail web application.
+- The `programId` of the program to which the card will belong. You can find this ID for a new or existing program by checking the program page in the Lightrail web application.
 
 Optionally, you can also specify the following information
 
