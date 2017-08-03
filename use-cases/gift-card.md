@@ -20,7 +20,7 @@ The `cardId` on the other hand is used for all administrative purposes such as f
 
 ## Use-Case
 
-Depending on your business model, various events can trigger issuing a new gift card for a customer. For example, you might want to create a new gift card to send it to your existing customers on their birthday, or you may want to enable purchasing a gift card on your store.
+Depending on your business model, various events can trigger issuing a new gift card for a customer. For example, you might want to create a new gift card to send it to your existing customers on their birthday, or you may want to enable your customers to purchase a gift card at your online store.
 
 ## High-Level Flow
 
