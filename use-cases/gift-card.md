@@ -16,7 +16,7 @@ Each gift card has:
 
 Generally, when a gift card is issued, the `fullCode` is sent to the recipient by email. The recipient can later provide this code as a proof that they *are* the legitimate holder of the card and check its balance or redeem its value, for example, at a store checkout. 
 
-The `cardId` on the other hand is used for all administrative purposes such as activating a card, freezing or unfreezing its value, funding the card, etc.
+The `cardId` on the other hand is used for all administrative purposes such as funding the card, freezing or unfreezing its value, etc.
 
 ## Use-Case
 
