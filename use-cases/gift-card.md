@@ -10,7 +10,7 @@ A Lightrail gift card is a virtual device for issuing gift values. Each gift car
 
 Each gift card has:
 
--  a specific `currency` which is inherited from the program it belongs to, 
+-  a `currency` which is inherited from the program it belongs to, 
 -  a `cardId` which uniquely identifies the card, 
 -  and a `fullCode` which is a unique unguessable alphanumeric string, usually released to the gift recipient in confidence. 
 
