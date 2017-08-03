@@ -39,7 +39,7 @@ In order to programmatically create a new gift card, you can call the [Cards API
 
 - The `programId` of the program to which the card will belong. You can find this ID for a new or existing program by checking the program page in the Lightrail web application.
 
-Optionally, you can also specify the following information
+Optionally, you can also specify the following information:
 
 - The `initialValue` for the card. If not specified this will default to zero.
 - The validity period of the card, if applicable, by specifying `startDate` and `expires`.
