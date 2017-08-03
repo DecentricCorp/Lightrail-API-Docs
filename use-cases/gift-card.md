@@ -29,7 +29,7 @@ Here are steps for issuing a new gift card:
 - Create a new gift card program if you have not set up one up already.
 - Create a new gift card under the program.
 - Retrieve the gift code corresponding to the new card from the Lightrail API.
-- Send the code to the customer, which is usually done via email or text message.
+- Send the code to the customer, usually via email or text message.
 
 ## Detailed Flow
 
