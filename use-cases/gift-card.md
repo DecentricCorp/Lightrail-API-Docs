@@ -54,9 +54,9 @@ Retrieving the full code takes place by making a simple call to the [Full Code A
 
 Usually gift codes are sent to the recipient by email. If you are selling a gift code on your web site, you have to ask the customer who is purchasing the gift code to provide the gift recipient's email address.
 
-For the contents of email, you should generally rely on a template and fill in the gift code and recipient's information, such as their name, to that template. 
+For the contents of email, you should generally rely on a template and fill the gift code and the recipient's information (e.g. their name) in that template. 
 
-Having determined the content of the email and its recipient's email address, you can use your email service of choice to send the email and deliver the gift code. 
+Having determined the content of the email and its recipient's email address, you can use an email service of choice to send the email and deliver the gift code. 
 
 Traditional email services provide an SMTP interface but for sending emails using a simpler RESTful interface, you may want to consider an email API service provider such as [SendWithUs](https://www.sendwithus.com/docs/quickstart) or [Amazon SES](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/sending-email.html).
 
