@@ -1,5 +1,5 @@
 ## Use-Cases
-This section provides detailed documents on implementing some common e-commerce use-cases using the Lightrail API. We provide an overview of the use-case and provide a step-by-step guide to API calls required to implement it. 
+This section provides detailed documents on implementing some common e-commerce use-cases using the Lightrail API. We provide an overview of the use-case followed by a step-by-step guide to making the API calls required to implement it. 
 
 Content:
 
