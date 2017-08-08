@@ -48,7 +48,7 @@ From the response of this call, you need to retain the `cardId` which is necessa
 
 ### Retrieve the Code
 
-Retrieving the full code takes place by making a simple call to the [Full Code API Endpoint](retrieving-the-full-code) and providing the `cardId`.
+Retrieving the full code takes place by making a simple call to the [Full Code API Endpoint](#retrieving-the-full-code) and providing the `cardId`.
 
 ### Distribute the Gift Code
 
