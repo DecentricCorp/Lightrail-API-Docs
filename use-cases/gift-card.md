@@ -62,11 +62,11 @@ From the response of this call, you need to retain the `cardId` which is necessa
 
 Here is an example of a gift card:
 
-- **Program ID:** <ID of the Consumer Gift Cards Program>
+- **Program ID:** `<ID of the Consumer Gift Cards Program>`
 - **Card Initial Value:** $50
 - **Card Start Date:** Aug 1st, 2017
 - **Card Expiry Date:** Oct 1st, 2017 
-- **Metadata:** order ID: <order ID for the card purchase>, transaction ID: <credit card transaction ID for the purchase>
+- **Metadata:** order ID: `<order ID for the card purchase>`, transaction ID: `<credit card transaction ID for the purchase>`
 
 ### Retrieve the Code
 
