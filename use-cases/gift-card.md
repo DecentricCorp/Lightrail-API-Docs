@@ -66,7 +66,7 @@ Here is an example of a gift card:
 - **Card Initial Value:** $50
 - **Card Start Date:** Aug 1st, 2017
 - **Card Expiry Date:** Oct 1st, 2017 
-- **Metadata:** order ID: `<order ID for the card purchase>`, transaction ID: `<credit card transaction ID for the purchase>`
+- **Metadata:** order ID for card purchase, transaction ID for the card purchase, purchaser's name and email address.
 
 ### Retrieve the Card's Full Code
 
@@ -106,7 +106,9 @@ POST https://api.lightrail.com/v1/cards
   "metadata": {
     "orderId": "x72a3sx5e",
     "transactionId": "tr2re3t0y2r3u0w6r",
-    "recipient" : "test@test.ca"
+    "recipientEmail" : "test@test.ca",
+    "purchaserName" : "Alice Liddell",
+    "purchaserEmail" : "alice@wonderland.ca"
    }
 }
 ```
