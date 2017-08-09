@@ -68,7 +68,7 @@ Here is an example of a gift card:
 - **Card Expiry Date:** Oct 1st, 2017 
 - **Metadata:** order ID: `<order ID for the card purchase>`, transaction ID: `<credit card transaction ID for the purchase>`
 
-### Retrieve the Code
+### Retrieve the Card's Full Code
 
 Retrieving the full code takes place by making a simple call to the [Full Code API Endpoint](#retrieving-the-full-code) and providing the `cardId`.
 
