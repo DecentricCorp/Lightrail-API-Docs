@@ -6,7 +6,7 @@ This document is a quick guide to creating and distributing new Lightrail gift c
 
 ## Concepts
 
-A Lightrail gift card is a virtual device for issuing gift values. Each gift card belongs to a Lightrail Program which determine some of the general parameters for its value, such as currency and expiration date. Programs also provide a vehicle to organize gift cards into groups for analysis and management purposes. For example, you can check the redemption stats for all of the gift cards created as part of the Boxing-Day 2017 Sale program. You can set up programs using the [Lightrail web application]().
+A Lightrail gift card is a virtual device for issuing gift values. Each gift card belongs to a Lightrail Program which determine some of the general parameters for its value, such as currency and expiration date. Programs also provide a vehicle to organize gift cards into groups for analysis and management purposes. For example, you can check the redemption stats for all of the gift cards created as part of the Boxing-Day 2017 Sale program. You can set up programs using the [Lightrail web application](https://www.lightrail.com/app/).
 
 Each gift card has:
 
@@ -33,6 +33,19 @@ Here are steps for issuing a new gift card:
 
 ## Detailed Flow
 
+### Create a Gift Card Program
+
+Because programs are used to manage and organize gift cards, Lightrail recommends that you create a dedicated program for each of your gift card use-cases. Creating Gift Card Programs is currently supported via [Lightrail web application](https://www.lightrail.com/app/).
+
+Here is an example of a consumer gift card program:
+
+- **Program Name:** Consumer Gift Cards
+- **Currency:** USD 
+- **Program Start Sate:** immediate
+- **Program End Date:** never
+- **Value Range:** $5 - $1000
+- **Card Expiry:** never
+
 ### Create the Gift Card
 
 In order to programmatically create a new gift card, you can call the [Cards API Endpoint](#creating-a-new-gift-card). For this call, you need to determine the following information: 
@@ -43,8 +56,17 @@ Optionally, you can also specify the following information:
 
 - The `initialValue` for the card. If not specified this will default to zero.
 - If applicable, the validity period of the card. This is specified by stating either or both of `startDate` and `expires` parameters.
+- A set of `metadata` to record any significant information you would like to retain with respect to the issuance of this card, e.g. the order and transaction IDs if the card is being purchased.  
 
 From the response of this call, you need to retain the `cardId` which is necessary for the following call.
+
+Here is an example of a gift card:
+
+- **Program ID:** <ID of the Consumer Gift Cards Program>
+- **Card Initial Value:** $50
+- **Card Start Date:** Aug 1st, 2017
+- **Card Expiry Date:** Oct 1st, 2017 
+- **Metadata:** order ID: <order ID for the card purchase>, transaction ID: <credit card transaction ID for the purchase>
 
 ### Retrieve the Code
 
@@ -70,15 +92,22 @@ For creating a new gift card, you need to provide the `programId` for the progra
 
 You also need to provide a `userSuppliedId` which is a client-side unique value to guarantee idempotence, i.e. to ensure that repeating the call with the same parameters will not lead to repeated server-side actions. Initial value and start and expiry dates are optional parameters.
 
+Note that you can provide a JSON object as `metadata`. Technically, this metadata will be recorded with the initial transaction which funds the card with its initial value.
+
 ```json
 POST https://api.lightrail.com/v1/cards
 {
   "userSuppliedId": "account-d37e",
   "programId": "program-06d0",
-  "initialValue" : 500,
+  "initialValue" : 5000,
   "cardType" : "GIFT_CARD",
-  "startDate" : "2017-08-02T00:27:02.910Z",
-  "expires" : "2017-10-02T00:27:02.910Z"
+  "startDate" : "2017-08-01T00:27:02.910Z",
+  "expires" : "2017-10-01T00:27:02.910Z", 
+  "metadata": {
+    "orderId": "x72a3sx5e",
+    "transactionId": "tr2re3t0y2r3u0w6r",
+    "recipient" : "test@test.ca"
+   }
 }
 ```
 
@@ -90,7 +119,7 @@ The response object to this call includes both the `userSuppliedId` and a server
   "cardId": "card-6207",
   "userSuppliedId": "account-d37",
   "contactId": null,
-  "dateCreated": "2017-08-02T22:15:42.123Z",
+  "dateCreated": "2017-08-01T22:15:42.123Z",
   "categories":[
    {
     "categoryId": "category-94d0",
