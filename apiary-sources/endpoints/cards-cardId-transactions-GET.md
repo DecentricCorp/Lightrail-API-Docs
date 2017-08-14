@@ -1,4 +1,4 @@
-### List Card Transactions [GET /cards/{cardId}/transactions]
+### List Card Transactions [GET /cards/{cardId}/transactions{?limit}{?offset}]
 Retrieve a paginated list of a Card's Transactions.
 
 ---
@@ -10,9 +10,9 @@ Retrieve a paginated list of a Card's Transactions.
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
-    + Attributes
-        + limit (number, optional) - {{pagination.limit}}
-        + offset (number, optional) - {{pagination.offset}}
++ Parameters
+    + limit (number, optional) - {{pagination.limit}}
+    + offset (number, optional) - {{pagination.offset}}
     
 + Response 200
     + Attributes
