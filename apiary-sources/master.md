@@ -250,6 +250,6 @@ It is the responsibility of the API user and their organization to understand an
 
 {% include 'sections/programs.md' %}
 
-{% include 'data-structures.md' %}
+{% include 'sections/data-structures.md' %}
 
 
