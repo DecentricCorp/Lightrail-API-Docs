@@ -17,13 +17,13 @@ This rule is made up of two numbers, and one operator: equals.  This rule will e
 Here's a more realistic redemption rule:
 
 ```javascript
-value >= 5000
+metadata.cartValue >= 5000
 ```
 
-This rule evaluates to true if the value of the transaction is greater or equal to 5000.  In the currency `USD` this is the rule for "purchase of $50.00 or more."  In the currency `JPY` this would be "purchase of ¥5000 or more."
+This rule evaluates to true if the value of the shopping cart is greater or equal to 5000.  In the currency `USD` this is the rule for "purchase of $50.00 or more."  In the currency `JPY` this would be "purchase of ¥5000 or more."
 
 The four variables of a transaction that can be used for a rule are:
-- `value`: a positive number for the total value of the transaction
+- `value`: a positive number for the value of the Lightrail transaction (which may not be the value of the full cart in split-tender transactions)
 - `balance`: a positive number for the balance remaining on the promotion
 - `currency`: a string for the ISO code of the currency of the transaction
 - `metadata`: a map of arbitrary data that can be sent with the transaction
@@ -38,6 +38,7 @@ Here's an example `metadata` JSON object for a doughnut store that includes elem
 
 ```json
 {
+  "cartValue": 1960,
   "cart": [
     {
       "category": "doughnut",
@@ -152,7 +153,7 @@ myMap['child']
 myMap[variableName]
 ```
 
-Functions are global.  They can be accessed like the global function they are, or treated like methods with the first argument acting as the object the method is on.  This second form is more convenient for chaining.  Some functions can accept a variable number of arguments or multiple types.  For a complete list of functions see the [functions appendix](#functions).
+Functions are global.  Their names are case-sensitive.  They can be accessed like the global function they are, or treated like methods with the first argument acting as the object the method is on.  This second form is more convenient for chaining.  Some functions can accept a variable number of arguments or multiple types.  For a complete list of functions see the [functions appendix](#functions).
 
 ```javascript
 max(1, 2)
@@ -224,6 +225,7 @@ In this `metadata` cart items are duplicated if more than one is bought.
 
 ```json
 {
+  "cartValue": 1960,
   "cart": [
     {
       "category": "doughnut",
@@ -279,7 +281,7 @@ In this `metadata` cart items are duplicated if more than one is bought.
 #### Spend at least $10
 
 ```javascript
-value >= 1000
+metadata.cartValue >= 1000
 ```
 
 #### Buy any 5 items
@@ -324,6 +326,7 @@ In this `metadata` cart items have a `quantity`.
 
 ```json
 {
+  "cartValue": 9593,
   "cart": [
     {
       "category": "shirt",
