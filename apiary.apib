@@ -1017,7 +1017,7 @@ A feature the Lightrail API supports is the ability to create Pending Transactio
 This means the value required for the Pending Transaction will be unavailable to be used for other Transactions. 
 A Pending Transaction can either be captured, which confirms the Transaction, or it can be voided, freeing up their associated value. 
 
-### List Card Transactions [GET /cards/{cardId}/transactions]
+### List Card Transactions [GET /cards/{cardId}/transactions{?limit}{?offset}]
 Retrieve a paginated list of a Card's Transactions.
 
 ---
@@ -1029,9 +1029,9 @@ Retrieve a paginated list of a Card's Transactions.
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
-    + Attributes
-        + limit (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
-        + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
++ Parameters
+    + limit (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
+    + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
     
 + Response 200
     + Attributes
