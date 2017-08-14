@@ -9,7 +9,7 @@ Retrieve a paginated list of Cards.
    
 + Parameter
     + limit (number, optional) - {{pagination.limit}}
-    + offset (number, optional) - {{pagination.limit}}
+    + offset (number, optional) - {{pagination.offset}}
     + categoryKey (string, optional) - A key of a Category. 
     + categoryValue (string, optional) - A value of a Category. 
     + contactId (string, optional) - A contactId to filter by.
