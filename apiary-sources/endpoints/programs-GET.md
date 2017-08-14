@@ -1,13 +1,11 @@
-## Programs [/programs/]
-This endpoint can be used to retrieve information about your existing Gift Card and Promotion Programs.
-
----
-### List Programs [GET /programs]
+### List Programs [GET /programs{?limit}{?offset}]
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    
+    + Parameter
+        + limit (number, optional) - {{pagination.limit}}
+        + offset (number, optional) - {{pagination.limit}}
 + Response 200
 
     + Body

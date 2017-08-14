@@ -6,7 +6,7 @@
 + contactId (string) - Lightrail assigned Contact identifier.
 + dateCreated (string) - Lightrail system time of creation in ISO-8601 format.
 + categories (Category) - A key-value object to store additional information about the Card. For example: `"categories": {"city": "san francisco", "special": "earlybird"}` 
-+ cardType (string) - `ACCOUNT_CARD`, `GIFT_CARD`.
++ cardType (string) - {{cardType}}
 + currency (string) - {{currency}}
 
 ## ValueStore (object)
@@ -67,8 +67,9 @@
 + principal (ValueStoreBalance)
 + attached (array[ValueStoreBalance])
 + currency (string) - {{currency}}
-+ cardType (string) - `ACCOUNT_CARD`, `GIFT_CARD`.
++ cardType (string) - {{cardType}}
 + balanceDate (string) - The time the balance was checked.
++ cardId (string) - The Lightrail Card ID.
 
 ## Category (object)
 + categoryKey (string) - The key of the category. Examples: "city", "special"

@@ -308,14 +308,14 @@ Retrieve a paginated list of Cards.
              Authorization: Bearer <YOUR_ACCESS_TOKEN>
    
 + Parameter
-    + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
-    + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
+    + limit (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
+    + offset (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
     + categoryKey (string, optional) - A key of a Category. 
     + categoryValue (string, optional) - A value of a Category. 
     + contactId (string, optional) - A contactId to filter by.
     + cardType (string, optional) - `ACCOUNT_CARD`, `GIFT_CARD`.
-    + currency (string, optional) - The 3 character ISO-4217 currency.
-    + userSuppliedId (string, optional) - Unique idempotency ID for the request.
+    + currency (string, optional) - The three-character ISO-4217 currency.
+    + userSuppliedId (string, optional) - Endpoint-unique idempotency ID provided by the client.
 
 + Response 200
     + Attributes 
@@ -376,6 +376,7 @@ Retrieve a paginated list of Cards.
               }
             }
 
+
 ### Retrieve Card by cardId [GET /cards/{cardId}]
 + Parameters 
     + cardId (string, required) - The Lightrail Card ID.
@@ -415,6 +416,7 @@ Retrieve a paginated list of Cards.
               }
             }
 
+
 ### Create Account Card [POST /cards]
 Create a Card of type `ACCOUNT_CARD` which is associated with an existing Contact.
 
@@ -424,14 +426,14 @@ Create a Card of type `ACCOUNT_CARD` which is associated with an existing Contac
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
     + Attributes 
-        + userSuppliedId (string, required) - Unique idempotency ID for the request.
+        + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
         + cardType (string, required) - ACCOUNT_CARD
-        + currency (string, required) - The 3 character ISO-4217 currency.
+        + currency (string, required) - The three-character ISO-4217 currency.
         + initialValue (number, optional) - If not provided, will default to 0.
         + categories (object, optional) - An object of key-value pairs. For example: `'categories': {'city':'Seattle', 'country':'USA'}`.
         + contactId (string, required) - Note, the Contact must be created before the request to create the card.
         + expires (string, optional) - Defaults to never expires.
-        + startDate (string, optional) - The date for which the associated ValueStore will become useable.
+        + startDate (string, optional) - The date for which the associated ValueStore will become usable.
         + inactive (boolean, optional) - If `true` the Card's `PRINCIPAL` ValueStore will have an `INACTIVE` balance.
 
     + Body
@@ -490,7 +492,7 @@ Create a Card of type `GIFT_CARD`.
         + userSuppliedId (string, required) - Unique idempotency ID for the request.
         + cardType (string, required) - GIFT_CARD
         + initialValue (number, optional) - If not provided, will default to 0.
-        + currency (string) - The 3 character ISO-4217 currency.
+        + currency (string) - The three-character ISO-4217 currency.
         + programId (string, required) - The Lightrail Program ID.
         + categories (object, optional) - An object of key-value pairs. For example: `'categories': {'city':'Seattle', 'country':'USA'}`.
         + contactId (string, optional) - Note, the Contact must be created before the request to create the card.
@@ -539,6 +541,7 @@ Create a Card of type `GIFT_CARD`.
               }
             }
 
+
 ### Retrieve fullcode for Gift Card [GET /cards/{cardId}/fullcode]
 Retrieves the `fullcode` associated with a Gift Card.
 
@@ -562,6 +565,7 @@ Retrieves the `fullcode` associated with a Gift Card.
                     "code" : "5JBUR-9V922-5EDL8-RP5R5-YYEVY"
                 }
             }
+
 
 ### Update Contact on Card [PATCH /cards/{cardId}]
 Update the Contact associated with a Card.
@@ -694,6 +698,7 @@ Freeze a Card, preventing all transactions until unfrozen.
               }
             }        
 
+
 ### Unfreeze Card [POST /cards/{cardId}/unfreeze]
 Unfreeze a frozen Card, re-enabling the creation of transactions.
 
@@ -803,12 +808,12 @@ Retrieve a paginated list of Contacts.
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
             
 + Parameters 
-    + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
+    + limit (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
     + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
     + email (string, optional) - The contact's email.
     + firstName (string, optional) - The contact's first name.
     + lastName (string, optional) - The contact's last name.
-    + userSuppliedId (string, required) - Unique idempotency ID for the request.
+    + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
     
 + Response 200
     + Attributes
@@ -845,6 +850,7 @@ Retrieve a paginated list of Contacts.
               }
             }
 
+
 ### Show Contact [GET /contacts/{contactId}]
 + Parameters
     + contactId (string, required) - The Lightrail Contact ID.
@@ -872,13 +878,14 @@ Retrieve a paginated list of Contacts.
               }
             }
 
+
 ### Create Contact [POST /contacts]
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
     + Attributes 
-        + userSuppliedId (string, required) - Unique idempotency ID for the request.
+        + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
         + email (string, optional) - The contact's email.
         + firstName (string, optional) - The contact's first name.
         + lastName (string, optional) - The contact's last name.
@@ -910,6 +917,7 @@ Retrieve a paginated list of Contacts.
                     "dateCreated": "2016-12-09T00:06:00.000Z"
                 }
             }
+
 
 ### Update Contact [PATCH /contacts/{contactId}/]
 + Parameters
@@ -950,14 +958,15 @@ Retrieve a paginated list of Contacts.
                 }
             }
 
+
 ### Retrieve Account Cards or Gift Cards for Contact [GET /cards{?contactId}{?cardType}{?currency}]
 Retrieve a paginated list of a Contact's Cards.
 
 ---
 + Parameters 
     + contactId (string, required) - The Lightrail Contact ID.
-    + cardType (string, required) - `ACCOUNT_CARD`, `GIFT_CARD`
-    + currency (string, optional) - Only needed if your Contact has Account Cards in multiple currencies.
+    + cardType (string, required) - `ACCOUNT_CARD`, `GIFT_CARD`.
+    + currency (string, optional) - The three-character ISO-4217 currency. Only needed if your Contact has Account Cards in multiple currencies.
 
 + Request (application/json)
     + Headers
@@ -1002,7 +1011,7 @@ Retrieve a paginated list of a Contact's Cards.
                 "totalCount":1
               }
             }
-            
+
 ## Transactions [/cards/{cardId}/transactions]
 A feature the Lightrail API supports is the ability to create Pending Transactions. 
 This means the value required for the Pending Transaction will be unavailable to be used for other Transactions. 
@@ -1021,7 +1030,7 @@ Retrieve a paginated list of a Card's Transactions.
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + limit (number, optional) - For pagination.  The maximum number of results to return at once. Default 100.
+        + limit (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
         + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
     
 + Response 200
@@ -1082,6 +1091,7 @@ Retrieve a paginated list of a Card's Transactions.
               }
             }
 
+
 ### Show Transaction [GET /cards/{cardId}/transactions/{transactionId}]
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
@@ -1125,6 +1135,7 @@ Retrieve a paginated list of a Card's Transactions.
                 }
             }
 
+
 ### Create Transaction [POST /cards/{cardId}/transactions]
 Creates a transaction against a Card. Transactions can be created as pending which locks the value required for the Transaction until it is either captured or voided. 
 
@@ -1139,7 +1150,7 @@ Creates a transaction against a Card. Transactions can be created as pending whi
 
     + Attributes
         + value (number) - The value of the transaction. Can be negative or positive. Note, value is in the smallest unit for the currency. If USD, then value represents cents. If the Transaction represents a $50 USD redemption value = -5000.
-        + currency (required) - The 3 character ISO-4217 currency code.  
+        + currency (required) - The three-character ISO-4217 currency.
         + metadata (Metadata, optional) - A key-value object to store additional information about the transaction. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`. Also note, the `giftbit_*` namespace for keys is reserved.
         + pending (boolean, optional) - If `true`, the required value will be locked, however in order to complete the transaction the pending transaction must be captured.
         
@@ -1196,6 +1207,7 @@ Creates a transaction against a Card. Transactions can be created as pending whi
               }
             }
 
+
 ### Capture Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/capture]
 Captures a pending Transaction. This locks in the value of the pending Transaction.
 
@@ -1237,6 +1249,7 @@ Captures a pending Transaction. This locks in the value of the pending Transacti
               }
             }
 
+
 ### Void Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/void]
 Voids a pending Transaction. This makes the value of the pending Transaction available to be used by other Transactions.
 
@@ -1277,20 +1290,21 @@ Voids a pending Transaction. This makes the value of the pending Transaction ava
               }
             }
 
+
 ### Refund Transaction [POST /cards/{cardId}/transactions/{transactionId}/refund]
 Refund a Transaction, reverting its affects.
 
 ---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
-    + transactionId (string, required) -The Lightrail Transaction ID. Must be a Transaction with transactionType `DRAWDOWN`.
+    + transactionId (string, required) -The Lightrail Transaction ID. Must be an existing Transaction with transactionType `DRAWDOWN`.
 
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
     + Attributes
-        + userSuppliedId (string, required) - Unique idempotency ID for the request. 
+        + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
     
 + Response 200
     + Attributes
@@ -1317,6 +1331,7 @@ Refund a Transaction, reverting its affects.
               }
             }
             
+
 ## Codes [/codes/{fullcode}/transactions]
 These endpoints are used when interacting directly with the `fullcode` of a Gift Card.
 
@@ -1383,6 +1398,7 @@ Retrieve a paginated list of a Card's Transactions using the Gift Card's `fullco
               }
             }
 
+
 ### Show Transaction [GET /codes/{fullcode}/transactions/{transactionId}{?pin}]
 + Parameters
     + transactionId (string, required) - The Lightrail Transaction ID.
@@ -1417,6 +1433,7 @@ Retrieve a paginated list of a Card's Transactions using the Gift Card's `fullco
                 }
             }
 
+
 ### Create Transaction [POST /codes/{fullcode}/transactions{?pin}]
 Creates a transaction against a Card using the Gift Card's `fullcode`.
 
@@ -1432,7 +1449,7 @@ Creates a transaction against a Card using the Gift Card's `fullcode`.
 
     + Attributes
         + value (number) - The value of the transaction. Must be negative when transacting against the fullcode. Note, value is in the smallest unit for the currency. If USD, then value represents cents. If the Transaction represents a $50 USD redemption value = -5000.
-        + currency (required) - The 3 character ISO-4217 currency code.  
+        + currency (required) - The three-character ISO-4217 currency.
         + metadata (Metadata, optional) - A key-value object to store additional information about the transaction. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`. Also note, the `giftbit_*` namespace for keys is reserved.
         + pending (boolean, optional) - If `true`, the required value will be locked, however in order to complete the transaction the pending transaction must be captured.
         
@@ -1489,8 +1506,9 @@ Creates a transaction against a Card using the Gift Card's `fullcode`.
               }
             }
 
+
 ## Balances [/cards/{cardId}/balance/]
-These endpoints are used to get the available balance assoicated with a Card.
+These endpoints are used to get the available balance associated with a Card.
 
 ---
 ### Get Balance by cardId [GET /cards/{cardId}/balance{?asAtDate}]
@@ -1502,9 +1520,9 @@ Retrieve a Card's balance.
     + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
 + Request (application/json)
     + Headers
-    
+
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    
+
 + Response 200
     + Attributes (Balance)
 
@@ -1528,8 +1546,9 @@ Retrieve a Card's balance.
                 }
             }
 
+
 ### Get Balance by fullcode [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
-Retreive a Card's balance using the Gift Card's `fullcode`.
+Retrieve a Card's balance using the Gift Card's `fullcode`.
 
 ---
 + Parameters
@@ -1564,6 +1583,7 @@ Retreive a Card's balance using the Gift Card's `fullcode`.
                 "balanceDate": "2017-06-05T17:11:36.999Z"
                 }
             }
+
 
 ### Get Balance by fullcode (Deprecated) [GET /codes/{fullcode}/balance{?asAtDate}{?pin}]
 Note, this endpoint is deprecated and should no longer be used. 
@@ -1639,6 +1659,7 @@ Retrieve a paginated list of a Card's ValueStores.
                 }          
             }
 
+
 ### Show ValueStore [GET /cards/{cardId}/valueStores/{valueStoreId}]
 + Parameters
     + cardId (string, required)
@@ -1666,6 +1687,7 @@ Retrieve a paginated list of a Card's ValueStores.
                 }
             }
 
+
 ### Add ValueStore [POST /cards/{cardId}/valueStores]
 Adds a ValueStore from a Promotion Program to a Card. 
 
@@ -1679,8 +1701,8 @@ Adds a ValueStore from a Promotion Program to a Card.
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + userSuppliedId (string, required) - Unique idempotency ID for the request.
-        + currency (string, required) - The 3 character ISO-4217 currency.
+        + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
+        + currency (string, required) - The three-character ISO-4217 currency.
         + programId (string, required) - The unique id of the Promotion Program. Note the Program's `ValueStoreType` must be of type `ATTACHED`.
         + expires (string, optional) - Defaults to lifespan set by program.
         + startDate (string, optional) - The date for which the ValueStore will become useable.
@@ -1712,6 +1734,7 @@ Adds a ValueStore from a Promotion Program to a Card.
                     "expires": "2017-06-13T06:59:59.000Z"
                 }   
             }
+
 
 ### Freeze ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/freeze]
 Freeze a Card's ValueStore, preventing all transactions against that ValueStore until unfrozen. 
@@ -1758,6 +1781,7 @@ Freeze a Card's ValueStore, preventing all transactions against that ValueStore 
                 }
             }
 
+
 ### Unfreeze ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/unfreeze]
 Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions against that ValueStore.
 
@@ -1772,7 +1796,7 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + userSuppliedId (string, required) - Unique idempotency ID for the request.
+        + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
         
     + Body 
     
@@ -1802,6 +1826,7 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
                 }
             }
 
+
 ### Cancel ValueStore [POST /cards/{cardId}/valueStores/{valueStoreId}/cancel]
 Permanently cancels a Card's ValueStore.
 
@@ -1816,7 +1841,7 @@ Permanently cancels a Card's ValueStore.
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + userSuppliedId (string, required) - Unique idempotency ID for the request.
+        + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
         
     + Body 
     
@@ -1846,10 +1871,12 @@ Permanently cancels a Card's ValueStore.
                 }
             }
 
+
 ## Categories [/categories/]
 These endpoints are used to retrieve information about your existing Categories.
 
 ---
+
 ### List Categories [GET /categories]
 + Request (application/json)
     + Headers
@@ -1884,6 +1911,7 @@ These endpoints are used to retrieve information about your existing Categories.
                 }
             }
 
+
 ### List Categories on Card [GET /cards/{cardId}/categories]
 + Parameters
     + cardId (string, required)
@@ -1913,16 +1941,19 @@ These endpoints are used to retrieve information about your existing Categories.
                     }
             }
 
+
 ## Programs [/programs/]
 This endpoint can be used to retrieve information about your existing Gift Card and Promotion Programs.
 
 ---
-### List Programs [GET /programs]
+### List Programs [GET /programs{?limit}{?offset}]
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    
+    + Parameter
+        + limit (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
+        + offset (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
 + Response 200
 
     + Body
@@ -1979,22 +2010,23 @@ This endpoint can be used to retrieve information about your existing Gift Card 
                 }
             }
 
+
 # Data Structures
 
 ## Card (object)
 + cardId (string) - The Lightrail Card ID.
-+ userSuppliedId (string) - Unique idempotency ID for the request.
++ userSuppliedId (string) - Endpoint-unique idempotency ID provided by the client.
 + contactId (string) - Lightrail assigned Contact identifier.
 + dateCreated (string) - Lightrail system time of creation in ISO-8601 format.
 + categories (Category) - A key-value object to store additional information about the Card. For example: `"categories": {"city": "san francisco", "special": "earlybird"}` 
 + cardType (string) - `ACCOUNT_CARD`, `GIFT_CARD`.
-+ currency (string) - The 3 character ISO-4217 currency.
++ currency (string) - The three-character ISO-4217 currency.
 
 ## ValueStore (object)
 + cardId (string) - The Lightrail Card ID.
 + valueStoreId (string) - The Lightrail ValueStore ID.
 + valueStoreType (string) - `PRINCIPAL`, `ATTACHED`
-+ currency (string) - The 3 character ISO-4217 currency.
++ currency (string) - The three-character ISO-4217 currency.
 + dateCreated (string) - Lightrail system time of the creation in ISO-8601 format.
 + programId (string) - The Lightrail Program ID.
 + expires (string) - The date when the ValueStore expires in ISO-8601 format.
@@ -2007,14 +2039,14 @@ This endpoint can be used to retrieve information about your existing Gift Card 
 ## Transaction (object)
 + transactionId (string) - The Lightrail Transaction ID.
 + value (number) - The value of the transaction. Can be negative or positive. Note, value is in the smallest unit for the currency. If USD, then value represents cents.
-+ userSuppliedId (string) - Unique idempotency ID for the request.
++ userSuppliedId (string) - Endpoint-unique idempotency ID provided by the client.
 + dateCreated (string) - Lightrail system time of the creation in ISO-8601 format.
 + transactionType (string) - The type of the Transaciton: `DRAWDOWN, FUND, INITIAL_VALUE, CANCELLATION, INACTIVATE, ACTIVATE, FREEZE, UNFREEZE, PENDING_CREATE, PENDING_VOID, PENDING_CAPTURE, DRAWDOWN_REFUND`.
 + transactionAccessMethod (string) - Indicates how the transaction was created. Either through the cardId or the fullcode. Possible values: ["CARDID", "RAWCODE"].
 + valueAvailableAfterTransaction (string) - Deprecated. Indicates the value available on the Card after the Transaction. 
 + giftbitUserId (string) - Deprecated.  
 + cardId (string) - The Lightrail Card ID.
-+ currency (string) - The 3 character ISO-4217 currency.
++ currency (string) - The three-character ISO-4217 currency.
 + metadata (object) - A key-value object to store additional information about the transaction. Note Lightrail's Redemption Rules operate on Transaction Metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`. Also note, the `giftbit_*` namespace for keys is reserved.
 
 ## Pagination (object)
@@ -2025,7 +2057,7 @@ This endpoint can be used to retrieve information about your existing Gift Card 
 + totalCount (number) - The total number of objects that matched the query.
 
 ## Code (object)
-+ currency (string, required) - The 3 character ISO-4217 currency.
++ currency (string, required) - The three-character ISO-4217 currency.
 + initialValue (number, required) - The value of the code at creation in the smallest currency unit 
   (such as cents).
 + programId (string, required) - The id of the Program for which the code will be created from.
@@ -2047,9 +2079,10 @@ This endpoint can be used to retrieve information about your existing Gift Card 
 ## Balance (object)
 + principal (ValueStoreBalance)
 + attached (array[ValueStoreBalance])
-+ currency (string) - The 3 character ISO-4217 currency.
++ currency (string) - The three-character ISO-4217 currency.
 + cardType (string) - `ACCOUNT_CARD`, `GIFT_CARD`.
 + balanceDate (string) - The time the balance was checked.
++ cardId (string) - The Lightrail Card ID.
 
 ## Category (object)
 + categoryKey (string) - The key of the category. Examples: "city", "special"
@@ -2057,7 +2090,7 @@ This endpoint can be used to retrieve information about your existing Gift Card 
 
 ## Contact (object)
 + contactId (string, required) - The Lightrail Contact ID.
-+ userSuppliedId (string, required) - Unique idempotency ID for the request.
++ userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
 + dateCreated (string) - Lightrail system time of creation in ISO-8601 format.
 + email (string, optional) - The contact's email.
 + firstName (string, optional) - The contact's first name.
@@ -2065,3 +2098,4 @@ This endpoint can be used to retrieve information about your existing Gift Card 
 
 ## Metadata (object)
 + A collection of key/value pairs of additional information about the transaction. The `giftbit_*` namespace for keys is reserved.
+

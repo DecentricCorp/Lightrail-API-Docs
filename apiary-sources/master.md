@@ -234,14 +234,22 @@ Error response JSON will be in the following format:
 The Lightrail API provides flexibility to implement multiple currency solutions (gift cards, unique promo codes, credit refunds, etc). 
 It is the responsibility of the API user and their organization to understand and follow the jurisdictions and laws that govern all aspects of their implementation.
 
-{% include 'ping.md' %}
-{% include 'cards.md' %}
-{% include 'contacts.md' %}
-{% include 'transactions.md' %}
-{% include 'balances.md' %}
-{% include 'valuestores.md' %}
-{% include 'categories.md' %}
-{% include 'programs.md' %}
-{% include 'datastructures.md' %}
+{% include 'sections/ping.md' %}
+
+{% include 'sections/cards.md' %}
+
+{% include 'sections/contacts.md' %}
+
+{% include 'sections/transactions.md' %}
+
+{% include 'sections/balances.md' %}
+
+{% include 'sections/valuestores.md' %}
+
+{% include 'sections/categories.md' %}
+
+{% include 'sections/programs.md' %}
+
+{% include 'data-structures.md' %}
 
 
