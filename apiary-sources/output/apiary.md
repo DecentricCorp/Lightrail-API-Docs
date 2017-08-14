@@ -309,7 +309,7 @@ Retrieve a paginated list of Cards.
    
 + Parameter
     + limit (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
-    + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
+    + offset (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
     + categoryKey (string, optional) - A key of a Category. 
     + categoryValue (string, optional) - A value of a Category. 
     + contactId (string, optional) - A contactId to filter by.
@@ -415,6 +415,7 @@ Retrieve a paginated list of Cards.
                 "currency":"USD"
               }
             }
+
 
 ### Create Account Card [POST /cards]
 Create a Card of type `ACCOUNT_CARD` which is associated with an existing Contact.
@@ -1011,7 +1012,6 @@ Retrieve a paginated list of a Contact's Cards.
               }
             }
 
-
 ## Transactions [/cards/{cardId}/transactions]
 A feature the Lightrail API supports is the ability to create Pending Transactions. 
 This means the value required for the Pending Transaction will be unavailable to be used for other Transactions. 
@@ -1151,7 +1151,7 @@ Creates a transaction against a Card. Transactions can be created as pending whi
     + Attributes
         + value (number) - The value of the transaction. Can be negative or positive. Note, value is in the smallest unit for the currency. If USD, then value represents cents. If the Transaction represents a $50 USD redemption value = -5000.
         + currency (required) - The three-character ISO-4217 currency.
-        + metadata (Metadata, optional) - A key-value JSON object to store additional information. The `giftbit_*` namespace for keys is reserved. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`.
+        + metadata (Metadata, optional) - A key-value object to store additional information about the transaction. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`. Also note, the `giftbit_*` namespace for keys is reserved.
         + pending (boolean, optional) - If `true`, the required value will be locked, however in order to complete the transaction the pending transaction must be captured.
         
     + Body 
@@ -1953,7 +1953,7 @@ This endpoint can be used to retrieve information about your existing Gift Card 
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
     + Parameter
         + limit (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
-        + offset (number, optional) - For pagination. The offset of the first results in the total results. Default 0.
+        + offset (number, optional) - For pagination. The maximum number of results to return at once. Default 100.
 + Response 200
 
     + Body
