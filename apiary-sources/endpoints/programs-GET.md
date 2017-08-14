@@ -3,6 +3,7 @@
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+    
     + Parameter
         + limit (number, optional) - {{pagination.limit}}
         + offset (number, optional) - {{pagination.offset}}
