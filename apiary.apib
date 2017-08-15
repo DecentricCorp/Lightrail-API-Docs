@@ -381,7 +381,7 @@ Retrieve a paginated list of Cards.
 
 ### Retrieve Card by cardId [GET /cards/{cardId}]
 + Parameters 
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
 
 + Request (application/json)
     + Headers
@@ -548,7 +548,7 @@ Retrieves the `fullcode` associated with a Gift Card.
 
 ---
 + Parameters 
-    + cardId (string) - The Lightrail Card Id. Note, Card must have cardType = `GIFT_CARD`.
+    + cardId (string) - The Lightrail Card ID. Note, Card must have cardType = `GIFT_CARD`.
     
 + Request (application/json)
     + Headers
@@ -573,7 +573,7 @@ Update the Contact associated with a Card.
 
 ---
 + Parameters 
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
 
 + Request (application/json)
     + Headers
@@ -619,7 +619,7 @@ If a card has been created as inactive, you can use this endpoint to activate.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id. The Card must have been created with `"inactive":true`.
+    + cardId (string, required) - The Lightrail Card ID. The Card must have been created with `"inactive":true`.
 
 + Request (application/json)
     + Headers
@@ -662,7 +662,7 @@ Freeze a Card, preventing all transactions until unfrozen.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
 
 + Request (application/json)
     + Headers
@@ -705,7 +705,7 @@ Unfreeze a frozen Card, re-enabling the creation of transactions.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
 
 + Request (application/json)
     + Headers
@@ -747,7 +747,7 @@ Permanently cancels a Card.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
 
 + Request (application/json)
     + Headers
@@ -973,7 +973,7 @@ Retrieve a paginated list of a Contact's Cards.
 
 ---
 + Parameters 
-    + contactId (string, required) - The Lightrail Card Id.
+    + contactId (string, required) - The Lightrail Card ID.
     + cardType (string, required) - `ACCOUNT_CARD`, `GIFT_CARD`.
     + currency (string, optional) - The three-character ISO-4217 currency. Only needed if the Contact has Account Cards in multiple currencies.
 
@@ -1032,7 +1032,7 @@ Retrieve a paginated list of a Card's Transactions.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
 
 + Request (application/json)
     + Headers
@@ -1103,7 +1103,7 @@ Retrieve a paginated list of a Card's Transactions.
 
 ### Show Transaction [GET /cards/{cardId}/transactions/{transactionId}]
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
     + transactionId (string, required) - The Lightrail Transaction ID.
 
 + Request (application/json)
@@ -1150,7 +1150,7 @@ Creates a transaction against a Card. Transactions can be created as pending whi
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
 
 + Request (application/json)
     + Headers
@@ -1222,7 +1222,7 @@ Captures a pending Transaction. This locks in the value of the pending Transacti
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
     + transactionId (string, required) - The Lightrail Transaction ID. Must be a pending Transaction.
 
 + Request (application/json)
@@ -1264,7 +1264,7 @@ Voids a pending Transaction. This makes the value of the pending Transaction ava
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
     + transactionId (string, required) - The Lightrail Transaction ID. Must be a pending Transaction.
 
 + Request (application/json)
@@ -1305,7 +1305,7 @@ Refund a Transaction, reverting its affects.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
     + transactionId (string, required) - The Lightrail Transaction ID. Must be an existing Transaction with transactionType `DRAWDOWN`.
 
 + Request (application/json)
@@ -1522,7 +1522,7 @@ Retrieve a Card's balance.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
     + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
 + Request (application/json)
     + Headers
@@ -1631,7 +1631,7 @@ Retrieve a paginated list of a Card's ValueStores.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
 
 + Request (application/json)
     + Headers
@@ -1668,7 +1668,7 @@ Retrieve a paginated list of a Card's ValueStores.
 
 ### Show ValueStore [GET /cards/{cardId}/valueStores/{valueStoreId}]
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
     + valueStoreId (string, required) - The Lightrail ValueStore ID.
 
 + Request (application/json)
@@ -1699,7 +1699,7 @@ Adds a ValueStore from a Promotion Program to a Card.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
 
 + Request (application/json)
     + Headers
@@ -1747,7 +1747,7 @@ Freeze a Card's ValueStore, preventing all transactions against that ValueStore 
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
     + valueStoreId (string, required) - The Lightrail ValueStore ID.
 
 + Request (application/json)
@@ -1793,7 +1793,7 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
     + valueStoreId (string, required) - The Lightrail ValueStore ID.
 
 + Request (application/json)
@@ -1838,7 +1838,7 @@ Permanently cancels a Card's ValueStore.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
     + valueStoreId (string, required) - The Lightrail ValueStore ID.
 
 + Request (application/json)
@@ -1920,7 +1920,7 @@ These endpoints are used to retrieve information about your existing Categories.
 
 ### List Categories on Card [GET /cards/{cardId}/categories]
 + Parameters
-    + cardId (string, required) - The Lightrail Card Id.
+    + cardId (string, required) - The Lightrail Card ID.
     
 + Request (application/json)
     + Headers
