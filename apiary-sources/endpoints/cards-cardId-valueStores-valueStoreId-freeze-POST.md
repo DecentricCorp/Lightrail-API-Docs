@@ -17,7 +17,7 @@ Freeze a Card's ValueStore, preventing all transactions against that ValueStore 
     + Body 
     
             {
-                "userSuppliedId":"freeze-valuestore-1"
+                "userSuppliedId":"tx-122"
             }
     
 + Response 200

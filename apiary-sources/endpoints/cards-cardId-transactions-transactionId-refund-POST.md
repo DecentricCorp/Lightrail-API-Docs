@@ -13,6 +13,12 @@ Refund a Transaction, reverting its affects.
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}}
     
+    + Body 
+            
+            {
+              "userSuppliedId":"tx-122",
+            }
+    
 + Response 200
     + Attributes
         + transaction (Transaction)

@@ -17,7 +17,7 @@ Permanently cancels a Card's ValueStore.
     + Body 
     
             {
-                "userSuppliedId":"cancel-valuestore-1"
+                "userSuppliedId":"tx-122"
             }
     
 + Response 200
