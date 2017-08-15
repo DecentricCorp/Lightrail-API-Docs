@@ -1,4 +1,4 @@
-### Get Balance by cardId [GET /cards/{cardId}/balance{?asAtDate}]
+### Get Balance by Card ID [GET /cards/{cardId}/balance{?asAtDate}]
 Retrieve a Card's balance.
 
 ---
@@ -17,19 +17,19 @@ Retrieve a Card's balance.
 
             {
                 "balance":{
-                "principal":{
-                "currentValue": 150,
-                "state": "ACTIVE",
-                "expires": null,
-                "startDate": null,
-                "programId": "program-dexx72",
-                "valueStoreId": "value-18xx79"
-                },
-                "attached":[
-                ],
-                "currency": "USD",
-                "cardType":"GIFT_CARD",
-                "balanceDate": "2017-06-05T17:11:36.999Z"
+                    "principal":{
+                        "currentValue": 150,
+                        "state": "ACTIVE",
+                        "expires": null,
+                        "startDate": null,
+                        "programId": "program-dexx72",
+                        "valueStoreId": "value-18xx79"
+                    },
+                    "attached":[
+                    ],
+                    "currency": "USD",
+                    "cardType":"GIFT_CARD",
+                    "balanceDate": "2017-06-05T17:11:36.999Z"
                 }
             }
 

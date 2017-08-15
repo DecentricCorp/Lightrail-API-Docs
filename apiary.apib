@@ -1587,7 +1587,7 @@ Depending on the context of your use-case you can check the balance either based
 Note that only gift cards have an associated `fullcode`.
 
 ---
-### Get Balance by cardId [GET /cards/{cardId}/balance{?asAtDate}]
+### Get Balance by Card ID [GET /cards/{cardId}/balance{?asAtDate}]
 Retrieve a Card's balance.
 
 ---
@@ -1606,24 +1606,24 @@ Retrieve a Card's balance.
 
             {
                 "balance":{
-                "principal":{
-                "currentValue": 150,
-                "state": "ACTIVE",
-                "expires": null,
-                "startDate": null,
-                "programId": "program-dexx72",
-                "valueStoreId": "value-18xx79"
-                },
-                "attached":[
-                ],
-                "currency": "USD",
-                "cardType":"GIFT_CARD",
-                "balanceDate": "2017-06-05T17:11:36.999Z"
+                    "principal":{
+                        "currentValue": 150,
+                        "state": "ACTIVE",
+                        "expires": null,
+                        "startDate": null,
+                        "programId": "program-dexx72",
+                        "valueStoreId": "value-18xx79"
+                    },
+                    "attached":[
+                    ],
+                    "currency": "USD",
+                    "cardType":"GIFT_CARD",
+                    "balanceDate": "2017-06-05T17:11:36.999Z"
                 }
             }
 
 
-### Get Balance by fullcode [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
+### Get Balance by Gift Code [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
 Retrieve a Card's balance using the Gift Card's `fullcode`.
 
 ---
@@ -1661,7 +1661,7 @@ Retrieve a Card's balance using the Gift Card's `fullcode`.
             }
 
 
-### Get Balance by fullcode (Deprecated) [GET /codes/{fullcode}/balance{?asAtDate}{?pin}]
+### Get Balance by Gift Code (Deprecated) [GET /codes/{fullcode}/balance{?asAtDate}{?pin}]
 Note, this endpoint is deprecated and should no longer be used. 
 
 ---
