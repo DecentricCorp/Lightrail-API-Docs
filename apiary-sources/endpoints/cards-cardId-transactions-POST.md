@@ -13,7 +13,7 @@ Creates a transaction against a Card. Transactions can be created as pending whi
     + Attributes
         + value (number) - {{transaction.value}}
         + currency (required) - {{currency}}
-        + metadata (Metadata, optional) - {{metadata}}
+        + metadata (Metadata, optional) - {{transaction.metadata}}
         + pending (boolean, optional) - {{transaction.pending}}
         
     + Body 

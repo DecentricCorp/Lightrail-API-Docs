@@ -9,4 +9,4 @@
 + giftbitUserId (string) - Deprecated.  
 + cardId (string) - The Lightrail Card ID.
 + currency (string) - {{currency}}
-+ metadata (object) - A key-value object to store additional information about the transaction. Note Lightrail's Redemption Rules operate on Transaction Metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`. Also note, the `giftbit_*` namespace for keys is reserved.
++ metadata (object) - {{transaction.metadata}}
