@@ -1,5 +1,5 @@
 ## Cards [/cards/]
-The _/cards_ endpoint is for use by your system to create and manage your Gift Cards and Account Cards.
+The `/cards` endpoint is for use by your system to create and manage your Gift Cards and Account Cards.
 The `cardId` should be stored as it's used in many subsequent requests - such as transaction against a Card. 
 In use cases where the recipient requires a gift code, the `fullcode` should be supplied. 
 
