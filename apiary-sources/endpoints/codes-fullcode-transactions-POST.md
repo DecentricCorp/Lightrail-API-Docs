@@ -1,4 +1,4 @@
-### Create Transaction based on `fullcode` [POST /codes/{fullcode}/transactions{?pin}]
+### Create Transaction Based on `fullcode` [POST /codes/{fullcode}/transactions{?pin}]
 Creates a transaction against a Card based on the Gift Card's `fullcode`.
 
 ---
