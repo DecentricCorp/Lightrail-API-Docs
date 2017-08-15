@@ -1,4 +1,4 @@
-### Show Transaction [GET /codes/{fullcode}/transactions/{transactionId}{?pin}]
+### Show Transaction Based on `fullcode` [GET /codes/{fullcode}/transactions/{transactionId}{?pin}]
 + Parameters
     + transactionId (string, required) - {{transaction.transactionId}}
     + fullcode (string, required) - The unique unguessable gift code.

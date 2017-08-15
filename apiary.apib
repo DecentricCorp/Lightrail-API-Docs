@@ -1027,7 +1027,7 @@ Note that only gift cards have an associated `fullcode`.
 
 
 ---
-### Create Transaction [POST /cards/{cardId}/transactions]
+### Create Transaction Based on `cardId` [POST /cards/{cardId}/transactions]
 Creates a transaction against a Card. Transactions can be created as pending which locks the value required for the Transaction until it is either captured or voided. 
 
 ---
@@ -1099,7 +1099,7 @@ Creates a transaction against a Card. Transactions can be created as pending whi
             }
 
 
-### Create Transaction [POST /codes/{fullcode}/transactions{?pin}]
+### Create Transaction Based on `fullcode` [POST /codes/{fullcode}/transactions{?pin}]
 Creates a transaction against a Card based on the Gift Card's `fullcode`.
 
 ---
@@ -1314,7 +1314,7 @@ Refund a Transaction, reverting its affects.
             
 
 
-### List Card Transactions [GET /cards/{cardId}/transactions{?limit}{?offset}]
+### List Card Transactions Based on `cardId` [GET /cards/{cardId}/transactions{?limit}{?offset}]
 Retrieve a paginated list of a Card's Transactions based on the Card ID.
 
 ---
@@ -1423,7 +1423,7 @@ Retrieve a paginated list of a Card's Transactions based on the Card ID.
               }
             }
 
-### List Transactions [GET /codes/{fullcode}/transactions{?pin}]
+### List Card Transactions Based on `fullcode` [GET /codes/{fullcode}/transactions{?pin}]
 Retrieve a paginated list of a Card's Transactions based on the Gift Card's `fullcode`.
 
 ---
@@ -1484,7 +1484,7 @@ Retrieve a paginated list of a Card's Transactions based on the Gift Card's `ful
 
 
 
-### Show Transaction [GET /cards/{cardId}/transactions/{transactionId}]
+### Show Transaction Based on `cardId` [GET /cards/{cardId}/transactions/{transactionId}]
 Retrieves a Transaction based on its ID.
 
 ---
@@ -1534,7 +1534,7 @@ Retrieves a Transaction based on its ID.
 
 
 
-### Show Transaction [GET /codes/{fullcode}/transactions/{transactionId}{?pin}]
+### Show Transaction Based on `fullcode` [GET /codes/{fullcode}/transactions/{transactionId}{?pin}]
 + Parameters
     + transactionId (string, required) - The Lightrail Transaction ID.
     + fullcode (string, required) - The unique unguessable gift code.

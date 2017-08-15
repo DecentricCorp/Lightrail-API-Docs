@@ -1,4 +1,4 @@
-### Create Transaction [POST /cards/{cardId}/transactions]
+### Create Transaction Based on `cardId` [POST /cards/{cardId}/transactions]
 Creates a transaction against a Card. Transactions can be created as pending which locks the value required for the Transaction until it is either captured or voided. 
 
 ---
