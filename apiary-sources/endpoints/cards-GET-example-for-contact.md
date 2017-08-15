@@ -3,7 +3,7 @@ Retrieve a paginated list of a Contact's Cards.
 
 ---
 + Parameters 
-    + contactId (string, required) - {{card.cardId}}
+    + contactId (string, required) - The Lightrail Contact ID.
     + cardType (string, required) - {{card.cardType}}
     + currency (string, optional) - {{currency}} Only needed if the Contact has Account Cards in multiple currencies.
 
