@@ -1,6 +1,9 @@
-### Update Contact [PATCH /contacts/{contactId}/]
+### Update Contact [PATCH /contacts/{contactId}]
+Updates a Contact.
+
+---
 + Parameters
-    + contactId (string, required)
+    + contactId (string, required) - The Lightrail Contact ID.
     
 + Request (application/json)
     + Headers
@@ -28,7 +31,7 @@
             {
                 "contact":
                 {
-                    "contactId": "contact-0f06b54b9fa44727a7ba7043de5365cf",
+                    "contactId": "contact-0fxxcf",
                     "userSuppliedId": "12345678",
                     "email": "noreply@giftbit.com",
                     "firstName": "Jane",

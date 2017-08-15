@@ -13,7 +13,7 @@ Retrieve a paginated list of Cards.
     + categoryKey (string, optional) - A key of a Category. 
     + categoryValue (string, optional) - A value of a Category. 
     + contactId (string, optional) - A contactId to filter by.
-    + cardType (string, optional) - {{cardType}}
+    + cardType (string, optional) - {{card.cardType}}
     + currency (string, optional) - {{currency}}
     + userSuppliedId (string, optional) - {{userSuppliedId}}
 
@@ -27,40 +27,40 @@ Retrieve a paginated list of Cards.
             {
               "cards":[
                 {
-                  "cardId":"card-a063cbe39ab1402ebf997cf088e81b82",
+                  "cardId":"card-a0xx82",
                   "userSuppliedId":"anonymous-giftcard28",
                   "contactId":null,
                   "dateCreated":"2017-07-28T21:21:00.606Z",
                   "categories":[
                     {
-                      "categoryId":"category-3d4ff98bf941489e8216c9ffb9d4efc3",
+                      "categoryId":"category-3dxxc3",
                       "key":"giftbit_order",
                       "value":"2017-07-28"
                     },
                     {
-                      "categoryId":"category-d2318a92c00f411987076a64243a0b57",
+                      "categoryId":"category-d2xx57",
                       "key":"giftbit_program",
-                      "value":"program-93f8264813b44877a08e8b7d9ee205e3"
+                      "value":"program-93xxe3"
                     }
                   ],
                   "cardType":"GIFT_CARD",
                   "currency":"USD"
                 },
                 {
-                  "cardId":"card-15b464bb6c164751b394f1a99df373bd",
+                  "cardId":"card-15xxbd",
                   "userSuppliedId":"anonymous-giftcard3",
                   "contactId":null,
                   "dateCreated":"2017-07-28T21:21:00.599Z",
                   "categories":[
                     {
-                      "categoryId":"category-3d4ff98bf941489e8216c9ffb9d4efc3",
+                      "categoryId":"category-3dxxc3",
                       "key":"giftbit_order",
                       "value":"2017-07-28"
                     },
                     {
-                      "categoryId":"category-d2318a92c00f411987076a64243a0b57",
+                      "categoryId":"category-d2xx57",
                       "key":"giftbit_program",
-                      "value":"program-93f8264813b44877a08e8b7d9ee205e3"
+                      "value":"program-93xxe3"
                     }
                   ],
                   "cardType":"GIFT_CARD",

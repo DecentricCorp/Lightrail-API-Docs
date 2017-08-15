@@ -3,7 +3,7 @@ Retrieve a Card's balance.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card ID.
+    + cardId (string, required) - {{card.cardId}}
     + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
 + Request (application/json)
     + Headers
@@ -22,8 +22,8 @@ Retrieve a Card's balance.
                 "state": "ACTIVE",
                 "expires": null,
                 "startDate": null,
-                "programId": "program-dedccd921d074f1eb6c0f75fc5ebee72",
-                "valueStoreId": "value-18638d4486ad4feaab125a61f5df3079"
+                "programId": "program-dexx72",
+                "valueStoreId": "value-18xx79"
                 },
                 "attached":[
                 ],

@@ -3,7 +3,7 @@ Creates a transaction against a Card. Transactions can be created as pending whi
 
 ---
 + Parameters
-    + cardId (string, required)
+    + cardId (string, required) - {{card.cardId}}
 
 + Request (application/json)
     + Headers
@@ -11,10 +11,10 @@ Creates a transaction against a Card. Transactions can be created as pending whi
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
 
     + Attributes
-        + value (number) - The value of the transaction. Can be negative or positive. Note, value is in the smallest unit for the currency. If USD, then value represents cents. If the Transaction represents a $50 USD redemption value = -5000.
+        + value (number) - {{transaction.value}}
         + currency (required) - {{currency}}
-        + metadata (Metadata, optional) - {{metadata}}
-        + pending (boolean, optional) - If `true`, the required value will be locked, however in order to complete the transaction the pending transaction must be captured.
+        + metadata (Metadata, optional) - {{transaction.metadata}}
+        + pending (boolean, optional) - {{transaction.pending}}
         
     + Body 
     
@@ -44,15 +44,15 @@ Creates a transaction against a Card. Transactions can be created as pending whi
 
             {
               "transaction":{
-                "transactionId":"transaction-622de8c7b5604808b7576985db59fe70",
+                "transactionId":"transaction-62xx70",
                 "value":-500,
                 "userSuppliedId":"exmaple2",
                 "dateCreated":"2017-07-31T18:38:02.449Z",
                 "transactionType":"DRAWDOWN",
                 "transactionAccessMethod":"CARDID",
                 "valueAvailableAfterTransaction":1500,
-                "giftbitUserId":"user-1dfd10e5cb3c451382bc79774ab33232-TEST",
-                "cardId":"card-76f0f09b52df40f29252d1abd886cbab",
+                "giftbitUserId":"user-1dxx32",
+                "cardId":"card-76xxab",
                 "currency":"USD",
                 "metadata":{
                   "checkout-cart":{

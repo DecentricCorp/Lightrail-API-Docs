@@ -1,6 +1,6 @@
 ### List Categories on Card [GET /cards/{cardId}/categories]
 + Parameters
-    + cardId (string, required)
+    + cardId (string, required) - {{card.cardId}}
     
 + Request (application/json)
     + Headers
@@ -16,12 +16,12 @@
             {
                 "categories":[
                     {
-                    "categoryId": "category-46f7808dffa54c8ba0da83d448ead415",
+                    "categoryId": "category-46xx15",
                     "key": "giftbit_program",
-                    "value": "program-dedccd921d074f1eb6c0f75fc5ebee72"
+                    "value": "program-dexx72"
                     },
                     {
-                    "categoryId": "category-da55afb0c007420e9417e38bc47ca8d9",
+                    "categoryId": "category-daxxd9",
                     "key": "giftbit_order",
                     "value": "2017-06-05"
                     }

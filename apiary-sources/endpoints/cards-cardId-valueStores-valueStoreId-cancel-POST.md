@@ -3,7 +3,7 @@ Permanently cancels a Card's ValueStore.
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card ID.
+    + cardId (string, required) - {{card.cardId}}
     + valueStoreId (string, required) - The Lightrail ValueStore ID.
 
 + Request (application/json)
@@ -28,16 +28,16 @@ Permanently cancels a Card's ValueStore.
 
             {
                 "transaction":{
-                "transactionId": "transaction-7f9c5dea0be24f57a902568a23a11c89",
-                "value": -50,
-                "userSuppliedId": "cancel-valueStore-1",
-                "dateCreated": "2017-06-05T16:39:06.679Z",
-                "transactionType": "CANCELLATION",
-                "transactionAccessMethod": "CARDID",
-                "valueAvailableAfterTransaction": 0,
-                "giftbitUserId": "user-5022fccf827647ee9cfb63b779d62193-TEST",
-                "codeLastFour": "NKNA",
-                "cardId": "card-fb8e53946e784280a2bc8273dcbb0fda",
-                "currency": "XXX"
+                    "transactionId": "transaction-7fxx89",
+                    "value": -50,
+                    "userSuppliedId": "cancel-valueStore-1",
+                    "dateCreated": "2017-06-05T16:39:06.679Z",
+                    "transactionType": "CANCELLATION",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 0,
+                    "giftbitUserId": "user-50xx93",
+                    "codeLastFour": "NKNA",
+                    "cardId": "card-fbxxda",
+                    "currency": "XXX"
                 }
             }

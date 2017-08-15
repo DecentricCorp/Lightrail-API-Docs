@@ -1,7 +1,6 @@
 ## Code (object)
 + currency (string, required) - {{currency}}
-+ initialValue (number, required) - The value of the code at creation in the smallest currency unit 
-  (such as cents).
++ initialValue (number, required) - The value of the code at creation in the smallest currency unit, e.g. cents for USD.
 + programId (string, required) - The id of the Program for which the code will be created from.
 + expires (string, optional) - The code's expiry date and time.  This field will be ommitted if the 
   code was not created with an expiry.  ISO-8601 format.

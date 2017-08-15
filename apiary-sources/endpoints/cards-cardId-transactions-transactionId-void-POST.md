@@ -3,15 +3,15 @@ Voids a pending Transaction. This makes the value of the pending Transaction ava
 
 ---
 + Parameters
-    + cardId (string, required) - The Lightrail Card ID.
-    + transactionId (string, required) - The Lightrail Transaction ID. Must be a pending Transaction.
+    + cardId (string, required) - {{card.cardId}}
+    + transactionId (string, required) - {{transaction.transactionId}} Must be a pending Transaction.
 
 + Request (application/json)
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
     + Attributes
-        + userSuppliedId (string, required) - Unique idempotency ID for the request. 
+        + userSuppliedId (string, required) - {{userSuppliedId}} 
     
 + Response 200
     + Attributes
@@ -21,19 +21,19 @@ Voids a pending Transaction. This makes the value of the pending Transaction ava
 
             {
               "transaction":{
-                "transactionId":"transaction-7dfa13635e0a468ca6257ff02bc4023b",
+                "transactionId":"transaction-7dxx3b",
                 "value":50,
-                "userSuppliedId":"transaction-fb3d3a0c76ac4d809dfbd4be3d77aa5a-reverse",
+                "userSuppliedId":"transaction-fbxx5a-reverse",
                 "dateCreated":"2017-07-31T18:54:58.141Z",
                 "transactionType":"PENDING_VOID",
                 "transactionAccessMethod":"CARDID",
                 "valueAvailableAfterTransaction":1299,
-                "giftbitUserId":"user-1dfd10e5cb3c451382bc79774ab33232-TEST",
-                "cardId":"card-76f0f09b52df40f29252d1abd886cbab",
+                "giftbitUserId":"user-1dxx32",
+                "cardId":"card-76xxab",
                 "currency":"USD",
-                "parentTransactionId":"transaction-fb3d3a0c76ac4d809dfbd4be3d77aa5a",
+                "parentTransactionId":"transaction-fbxx5a",
                 "metadata":{
-                  "giftbit_initial_transaction_id":"transaction-fb3d3a0c76ac4d809dfbd4be3d77aa5a"
+                  "giftbit_initial_transaction_id":"transaction-fbxx5a"
                 }
               }
             }
