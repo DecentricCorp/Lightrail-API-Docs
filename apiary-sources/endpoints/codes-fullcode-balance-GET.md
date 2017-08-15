@@ -1,4 +1,4 @@
-### Get Balance by fullcode (Deprecated) [GET /codes/{fullcode}/balance{?asAtDate}{?pin}]
+### Get Balance by Gift Code (Deprecated) [GET /codes/{fullcode}/balance{?asAtDate}{?pin}]
 Note, this endpoint is deprecated and should no longer be used. 
 
 ---
