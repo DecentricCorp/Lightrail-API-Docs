@@ -3,7 +3,7 @@ Note, this endpoint is deprecated and should no longer be used.
 
 ---
 + Parameters
-    + fullcode (string, required)
+    + fullcode (string, required) - The unique unguessable gift code.
     + pin (string, optional) - This is required if the fullcode has a pin.
     + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
 

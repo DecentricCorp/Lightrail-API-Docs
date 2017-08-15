@@ -25,7 +25,7 @@ Retrieve a paginated list of Contacts.
             {
               "contacts":[
                 {
-                  "contactId":"contact-0cfafcd94b2d42a698771a7b63e37c86",
+                  "contactId":"contact-0cxx86",
                   "userSuppliedId":"contact3",
                   "email":"johnsmom@example.com",
                   "firstName":"Sarah",
@@ -33,7 +33,7 @@ Retrieve a paginated list of Contacts.
                   "dateCreated":"2017-07-28T21:21:04.000Z"
                 },
                 {
-                  "contactId":"contact-5e5633f937894404901e3f5cbecf8e2c",
+                  "contactId":"contact-5exx2c",
                   "userSuppliedId":"contact4",
                   "email":"whatshappening@example.com",
                   "firstName":"Bill",

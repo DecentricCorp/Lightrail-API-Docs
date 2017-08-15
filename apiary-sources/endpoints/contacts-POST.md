@@ -1,4 +1,7 @@
 ### Create Contact [POST /contacts]
+Creates a new Contact. 
+
+---
 + Request (application/json)
     + Headers
     
@@ -28,7 +31,7 @@
             {
                 "contact":
                 {
-                    "contactId": "contact-0f06b54b9fa44727a7ba7043de5365cf",
+                    "contactId": "contact-0fxxcf",
                     "userSuppliedId": "12345678",
                     "email": "noreply@giftbit.com",
                     "firstName": null,

@@ -3,7 +3,7 @@ Adds a ValueStore from a Promotion Program to a Card.
 
 ---
 + Parameters
-    + cardId (string, required)
+    + cardId (string, required) - {{card.cardId}}
 
 + Request (application/json)
     + Headers
@@ -21,10 +21,10 @@ Adds a ValueStore from a Promotion Program to a Card.
     + Body 
     
             {
-            "userSuppliedId":"promo1",
-            "currency": "XXX",
-            "programId":"program-d0c6328cacde469ba3b28105e9d89c04",
-            "initialValue":150
+                "userSuppliedId":"promo1",
+                "currency": "XXX",
+                "programId":"program-d0xx04",
+                "initialValue":150
             }
     
 + Response 200
@@ -35,12 +35,12 @@ Adds a ValueStore from a Promotion Program to a Card.
 
             {
                 "valueStore":{
-                    "cardId": "card-9991e39b4526401f85a889cb20b1a465",
-                    "valueStoreId": "value-806116e736854136867d17fbfb959382",
+                    "cardId": "card-99xx65",
+                    "valueStoreId": "value-80xx82",
                     "valueStoreType": "ATTACHED",
                     "currency": "XXX",
                     "dateCreated": "2017-06-05T16:14:58.314Z",
-                    "programId": "program-d0c6328cacde469ba3b28105e9d89c04",
+                    "programId": "program-d0xx04",
                     "expires": "2017-06-13T06:59:59.000Z"
                 }   
             }

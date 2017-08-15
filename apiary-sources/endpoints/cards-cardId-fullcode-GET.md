@@ -3,7 +3,7 @@ Retrieves the `fullcode` associated with a Gift Card.
 
 ---
 + Parameters 
-    + cardId (string) - The Lightrail Card ID. Note, Card must have cardType = `GIFT_CARD`.
+    + cardId (string) - {{card.cardId}} Note, Card must have cardType = `GIFT_CARD`.
     
 + Request (application/json)
     + Headers

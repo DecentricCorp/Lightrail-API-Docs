@@ -3,9 +3,9 @@ Retrieve a paginated list of a Contact's Cards.
 
 ---
 + Parameters 
-    + contactId (string, required) - The Lightrail Contact ID.
-    + cardType (string, required) - {{cardType}}
-    + currency (string, optional) - {{currency}} Only needed if your Contact has Account Cards in multiple currencies.
+    + contactId (string, required) - {{card.cardId}}
+    + cardType (string, required) - {{card.cardType}}
+    + currency (string, optional) - {{currency}} Only needed if the Contact has Account Cards in multiple currencies.
 
 + Request (application/json)
     + Headers
@@ -22,20 +22,20 @@ Retrieve a paginated list of a Contact's Cards.
             {
               "cards":[
                 {
-                  "cardId":"card-f35b7fb3f7c5435385b709fc7b2bc7a5",
+                  "cardId":"card-f3xxa5",
                   "userSuppliedId":"contact2-account",
-                  "contactId":"contact-e56b00c7bb8e4f45ac61f941d3f557ba",
+                  "contactId":"contact-e5xxba",
                   "dateCreated":"2017-07-03T21:21:00.565Z",
                   "categories":[
                     {
-                      "categoryId":"category-3d4ff98bf941489e8216c9ffb9d4efc3",
+                      "categoryId":"category-3dxxc3",
                       "key":"giftbit_order",
                       "value":"2017-07-28"
                     },
                     {
-                      "categoryId":"category-bf9bfbac78004199b2d544d6c830d3c2",
+                      "categoryId":"category-bfxxc2",
                       "key":"giftbit_program",
-                      "value":"program-account-USD-user-1dfd10e5cb3c451382bc79774ab33232-TEST"
+                      "value":"program-account-USD-user-1dxx32"
                     }
                   ],
                   "cardType":"ACCOUNT_CARD",

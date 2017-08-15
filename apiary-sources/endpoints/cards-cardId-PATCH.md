@@ -3,7 +3,7 @@ Update the Contact associated with a Card.
 
 ---
 + Parameters 
-    + cardId (string, required) - The Lightrail Card ID.
+    + cardId (string, required) - {{card.cardId}}
 
 + Request (application/json)
     + Headers
@@ -11,12 +11,12 @@ Update the Contact associated with a Card.
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
             
     + Attributes
-        + contactId (string, required) - The Contact's unique identifier which you'd like to update the Card with.
+        + contactId (string, required) - The unique identifier of the new Contact to whom the card must be assigned.
             
     + Body
     
             {
-                "contactId": "contact-592941d2335d402e9dc3d6a981bc3896"
+                "contactId": "contact-59xx96"
             }
 
 + Response 200
@@ -28,13 +28,13 @@ Update the Contact associated with a Card.
         
             {
               "card": {
-                "cardId": "card-2235b727f65a46648138429b95fdaa7b",
+                "cardId": "card-22xx7b",
                 "userSuppliedId": "testCategoryCreation10-19",
-                "contactId": "contact-592941d2335d402e9dc3d6a981bc3896",
+                "contactId": "contact-59xx96",
                 "dateCreated": "2017-05-16T16:49:33.027Z",
                 "categories": [
                   {
-                    "categoryId": "category-48ecc24b16944b40a1218e319facd24a",
+                    "categoryId": "category-48xx4a",
                     "key": "giftbit_order",
                     "value": "testCategoryCreationId9"
                   }

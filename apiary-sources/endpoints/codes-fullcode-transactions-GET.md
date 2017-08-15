@@ -1,5 +1,5 @@
 ### List Transactions [GET /codes/{fullcode}/transactions{?pin}]
-Retrieve a paginated list of a Card's Transactions using the Gift Card's `fullcode`.
+Retrieve a paginated list of a Card's Transactions based on the Gift Card's `fullcode`.
 
 ---
 + Parameters
@@ -21,34 +21,31 @@ Retrieve a paginated list of a Card's Transactions using the Gift Card's `fullco
             {
               "transactions":[
                 {
-                  "transactionId":"transaction-e099b4fc262b4c98a65d79e42fd6f4f5",
+                  "transactionId":"transaction-e0xxf5",
                   "value":-599,
-                  "userSuppliedId":"anonymous-giftcard10-transaction1",
+                  "userSuppliedId":"tx10",
                   "dateCreated":"2017-07-28T21:21:10.009Z",
                   "transactionType":"DRAWDOWN",
                   "transactionAccessMethod":"CARDID",
                   "valueAvailableAfterTransaction":1401,
-                  "giftbitUserId":"user-1dfd10e5cb3c451382bc79774ab33232-TEST",
-                  "cardId":"card-76f0f09b52df40f29252d1abd886cbab",
+                  "giftbitUserId":"user-1dxx32",
+                  "cardId":"card-76xxab",
                   "currency":"USD",
                   "metadata":{
                     "giftbit_override_dateCreated":"2017-07-28T21:21:10.009Z"
                   }
                 },
                 {
-                  "transactionId":"transaction-0094bdcc1be34b0ebc9e957d5dd924a5",
+                  "transactionId":"transaction-00xxa5",
                   "value":2000,
                   "userSuppliedId":"anonymous-giftcard10",
                   "dateCreated":"2017-07-13T21:21:00.601Z",
                   "transactionType":"INITIAL_VALUE",
                   "transactionAccessMethod":"CARDID",
                   "valueAvailableAfterTransaction":2000,
-                  "giftbitUserId":"user-1dfd10e5cb3c451382bc79774ab33232-TEST",
-                  "cardId":"card-76f0f09b52df40f29252d1abd886cbab",
-                  "currency":"USD",
-                  "metadata":{
-                    "giftbit_override_dateCreated":"2017-07-13T21:21:00.601Z"
-                  }
+                  "giftbitUserId":"user-1dxx32",
+                  "cardId":"card-76xxab",
+                  "currency":"USD",                  
                 }
               ],
               "pagination":{
