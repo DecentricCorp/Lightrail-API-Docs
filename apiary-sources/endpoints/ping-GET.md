@@ -22,7 +22,7 @@
                 ],
                 "roles":[
                   "accountManager",
-                  "contactManager",
+                  "contactManager"
                 ],
                 "effectiveScopes":[
                   {
