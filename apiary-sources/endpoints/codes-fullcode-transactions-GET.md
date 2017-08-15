@@ -1,4 +1,4 @@
-### List Card Transactions Based on `fullcode` [GET /codes/{fullcode}/transactions{?pin}]
+### List Card Transactions Based on Gift Code [GET /codes/{fullcode}/transactions{?pin}]
 Retrieve a paginated list of a Card's Transactions based on the Gift Card's `fullcode`.
 
 ---
