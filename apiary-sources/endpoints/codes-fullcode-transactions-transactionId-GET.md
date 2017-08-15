@@ -20,18 +20,19 @@ Retrieves a particular Transaction by its ID based on the `fullcode`.
     + Body 
     
             {
-                transaction":{
-                    "transactionId": "transaction-3exx35",
-                    "value": -50,
-                    "userSuppliedId": "gift_card_4-inactive",
-                    "dateCreated": "2017-06-05T15:39:25.411Z",
-                    "transactionType": "INACTIVATE",
-                    "transactionAccessMethod": "CARDID",
-                    "valueAvailableAfterTransaction": 0,
-                    "giftbitUserId": "user-50xx93",
-                    "codeLastFour": "S9X5",
-                    "cardId": "card-99xx65",
-                    "currency": "XXX"
+                "transactionId": "transaction-95xx1d",
+                "value": -15875,
+                "userSuppliedId": "11xx62-capture",
+                "dateCreated": "2017-08-10T00:08:54.697Z",
+                "transactionType": "DRAWDOWN",
+                "transactionAccessMethod": "CARDID",
+                "valueAvailableAfterTransaction": 0,
+                "giftbitUserId": "user-08xx8e",
+                "cardId": "card-6dxx89",
+                "currency": "USD",
+                "parentTransactionId": "transaction-a6xx9d",
+                "metadata":{
+                    "giftbit_initial_transaction_id": "transaction-a6xx9d"
                 }
             }
 
