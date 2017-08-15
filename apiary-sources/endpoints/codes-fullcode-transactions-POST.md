@@ -1,5 +1,9 @@
-### Create Transaction Based on `fullcode` [POST /codes/{fullcode}/transactions{?pin}]
+### Create Transaction Based on Gift Code [POST /codes/{fullcode}/transactions{?pin}]
 Creates a transaction against a Card based on the Gift Card's `fullcode`.
+Transactions can be created as pending which locks the value required for the Transaction until it is either captured or voided.
+Note that there are no Lightrail endpoints for capturing or voiding a pending transaction based on `fullcode`, 
+so you need to save the `cardId` from the response to this call in order to eventually capture or void the pending transaction. 
+
 
 ---
 + Parameters

@@ -1,5 +1,5 @@
-### Show Transaction Based on `cardId` [GET /cards/{cardId}/transactions/{transactionId}]
-Retrieves a Transaction based on its ID.
+### Show Transaction Based on Card ID [GET /cards/{cardId}/transactions/{transactionId}]
+Retrieves a particular Transaction by its ID based on the `cardId`.
 
 ---
 
