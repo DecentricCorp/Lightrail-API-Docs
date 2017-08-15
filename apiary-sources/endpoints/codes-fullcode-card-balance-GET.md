@@ -19,7 +19,7 @@ Retrieve a Card's balance using the Gift Card's `fullcode`.
 
             {
                 "balance":{
-                "cardId": "card-6dxxx89"
+                "cardId": "card-6dxxx89",
                 "principal":{
                 "currentValue": 150,
                 "state": "ACTIVE",
