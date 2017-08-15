@@ -14,7 +14,7 @@ Creates a transaction against a Card. Transactions can be created as pending whi
         + value (number) - {{transaction.value}}
         + currency (required) - {{currency}}
         + metadata (Metadata, optional) - {{metadata}}
-        + pending (boolean, optional) - If `true`, the transaction will be created as pending, i.e. the value will be locked until it is either captured or voided. The default is `false`.
+        + pending (boolean, optional) - {{transaction.pending}}
         
     + Body 
     

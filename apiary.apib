@@ -315,7 +315,7 @@ Retrieve a paginated list of Cards.
     + categoryKey (string, optional) - A key of a Category. 
     + categoryValue (string, optional) - A value of a Category. 
     + contactId (string, optional) - A contactId to filter by.
-    + cardType (string, optional) - 
+    + cardType (string, optional) - `ACCOUNT_CARD`, `GIFT_CARD`.
     + currency (string, optional) - The three-character ISO-4217 currency.
     + userSuppliedId (string, optional) - Endpoint-unique idempotency ID provided by the client.
 
@@ -925,7 +925,10 @@ Creates a new Contact.
             }
 
 
-### Update Contact [PATCH /contacts/{contactId}/]
+### Update Contact [PATCH /contacts/{contactId}]
+Updates a Contact.
+
+---
 + Parameters
     + contactId (string, required) - The Lightrail Contact ID.
     
@@ -2028,7 +2031,7 @@ Retrieves a paginated list of all Lightrail Programs belonging to the user.
 + contactId (string) - Lightrail assigned Contact identifier.
 + dateCreated (string) - Lightrail system time of creation in ISO-8601 format.
 + categories (Category) - A key-value object to store additional information about the Card. For example: `"categories": {"city": "san francisco", "special": "earlybird"}` 
-+ cardType (string) - 
++ cardType (string) - `ACCOUNT_CARD`, `GIFT_CARD`.
 + currency (string) - The three-character ISO-4217 currency.
 
 ## ValueStore (object)
@@ -2067,7 +2070,7 @@ Retrieves a paginated list of all Lightrail Programs belonging to the user.
 
 ## Code (object)
 + currency (string, required) - The three-character ISO-4217 currency.
-+ initialValue (number, required) - The value of the code at creation in the smallest currency unit, e.g. cents for US.
++ initialValue (number, required) - The value of the code at creation in the smallest currency unit, e.g. cents for USD.
 + programId (string, required) - The id of the Program for which the code will be created from.
 + expires (string, optional) - The code's expiry date and time.  This field will be ommitted if the 
   code was not created with an expiry.  ISO-8601 format.
@@ -2088,7 +2091,7 @@ Retrieves a paginated list of all Lightrail Programs belonging to the user.
 + principal (ValueStoreBalance)
 + attached (array[ValueStoreBalance])
 + currency (string) - The three-character ISO-4217 currency.
-+ cardType (string) - 
++ cardType (string) - `ACCOUNT_CARD`, `GIFT_CARD`.
 + balanceDate (string) - The time the balance was checked.
 + cardId (string) - The Lightrail Card ID.
 

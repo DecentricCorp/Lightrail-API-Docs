@@ -13,7 +13,7 @@ Retrieve a paginated list of Cards.
     + categoryKey (string, optional) - A key of a Category. 
     + categoryValue (string, optional) - A value of a Category. 
     + contactId (string, optional) - A contactId to filter by.
-    + cardType (string, optional) - {{cardType}}
+    + cardType (string, optional) - {{card.cardType}}
     + currency (string, optional) - {{currency}}
     + userSuppliedId (string, optional) - {{userSuppliedId}}
 

@@ -1,4 +1,7 @@
-### Update Contact [PATCH /contacts/{contactId}/]
+### Update Contact [PATCH /contacts/{contactId}]
+Updates a Contact.
+
+---
 + Parameters
     + contactId (string, required) - The Lightrail Contact ID.
     
