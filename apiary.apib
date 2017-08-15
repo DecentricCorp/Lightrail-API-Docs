@@ -262,7 +262,6 @@ Use the /ping endpoint to check that your authorization is working correctly or 
                 "roles":[
                   "accountManager",
                   "contactManager",
-                  ...
                 ],
                 "effectiveScopes":[
                   {
@@ -278,8 +277,7 @@ Use the /ping endpoint to check that your authorization is working correctly or 
                       "lightrailV1",
                       "payments"
                     ]
-                  },
-                  ...
+                  }
                 ]
               }
             }
@@ -440,14 +438,14 @@ Create a Card of type `ACCOUNT_CARD` which is associated with an existing Contac
     + Body
     
             {
-              "userSuppliedId":"accountCard1",
-              "cardType":"ACCOUNT_CARD",
-              "contactId":"contact-0cxx86",
-              "currency":"USD",
-              "initialValue":500,
-              "categories": {
-                "city":"seattle"
-              }
+                "userSuppliedId":"accountCard1",
+                "cardType":"ACCOUNT_CARD",
+                "contactId":"contact-0cxx86",
+                "currency":"USD",
+                "initialValue":500,
+                "categories": {
+                    "city":"seattle"
+                }
             }
         
 + Response 200
@@ -1029,7 +1027,7 @@ This means the value required for the Pending Transaction will be unavailable to
 A Pending Transaction can either be captured, which confirms the Transaction, or it can be voided, freeing up their associated value. 
 
 ### List Card Transactions [GET /cards/{cardId}/transactions{?limit}{?offset}]
-Retrieve a paginated list of a Card's Transactions.
+Retrieve a paginated list of a Card's Transactions based on the Card ID.
 
 ---
 + Parameters
@@ -1054,53 +1052,88 @@ Retrieve a paginated list of a Card's Transactions.
     + Body
     
             {
-              "transactions":[
+              "transactions": [
                 {
-                  "transactionId":"transaction-62xx70",
-                  "value":-500,
-                  "userSuppliedId":"example2",
-                  "dateCreated":"2017-07-31T18:38:02.449Z",
-                  "transactionType":"DRAWDOWN",
-                  "transactionAccessMethod":"CARDID",
-                  "valueAvailableAfterTransaction":1500,
-                  "giftbitUserId":"user-1dxx32",
-                  "cardId":"card-76xxab",
-                  "currency":"USD",
-                  "metadata":{
-                    "checkout-cart":{
-                      "items":[
-                        {
-                          "id":"1"
-                        },
-                        {
-                          "id":"2"
-                        }
-                      ]
+                    "transactionId": "transaction-c8xx2b",
+                    "value": -13,
+                    "userSuppliedId": "tx001184",
+                    "dateCreated": "2017-08-15T21:59:01.571Z",
+                    "transactionType": "DRAWDOWN",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 26987,
+                    "giftbitUserId": "user-08xx8e",
+                    "cardId": "card-6dxx89",
+                    "currency": "USD",
+                    "parentTransactionId": "transaction-9axx70",
+                    "metadata": {
+                    "giftbit_initial_transaction_id": "transaction-9axx70"
                     }
-                  }
                 },
                 {
-                  "transactionId":"transaction-00xxa5",
-                  "value":2000,
-                  "userSuppliedId":"anonymous-giftcard10",
-                  "dateCreated":"2017-07-13T21:21:00.601Z",
-                  "transactionType":"INITIAL_VALUE",
-                  "transactionAccessMethod":"CARDID",
-                  "valueAvailableAfterTransaction":2000,
-                  "giftbitUserId":"user-1dxx32",
-                  "cardId":"card-76xxab",
-                  "currency":"USD"                
+                    "transactionId": "transaction-aexx63",
+                    "value": 13,
+                    "userSuppliedId": "tx001184-reverse",
+                    "dateCreated": "2017-08-15T21:59:01.557Z",
+                    "transactionType": "PENDING_CAPTURE",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 27000,
+                    "giftbitUserId": "user-08xx8e",
+                    "cardId": "card-6dxx89",
+                    "currency": "USD",
+                    "parentTransactionId": "transaction-9axx70",
+                    "metadata": {
+                    "giftbit_initial_transaction_id": "transaction-9axx70"
+                }
+                },
+                {
+                    "transactionId": "transaction-9axx70",
+                    "value": -13,
+                    "userSuppliedId": "test001183",
+                    "dateCreated": "2017-08-15T21:56:40.669Z",
+                    "transactionType": "PENDING_CREATE",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 26987,
+                    "giftbitUserId": "user-08xx8e",
+                    "cardId": "card-6dxx89",
+                    "currency": "USD"
+                },
+                {
+                    "transactionId": "transaction-72xx69",
+                    "value": 13500,
+                    "userSuppliedId": "test001182",
+                    "dateCreated": "2017-08-15T21:45:33.547Z",
+                    "transactionType": "FUND",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 27000,
+                    "giftbitUserId": "user-08xx8e",
+                    "cardId": "card-6dxx89",
+                    "currency": "USD"
+                },
+                {
+                    "transactionId": "transaction-95xx1d",
+                    "value": -15875,
+                    "userSuppliedId": "11xx62-capture",
+                    "dateCreated": "2017-08-10T00:08:54.697Z",
+                    "transactionType": "DRAWDOWN",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 0,
+                    "giftbitUserId": "user-08xx8e-TEST",
+                    "cardId": "card-6dxx89",
+                    "currency": "USD",
+                    "parentTransactionId": "transaction-a6xx9d",
+                    "metadata": {
+                    "giftbit_initial_transaction_id": "transaction-a6xx9d"
+                    }
                 }
               ],
-              "pagination":{
-                "count":2,
-                "limit":100,
-                "maxLimit":1000,
-                "offset":0,
-                "totalCount":2
+              "pagination": {
+                "count": 4,
+                "limit": 100,
+                "maxLimit": 1000,
+                "offset": 0,
+                "totalCount": 4
               }
             }
-
 
 ### Show Transaction [GET /cards/{cardId}/transactions/{transactionId}]
 Retrieves a Transaction based on its ID.
@@ -1298,22 +1331,22 @@ Voids a pending Transaction. This makes the value of the pending Transaction ava
     + Body
 
             {
-              "transaction":{
-                "transactionId":"transaction-7dxx3b",
-                "value":50,
-                "userSuppliedId":"transaction-fbxx5a-reverse",
-                "dateCreated":"2017-07-31T18:54:58.141Z",
-                "transactionType":"PENDING_VOID",
-                "transactionAccessMethod":"CARDID",
-                "valueAvailableAfterTransaction":1299,
-                "giftbitUserId":"user-1dxx32",
-                "cardId":"card-76xxab",
-                "currency":"USD",
-                "parentTransactionId":"transaction-fbxx5a",
-                "metadata":{
-                  "giftbit_initial_transaction_id":"transaction-fbxx5a"
+                "transaction":{
+                    "transactionId":"transaction-7dxx3b",
+                    "value":50,
+                    "userSuppliedId":"transaction-fbxx5a-reverse",
+                    "dateCreated":"2017-07-31T18:54:58.141Z",
+                    "transactionType":"PENDING_VOID",
+                    "transactionAccessMethod":"CARDID",
+                    "valueAvailableAfterTransaction":1299,
+                    "giftbitUserId":"user-1dxx32",
+                    "cardId":"card-76xxab",
+                    "currency":"USD",
+                    "parentTransactionId":"transaction-fbxx5a",
+                    "metadata":{
+                      "giftbit_initial_transaction_id":"transaction-fbxx5a"
+                    }
                 }
-              }
             }
 
 
@@ -1633,15 +1666,15 @@ Note, this endpoint is deprecated and should no longer be used.
 
             {
                 balance":{
-                "currentValue": 150,
-                "fundedValue": 0,
-                "drawdownValue": 0,
-                "cancellationValue": 0,
-                "initialValue": 150,
-                "frozenValue": 0,
-                "inactiveValue": 0,
-                "pendingValue": 0,
-                "currency": "USD"
+                    "currentValue": 150,
+                    "fundedValue": 0,
+                    "drawdownValue": 0,
+                    "cancellationValue": 0,
+                    "initialValue": 150,
+                    "frozenValue": 0,
+                    "inactiveValue": 0,
+                    "pendingValue": 0,
+                    "currency": "USD"
                 }
             }
 
@@ -1791,7 +1824,6 @@ Freeze a Card's ValueStore, preventing all transactions against that ValueStore 
     + Attributes
         + transaction (Transaction)
 
-
     + Body
 
             {
@@ -1841,17 +1873,17 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
 
             {
                 "transaction":{
-                "transactionId": "transaction-f7xx82",
-                "value": 50,
-                "userSuppliedId": "unfreeze-valueStore-1",
-                "dateCreated": "2017-06-05T16:37:57.218Z",
-                "transactionType": "UNFREEZE",
-                "transactionAccessMethod": "CARDID",
-                "valueAvailableAfterTransaction": 50,
-                "giftbitUserId": "user-50xx93",
-                "codeLastFour": "NKNA",
-                "cardId": "card-fbxxda",
-                "currency": "XXX"
+                    "transactionId": "transaction-f7xx82",
+                    "value": 50,
+                    "userSuppliedId": "unfreeze-valueStore-1",
+                    "dateCreated": "2017-06-05T16:37:57.218Z",
+                    "transactionType": "UNFREEZE",
+                    "transactionAccessMethod": "CARDID",
+                    "valueAvailableAfterTransaction": 50,
+                    "giftbitUserId": "user-50xx93",
+                    "codeLastFour": "NKNA",
+                    "cardId": "card-fbxxda",
+                    "currency": "XXX"
                 }
             }
 
@@ -1959,14 +1991,14 @@ These endpoints are used to retrieve information about your existing Categories.
             {
                 "categories":[
                     {
-                    "categoryId": "category-46xx15",
-                    "key": "giftbit_program",
-                    "value": "program-dexx72"
+                        "categoryId": "category-46xx15",
+                        "key": "giftbit_program",
+                        "value": "program-dexx72"
                     },
                     {
-                    "categoryId": "category-daxxd9",
-                    "key": "giftbit_order",
-                    "value": "2017-06-05"
+                        "categoryId": "category-daxxd9",
+                        "key": "giftbit_order",
+                        "value": "2017-06-05"
                     }
             }
 

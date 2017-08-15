@@ -24,7 +24,6 @@ Freeze a Card's ValueStore, preventing all transactions against that ValueStore 
     + Attributes
         + transaction (Transaction)
 
-
     + Body
 
             {
