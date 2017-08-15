@@ -12,10 +12,11 @@ Unfreeze a frozen Card, re-enabling the creation of transactions.
 
     + Attributes
         + userSuppliedId (string, required): {{userSuppliedId}}
+   
     + Body 
     
             {
-                "userSuppliedId":"unfreeze-1"
+                "userSuppliedId":"tx-122"
             }
     
 + Response 200

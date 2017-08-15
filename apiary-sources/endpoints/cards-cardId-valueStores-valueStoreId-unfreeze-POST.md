@@ -17,7 +17,7 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
     + Body 
     
             {
-                "userSuppliedId":"unfreeze-valuestore-1"
+                "userSuppliedId":"tx-122"
             }
     
 + Response 200

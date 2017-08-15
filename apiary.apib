@@ -714,10 +714,11 @@ Unfreeze a frozen Card, re-enabling the creation of transactions.
 
     + Attributes
         + userSuppliedId (string, required): Endpoint-unique idempotency ID provided by the client.
+   
     + Body 
     
             {
-                "userSuppliedId":"unfreeze-1"
+                "userSuppliedId":"tx-122"
             }
     
 + Response 200
@@ -1236,6 +1237,12 @@ Captures a pending Transaction. This locks in the value of the pending Transacti
             
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
+    
+    + Body 
+        
+            {
+              "userSuppliedId":"tx-122",
+            }
 
 + Response 200
     + Attributes
@@ -1278,6 +1285,12 @@ Voids a pending Transaction. This makes the value of the pending Transaction ava
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client. 
     
+    + Body 
+            
+            {
+              "userSuppliedId":"tx-122",
+            }
+    
 + Response 200
     + Attributes
         + transaction (Transaction)
@@ -1318,6 +1331,12 @@ Refund a Transaction, reverting its affects.
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
+    
+    + Body 
+            
+            {
+              "userSuppliedId":"tx-122",
+            }
     
 + Response 200
     + Attributes
@@ -1765,7 +1784,7 @@ Freeze a Card's ValueStore, preventing all transactions against that ValueStore 
     + Body 
     
             {
-                "userSuppliedId":"freeze-valuestore-1"
+                "userSuppliedId":"tx-122"
             }
     
 + Response 200
@@ -1811,7 +1830,7 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
     + Body 
     
             {
-                "userSuppliedId":"unfreeze-valuestore-1"
+                "userSuppliedId":"tx-122"
             }
     
 + Response 200
@@ -1856,7 +1875,7 @@ Permanently cancels a Card's ValueStore.
     + Body 
     
             {
-                "userSuppliedId":"cancel-valuestore-1"
+                "userSuppliedId":"tx-122"
             }
     
 + Response 200

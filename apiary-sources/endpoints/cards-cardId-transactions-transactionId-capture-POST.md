@@ -13,6 +13,12 @@ Captures a pending Transaction. This locks in the value of the pending Transacti
             
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}}
+    
+    + Body 
+        
+            {
+              "userSuppliedId":"tx-122",
+            }
 
 + Response 200
     + Attributes

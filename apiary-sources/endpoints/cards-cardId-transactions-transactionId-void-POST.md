@@ -13,6 +13,12 @@ Voids a pending Transaction. This makes the value of the pending Transaction ava
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}} 
     
+    + Body 
+            
+            {
+              "userSuppliedId":"tx-122",
+            }
+    
 + Response 200
     + Attributes
         + transaction (Transaction)
