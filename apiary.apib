@@ -1022,7 +1022,9 @@ Retrieve a paginated list of a Contact's Cards.
 
 
 ## Transactions [/cards/{cardId}/transactions]
-These endpoints are the various ways you can create new transactions on Cards
+These endpoints are the various ways you can create and retrieve transactions on Cards based on either their `cardId` or their `fullcode`. 
+Note that only gift cards have an associated `fullcode`.
+
 
 ---
 ### Create Transaction [POST /cards/{cardId}/transactions]
@@ -1572,7 +1574,7 @@ Retrieves a Transaction based on its ID.
 ## Balances [/cards/{cardId}/balance/]
 These endpoints are used to get the available balance associated with a Card. 
 Depending on the context of your use-case you can check the balance either based on the `cardId` or the `fullcode`. 
-Note that only gift cards are associated with a `fullcode`.
+Note that only gift cards have an associated `fullcode`.
 
 ---
 ### Get Balance by cardId [GET /cards/{cardId}/balance{?asAtDate}]

@@ -1,5 +1,7 @@
 ## Transactions [/cards/{cardId}/transactions]
-These endpoints are the various ways you can create new transactions on Cards
+These endpoints are the various ways you can create and retrieve transactions on Cards based on either their `cardId` or their `fullcode`. 
+Note that only gift cards have an associated `fullcode`.
+
 
 ---
 {% include 'endpoints/cards-cardId-transactions-POST.md' %}
