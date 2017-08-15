@@ -20,14 +20,14 @@ Create a Card of type `ACCOUNT_CARD` which is associated with an existing Contac
     + Body
     
             {
-              "userSuppliedId":"accountCard1",
-              "cardType":"ACCOUNT_CARD",
-              "contactId":"contact-0cxx86",
-              "currency":"USD",
-              "initialValue":500,
-              "categories": {
-                "city":"seattle"
-              }
+                "userSuppliedId":"accountCard1",
+                "cardType":"ACCOUNT_CARD",
+                "contactId":"contact-0cxx86",
+                "currency":"USD",
+                "initialValue":500,
+                "categories": {
+                    "city":"seattle"
+                }
             }
         
 + Response 200

@@ -16,13 +16,13 @@
             {
                 "categories":[
                     {
-                    "categoryId": "category-46xx15",
-                    "key": "giftbit_program",
-                    "value": "program-dexx72"
+                        "categoryId": "category-46xx15",
+                        "key": "giftbit_program",
+                        "value": "program-dexx72"
                     },
                     {
-                    "categoryId": "category-daxxd9",
-                    "key": "giftbit_order",
-                    "value": "2017-06-05"
+                        "categoryId": "category-daxxd9",
+                        "key": "giftbit_order",
+                        "value": "2017-06-05"
                     }
             }

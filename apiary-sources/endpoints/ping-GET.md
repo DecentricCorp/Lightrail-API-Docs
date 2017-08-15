@@ -23,7 +23,6 @@
                 "roles":[
                   "accountManager",
                   "contactManager",
-                  ...
                 ],
                 "effectiveScopes":[
                   {
@@ -39,8 +38,7 @@
                       "lightrailV1",
                       "payments"
                     ]
-                  },
-                  ...
+                  }
                 ]
               }
             }
