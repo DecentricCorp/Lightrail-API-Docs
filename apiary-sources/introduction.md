@@ -16,13 +16,13 @@ The base URL for the Lightrail API is `https://api.lightrail.com/v1/`.
 
 In order to use the API endpoints, you need an API key for authentication. You can find your test or production API key in the _API_ tab under _Account Settings_ after you log in to your Lightrail account. 
 If you do not have a Lightrail account yet, <em><a href="https://www.lightrail.com/#gform" target="_blank">contact us to request a demo</a></em>. 
-Make sure to take the measures for keeping your API key secure and store it safely in your production configurations.
 
-Note that in your user settings you can toggle to a test mode which provides you with a test `access_token`. 
-This allows you to make calls to the API without affecting your Cards or the calculated statistics in live mode. Emails sent from test mode will be labeled as such.
+Note that in your account settings, you will be in test mode by default which will provide a test API key. This allows you to make calls to the API without affecting your production system and its statistics.
+Once you are ready for production, you can toggle to switch off the test mode at which point you will find a new production API key. 
+Make sure to take all the necessary measures to keep your API key secure and store it safely in your production configurations.
 
-Prefix your `access_token` with the word ‘Bearer’ (case sensitive) and a space and pass it on in the Authorization HTTP header. 
-For example `Authorization: Bearer {access_token}`.
+To start making API calls, prefix your API key with the word ‘Bearer’ (case sensitive) and a space, then pass it on in the `Authorization` HTTP header. 
+For example `Authorization: Bearer {apiKey}`.
 
 ## The Lightrail Object Model
 The full API object model is here for your reference. Depending on your use-case, you may not need to use every object/endpoint. Read on for use-case elaboration
