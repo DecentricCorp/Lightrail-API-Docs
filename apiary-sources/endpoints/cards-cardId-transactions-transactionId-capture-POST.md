@@ -1,10 +1,10 @@
 ### Capture Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/capture]
-Captures a pending Transaction. This locks in the value of the pending Transaction.
+Capture a pending Transaction, thereby collecting the value withheld by the pending Transaction.
 
 ---
 + Parameters
     + cardId (string, required) - {{card.cardId}}
-    + transactionId (string, required) - {{transaction.transactionId}} Must be a pending Transaction.
+    + transactionId (string, required) - The `transactionId` of the pending Transaction.
 
 + Request (application/json)
     + Headers

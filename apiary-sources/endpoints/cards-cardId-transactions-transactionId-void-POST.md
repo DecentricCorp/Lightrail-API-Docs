@@ -1,5 +1,5 @@
 ### Void Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/void]
-Voids a pending Transaction. This makes the value of the pending Transaction available to be used by other Transactions.
+Voids a pending Transaction by unlocking the value withheld by the pending Transaction.
 
 ---
 + Parameters
@@ -10,6 +10,7 @@ Voids a pending Transaction. This makes the value of the pending Transaction ava
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}} 
     

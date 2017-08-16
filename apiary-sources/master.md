@@ -246,7 +246,9 @@ It is the responsibility of the API user and their organization to understand an
 
 {% include 'sections/valuestores.md' %}
 
+{#
 {% include 'sections/categories.md' %}
+#}
 
 {% include 'sections/programs.md' %}
 

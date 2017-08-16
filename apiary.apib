@@ -297,7 +297,7 @@ In use cases where the recipient requires a gift code, the `fullcode` should be 
 
 ---
 ### List Cards [GET /cards/{?limit}{?offset}{?categoryKey}{?categoryValue}{?contactId}{?cardType}{?currency}{?userSuppliedId}]
-Retrieve a paginated list of Cards.
+Retrieve a paginated list of Cards. The search can be narrowed down based on various parameters.
 
 ---
 + Request (application/json)
@@ -311,11 +311,11 @@ Retrieve a paginated list of Cards.
     + offset (number, optional) - For pagination. The offset of the first results in the total results. 
       + Default: 0
     + categoryKey (string, optional) - A key of a Category. 
-    + categoryValue (string, optional) - A value of a Category. 
-    + contactId (string, optional) - A contactId to filter by.
+    + categoryValue (string, optional) - A value of a Category.  
+    + contactId (string, optional) - Retrieve only the Cards belonging to a specific Contact.
     + cardType (string, optional) - `ACCOUNT_CARD`, `GIFT_CARD`.
     + currency (string, optional) - The three-character ISO-4217 currency.
-    + userSuppliedId (string, optional) - Endpoint-unique idempotency ID provided by the client.
+    + userSuppliedId (string, optional) - Retrieve the Card created with this `userSuppliedId`. Note that since `userSuppliedId`s are unique, this guarantees that exactly one Card will be returned if it exists. 
 
 + Response 200
     + Attributes 
@@ -377,7 +377,10 @@ Retrieve a paginated list of Cards.
             }
 
 
-### Retrieve Card by cardId [GET /cards/{cardId}]
+### Retrieve Card [GET /cards/{cardId}]
+Retrieve the Card object by its `cardId`. 
+
+---
 + Parameters 
     + cardId (string, required) - The Lightrail Card ID.
 
@@ -542,7 +545,7 @@ Create a Card of type `GIFT_CARD`.
 
 
 ### Retrieve fullcode for Gift Card [GET /cards/{cardId}/fullcode]
-Retrieves the `fullcode` associated with a Gift Card.
+Retrieve the `fullcode` associated with a Gift Card. 
 
 ---
 + Parameters 
@@ -567,7 +570,7 @@ Retrieves the `fullcode` associated with a Gift Card.
 
 
 ### Update Contact on Card [PATCH /cards/{cardId}]
-Update the Contact associated with a Card.
+Update the Contact associated with a Card, effectively, transferring the Card to another Contact.
 
 ---
 + Parameters 
@@ -742,7 +745,7 @@ Unfreeze a frozen Card, re-enabling the creation of transactions.
             }
 
 ### Cancel Card [POST /cards/{cardId}/cancel]
-Permanently cancels a Card.
+Cancel a Card permanently.
 
 ---
 + Parameters
@@ -1177,12 +1180,12 @@ so you need to save the `cardId` from the response to this call in order to even
             }
 
 ### Capture Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/capture]
-Captures a pending Transaction. This locks in the value of the pending Transaction.
+Capture a pending Transaction, thereby collecting the value withheld by the pending Transaction.
 
 ---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
-    + transactionId (string, required) - The Lightrail Transaction ID. Must be a pending Transaction.
+    + transactionId (string, required) - The `transactionId` of the pending Transaction.
 
 + Request (application/json)
     + Headers
@@ -1225,7 +1228,7 @@ Captures a pending Transaction. This locks in the value of the pending Transacti
 
 
 ### Void Pending Transaction [POST /cards/{cardId}/transactions/{transactionId}/void]
-Voids a pending Transaction. This makes the value of the pending Transaction available to be used by other Transactions.
+Voids a pending Transaction by unlocking the value withheld by the pending Transaction.
 
 ---
 + Parameters
@@ -1236,6 +1239,7 @@ Voids a pending Transaction. This makes the value of the pending Transaction ava
     + Headers
     
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client. 
     
@@ -1272,7 +1276,7 @@ Voids a pending Transaction. This makes the value of the pending Transaction ava
 
 
 ### Refund Transaction [POST /cards/{cardId}/transactions/{transactionId}/refund]
-Refunds a Transaction, reverting its affects. 
+Refund a Transaction by reverting its effect. 
 
 ---
 + Parameters
@@ -1321,7 +1325,6 @@ Refunds a Transaction, reverting its affects.
 
 ### List Card Transactions Based on Card ID [GET /cards/{cardId}/transactions{?limit}{?offset}]
 Retrieve a paginated list of a Card's Transactions based on the Card ID.
-
 
 ---
 + Parameters
@@ -1491,7 +1494,7 @@ Retrieve a paginated list of a Card's Transactions based on the Gift Card's `ful
 
 
 ### Show Transaction Based on Card ID [GET /cards/{cardId}/transactions/{transactionId}]
-Retrieves a particular Transaction by its ID based on the `cardId`.
+Retrieve a particular Transaction by its ID based on the `cardId`.
 
 ---
 
@@ -1588,12 +1591,12 @@ Note that only gift cards have an associated `fullcode`.
 
 ---
 ### Get Balance by Card ID [GET /cards/{cardId}/balance{?asAtDate}]
-Retrieve a Card's balance.
+Retrieve a Card's balance based on its `cardId`.
 
 ---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
-    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
+    + asAtDate (string, optional) - The date and time at which the balance should be retrieved.
 + Request (application/json)
     + Headers
 
@@ -1662,13 +1665,13 @@ Retrieve a Card's balance using the Gift Card's `fullcode`.
 
 
 ### Get Balance by Gift Code (Deprecated) [GET /codes/{fullcode}/balance{?asAtDate}{?pin}]
-Note, this endpoint is deprecated and should no longer be used. 
+This endpoint is deprecated and should no longer be used. 
 
 ---
 + Parameters
     + fullcode (string, required) - The unique unguessable gift code.
     + pin (string, optional) - This is required if the fullcode has a pin.
-    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
+    + asAtDate (string, optional) - The date and time at which the balance should be retrieved.
 
 + Request (application/json)
     + Headers
@@ -1781,7 +1784,7 @@ Adds a ValueStore from a Promotion Program to a Card.
         + currency (string, required) - The three-character ISO-4217 currency.
         + programId (string, required) - The unique id of the Promotion Program. Note the Program's `ValueStoreType` must be of type `ATTACHED`.
         + expires (string, optional) - Defaults to lifespan set by program.
-        + startDate (string, optional) - The date for which the ValueStore will become useable.
+        + startDate (string, optional) - The date for which the ValueStore will become usable.
         + initialValue (number, optional) - The initial value of the ValueStore.
         
     + Body 
@@ -1947,74 +1950,6 @@ Permanently cancels a Card's ValueStore.
             }
 
 
-## Categories [/categories/]
-These endpoints are used to retrieve information about your existing Categories.
-
----
-
-### List Categories [GET /categories]
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    
-+ Response 200
-    + Attributes
-        + categories (array[Category])
-
-    + Body
-
-            {
-                "categories":[
-                {
-                "categoryId": "category-46xx15",
-                "key": "giftbit_program",
-                "value": "program-dexx72"
-                },
-                {
-                "categoryId": "category-daxxd9",
-                "key": "giftbit_order",
-                "value": "2017-06-05"
-                }
-                ],
-                "pagination":{
-                "count": 2,
-                "limit": 100,
-                "maxLimit": 1000,
-                "offset": 0,
-                "totalCount": 2
-                }
-            }
-
-
-### List Categories on Card [GET /cards/{cardId}/categories]
-+ Parameters
-    + cardId (string, required) - The Lightrail Card ID.
-    
-+ Request (application/json)
-    + Headers
-    
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
-    
-+ Response 200
-    + Attributes
-        + categories (array[Category])
-
-    + Body
-
-            {
-                "categories":[
-                    {
-                        "categoryId": "category-46xx15",
-                        "key": "giftbit_program",
-                        "value": "program-dexx72"
-                    },
-                    {
-                        "categoryId": "category-daxxd9",
-                        "key": "giftbit_order",
-                        "value": "2017-06-05"
-                    }
-            }
 
 
 ## Programs [/programs/]

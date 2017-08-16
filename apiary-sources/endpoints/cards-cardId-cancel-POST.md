@@ -1,5 +1,5 @@
 ### Cancel Card [POST /cards/{cardId}/cancel]
-Permanently cancels a Card.
+Cancel a Card permanently.
 
 ---
 + Parameters

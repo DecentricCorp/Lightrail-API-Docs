@@ -1,10 +1,10 @@
 ### Get Balance by Card ID [GET /cards/{cardId}/balance{?asAtDate}]
-Retrieve a Card's balance.
+Retrieve a Card's balance based on its `cardId`.
 
 ---
 + Parameters
     + cardId (string, required) - {{card.cardId}}
-    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
+    + asAtDate (string, optional) - {{balance.asAtDate}}
 + Request (application/json)
     + Headers
 
