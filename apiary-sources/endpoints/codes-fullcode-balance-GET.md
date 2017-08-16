@@ -1,11 +1,11 @@
 ### Get Balance by Gift Code (Deprecated) [GET /codes/{fullcode}/balance{?asAtDate}{?pin}]
-Note, this endpoint is deprecated and should no longer be used. 
+This endpoint is deprecated and should no longer be used. 
 
 ---
 + Parameters
     + fullcode (string, required) - The unique unguessable gift code.
     + pin (string, optional) - This is required if the fullcode has a pin.
-    + asAtDate (string, optional) - The date and time you'd like to retrieve the balance at.
+    + asAtDate (string, optional) - {{balance.asAtDate}}
 
 + Request (application/json)
     + Headers

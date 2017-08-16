@@ -1,4 +1,8 @@
 ### List Categories on Card [GET /cards/{cardId}/categories]
+Retrieve the list of all Categories associated with a given Card.
+
+---
+
 + Parameters
     + cardId (string, required) - {{card.cardId}}
     

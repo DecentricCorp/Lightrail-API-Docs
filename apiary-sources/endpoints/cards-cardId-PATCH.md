@@ -1,5 +1,5 @@
 ### Update Contact on Card [PATCH /cards/{cardId}]
-Update the Contact associated with a Card.
+Update the Contact associated with a Card, effectively transferring the Card to another Contact.
 
 ---
 + Parameters 

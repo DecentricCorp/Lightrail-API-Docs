@@ -1,5 +1,5 @@
 ### Retrieve fullcode for Gift Card [GET /cards/{cardId}/fullcode]
-Retrieves the `fullcode` associated with a Gift Card.
+Retrieve the `fullcode` associated with a Gift Card. 
 
 ---
 + Parameters 

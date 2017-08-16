@@ -1,7 +1,6 @@
 ### List Card Transactions Based on Card ID [GET /cards/{cardId}/transactions{?limit}{?offset}]
 Retrieve a paginated list of a Card's Transactions based on the Card ID.
 
-
 ---
 + Parameters
     + cardId (string, required) - {{card.cardId}}

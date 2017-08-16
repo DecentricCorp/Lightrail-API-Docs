@@ -15,7 +15,7 @@ Adds a ValueStore from a Promotion Program to a Card.
         + currency (string, required) - {{currency}}
         + programId (string, required) - The unique id of the Promotion Program. Note the Program's `ValueStoreType` must be of type `ATTACHED`.
         + expires (string, optional) - Defaults to lifespan set by program.
-        + startDate (string, optional) - The date for which the ValueStore will become useable.
+        + startDate (string, optional) - The date for which the ValueStore will become usable.
         + initialValue (number, optional) - The initial value of the ValueStore.
         
     + Body 
