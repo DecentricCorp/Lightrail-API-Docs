@@ -3,47 +3,32 @@ HOST: https://api.lightrail.com/v1/
 
 # Lightrail API
 
-Welcome to the Lightrail API documentation.  Lightrail is an extremely powerful and flexible platform, designed to be rapidly adopted and built into.
-This document is part of that experience; in addition to being a fully interactive REST reference, it is designed to minimize implementation time by elaborating on common
-use cases, explaining the relevant portions of the Lightrail system and giving common API calls and examples for each.  
-
-Contact us anytime at hello@lightrail.com - we are here to help you solidify your use case and implementation.
-
-### A Note on the Documentation
-This interactive documentation will provide full code samples in many popular languages and let you try out all functionality.
-
-The API Blueprint file that produces this documentation is in GitHub at https://github.com/Giftbit/Lightrail-API-Docs. 
-If you find a mistake or have a suggestion for improvement, please submit it directly via pull request.
-
-### Common Use Cases
-This documentation will explore in detail the most common use cases of the Lightrail API. 
-Generally, our users are looking to implement either of the following programs:
-<ol>
-    <li>A gift card program</li>
-    <li>A customer account credit or points program </li>
-</ol>
-
-Note that this is not an exhaustive list and some use cases will require a combination of the two. 
-Lightrail is designed to power and enhance any use case of stored value.  We are here to work with you.
-
-In each scenario, the power of Lightrail Promotions allows you to incentivize and motivate your users. Lightrail also provides a rich statistical interface which will give you more insight into your programs.
+Welcome to the Lightrail API documentation. Lightrail is a powerful and flexible platform for digital account credits, gift cards, promotions, and points. 
+Lightrail is carefully designed for rapid adoption and integration while maintaining flexibility to support various business use-cases and we would like this document 
+to be part of that experience. In addition to being a fully interactive REST reference, we will have a quick overview of Lightrail's 
+conceptual model, common use-cases, and common API calls with examples. 
+Contact us anytime at hello@lightrail.com —we are here to help you solidify your use-case and implementation.
 
 ## Getting Started
 
 ### API Base URL
 
-The base URL for Lightrail's API is <em>https://api.lightrail.com/v1/</em>.
+The base URL for the Lightrail API is `https://api.lightrail.com/v1/`.
 
 ### Lightrail User Creation and Authorization
 
-You'll need your test or production `access_token` from your Lightrail user details page to use the API. If you don't already have a user account, you can <em><a href="https://www.lightrail.com/#gform" target="_blank">contact us to request a demo</a></em>. Be sure to store your production `access_token` extremely securely in your production configurations.
+In order to use the API endpoints, you need an API key for authentication. You can find your test or production API key in the _API_ tab under _Account Settings_ after you log in to your Lightrail account. 
+If you do not have a Lightrail account yet, <em><a href="https://www.lightrail.com/#gform" target="_blank">contact us to request a demo</a></em>. 
 
-Note that in your user settings you can toggle to a test mode which provides you with a test `access_token`. This allows you to make calls to the API without affecting your Cards or the calculated statistics in live mode. Emails sent from test mode will be labeled as such.
+Note that in your account settings, you will be in test mode by default which will provide a test API key. This allows you to make calls to the API without affecting your production system and its statistics.
+Once you are ready for production, you can toggle to switch off the test mode at which point you will find a new production API key. 
+Make sure to take all the necessary measures to keep your API key secure and store it safely in your production configurations.
 
-You authenticate with your `access_token` by including your token prefixed by the word ‘Bearer’ (case sensitive) and a space in the Authorization HTTP header. For example `Authorization: Bearer {access_token}`.
+To make API calls, prefix your API key with the word ‘Bearer’ (case sensitive) and a space, then pass it on in the `Authorization` HTTP header. 
+For example `Authorization: Bearer {apiKey}`.
 
 ## The Lightrail Object Model
-The full API object model is here for your reference. Depending on your use case, you may not need to use every object/endpoint. Read on for use case elaboration
+The full API object model is here for your reference. Depending on your use-case, you may not need to use every object/endpoint. Read on for use-case elaboration
 
 ![Lightrail Object Model](http://resources.giftbit.com/api/embeddedimages/Lightrail_Object_Model_(stacked).png)
 
@@ -66,18 +51,19 @@ Account Cards represent value that is attached to a Contact.
 They are used when implementing a customer account credit or points program and can be thought of as a customer's account.
 Since Account Cards do not have a `fullcode`, their value is interacted with using the Card object. 
 
-## Use Case Exploration
 
-The following sections dive into Lightrail's most common use cases. Feel free to skip to the section relevant to you. If you're not sure which applies to you, please don't hesitate to ask!
+## Common Use-Cases
+
+The following sections dive into Lightrail's most common use-cases. Feel free to skip to the section relevant to you. If you're not sure which applies to you, please don't hesitate to ask!
 
 Also note, the ability to incentivize your users or recipients through Lightrail Card Promotions is available for both Gift Cards and Account Cards. 
-Detailed information for Card Promotions and how it can be applied to either use case can be found in the following [Create and Attach Promotions](#create-and-attach-promotions-anchor) section. 
+Detailed information for Card Promotions and how it can be applied to either use-case can be found in the following [Create and Attach Promotions](#create-and-attach-promotions-anchor) section. 
 
 Looking to import your existing codes into the Lightrail system? We support that. Please let us know to find out more. 
 
-### Use Case 1: Powering Your Gift Card Program
+### Use-Case 1: Powering Your Gift Card Program
  
-A common use case for the Lightrail API is one in which Lightrail powers your gift cards. 
+A common use-case for the Lightrail API is one in which Lightrail powers your gift cards. 
 
 For example, suppose your business is an online e-commerce platform and you want to enable your customers to purchase gift cards.
 When a customer purchases a gift card, you would create a Gift Card in the Lightrail API. You would retrieve the Gift Card's `fullcode` and deliver it to the customer.
@@ -103,23 +89,23 @@ For more information on this functionality, please contact hello@lightrail.com.
 
 #### Common Requests in Gift Card Integration
 
-| Action                        | Type   | Body                                                                                                                | Endpoint                               | 
-|:------------------------------|--------|---------------------------------------------------------------------------------------------------------------------|----------------------------------------|
+| Action                        | Type   | Body                                                                                                                | Endpoint                            | 
+|:------------------------------|--------|---------------------------------------------------------------------------------------------------------------------|-------------------------------------|
 | Create Gift Card              | `POST` | `{'userSuppliedId':'gc1', 'cardType':'GIFT_CARD', 'programId':'program-123', 'initialValue':500, 'currency':'USD'}` | `/v1/cards`                         | 
 | Retrieve `fullcode`           | `GET`  |                                                                                                                     | `/v1/cards/<cardId>/fullcode`       |
-| Check Balance                 | `GET`  |                                                                                                                     | `/v1/codes/<fullcode>/card/balance`      |
+| Check Balance                 | `GET`  |                                                                                                                     | `/v1/codes/<fullcode>/card/balance` |
 | Create Transaction            | `POST` | `{'userSuppliedId':'tx1', 'value':-10, 'currency':'USD'}`                                                           | `/v1/codes/<fullcode>/transactions` | 
 | Retrieve Transaction History  | `GET`  |                                                                                                                     | `/v1/codes/<fullcode>/transactions` | 
 
 Note, there may be additional endpoints you'd need to use depending on your use-case. 
 
-### Use Case 2: Power an Account Credits or Points Program
+### Use-Case 2: Power an Account Credits or Points Program
 
-Another common use case is one in which Lightrail manages value attached to your customers. 
+Another common use-case is one in which Lightrail manages value attached to your customers. 
 
 For example, suppose you'd like to enable your users to earn points within your platform.
 Once a user has earned enough points perhaps you'd like to allow them to spend their points and choose a reward.
-In this use case, you would create a Contact in the Lightrail API followed by creating an Account Card for that Contact.
+In this use-case, you would create a Contact in the Lightrail API followed by creating an Account Card for that Contact.
 This Account Card would be used to track the customer's points. 
 As a customer earns or spends value, you would add or subtract value by creating Transactions against the Account Card in the Lightrail API.
 
@@ -135,17 +121,17 @@ As a customer earns or spends value, you would add or subtract value by creating
 | Retrieve Account Card from Contact | `GET`  |                                                                                                    | `/v1/cards?contactId=<contactId>&currency=<currency>&cardType=ACCOUNT_CARD`|
 
 Note, in these example calls, the currency is set to `XXX` to represent points although `USD` or any other valid currency code could be used if you wanted to track a dollar figure.
-Also, in this sort of use case, we recommend storing the Account Card's `cardId` with your customer's account within your application. 
+Also, in this sort of use-case, we recommend storing the Account Card's `cardId` with your customer's account within your application. 
 This will remove an unnecessary lookup each time you want to update a customer's points.
 
-If this use case fits your need for points, a great way to reward your customers is offer them gift cards from top brands through <a href="https://www.giftbit.com" target="_blank">Giftbit’s Rewards API.</a>
+If this use-case fits your need for points, a great way to reward your customers is offer them gift cards from top brands through <a href="https://www.giftbit.com" target="_blank">Giftbit’s Rewards API.</a>
 
 <a name="create-and-attach-promotions-anchor"></a>
 ## Create and Attach Promotions
 
 In addition to the many capabilities Lightrail provides out of the box, Lightrail gives you the ability to attach Promotions to Cards, allowing you to incentivize and motivate your users or recipients. 
 Promotions work by adding temporary value to your cards with special redemption rules. 
-Promotions can be used in both the gift card and account credit use cases. 
+Promotions can be used in both the gift card and account credit use-cases. 
 
 Promotions are created from a Promotion Program which can be created from the <a href="https://www.lightrail.com/app/#/promotions" target="_blank">Promotions</a> section of the Lightrail web application. 
 Similar to a Gift Card Program, they enable you to restrict promotion properties such the allowed value ranges, currency, and custom expiry. 
@@ -233,6 +219,12 @@ Error response JSON will be in the following format:
 ### Legal Responsibilities
 The Lightrail API provides flexibility to implement multiple currency solutions (gift cards, unique promo codes, credit refunds, etc). 
 It is the responsibility of the API user and their organization to understand and follow the jurisdictions and laws that govern all aspects of their implementation.
+
+### A Note on the Documentation
+This interactive documentation will provide full code samples in many popular languages and let you try out all functionality.
+
+The API Blueprint file that produces this documentation is in GitHub at https://github.com/Giftbit/Lightrail-API-Docs. 
+If you find a mistake or have a suggestion for improvement, please submit it directly via pull request.
 
 ## Ping and Health Check [/ping]
 Use the `/ping` endpoint to to health-check the API and test whether your API key is working correctly. 
