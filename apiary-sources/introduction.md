@@ -21,7 +21,7 @@ Note that in your account settings, you will be in test mode by default which wi
 Once you are ready for production, you can toggle to switch off the test mode at which point you will find a new production API key. 
 Make sure to take all the necessary measures to keep your API key secure and store it safely in your production configurations.
 
-To start making API calls, prefix your API key with the word ‘Bearer’ (case sensitive) and a space, then pass it on in the `Authorization` HTTP header. 
+To make API calls, prefix your API key with the word ‘Bearer’ (case sensitive) and a space, then pass it on in the `Authorization` HTTP header. 
 For example `Authorization: Bearer {apiKey}`.
 
 ## The Lightrail Object Model
