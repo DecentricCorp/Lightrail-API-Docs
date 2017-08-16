@@ -5,9 +5,10 @@ HOST: https://api.lightrail.com/v1/
 
 Welcome to the Lightrail API documentation. Lightrail is a powerful and flexible platform for digital account credits, gift cards, promotions, and points. 
 Lightrail is carefully designed for rapid adoption and integration while maintaining flexibility to support various business use-cases and we would like this document 
-to be part of that experience. In addition to being a fully interactive REST reference, we will have a quick overview of Lightrail's 
+to be part of that experience. In addition to a fully-interactive REST reference, we will have a quick overview of Lightrail's 
 conceptual model, common use-cases, and common API calls with examples. 
-Contact us anytime at hello@lightrail.com —we are here to help you solidify your use-case and implementation.
+
+Contact us anytime at hello@lightrail.com —we are here to help you solidify your use-cases and implementation.
 
 ## Getting Started
 
@@ -24,8 +25,8 @@ Note that in your account settings, you will be in test mode by default which wi
 Once you are ready for production, you can toggle to switch off the test mode at which point you will find a new production API key. 
 Make sure to take all the necessary measures to keep your API key secure and store it safely in your production configurations.
 
-To make API calls, prefix your API key with the word ‘Bearer’ (case sensitive) and a space, then pass it on in the `Authorization` HTTP header. 
-For example `Authorization: Bearer {apiKey}`.
+To make API calls, prefix your API key with the word `Bearer` followed by a space and pass it in the `Authorization` HTTP header:
+`Authorization: Bearer {apiKey}`
 
 ## The Lightrail Object Model
 The full API object model is here for your reference. Depending on your use-case, you may not need to use every object/endpoint. Read on for use-case elaboration
