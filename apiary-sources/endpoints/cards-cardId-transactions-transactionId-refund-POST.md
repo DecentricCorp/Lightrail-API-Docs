@@ -1,5 +1,5 @@
 ### Refund Transaction [POST /cards/{cardId}/transactions/{transactionId}/refund]
-Refund a Transaction by reverting its effect. 
+Refund a Transaction by reversing its effect. 
 
 ---
 + Parameters
