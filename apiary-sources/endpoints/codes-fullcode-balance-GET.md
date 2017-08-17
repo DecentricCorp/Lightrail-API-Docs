@@ -1,3 +1,4 @@
+{#
 ### Get Balance by Gift Code (Deprecated) [GET /codes/{fullcode}/balance{?asAtDate}{?pin}]
 This endpoint is deprecated and should no longer be used. 
 
@@ -28,3 +29,4 @@ This endpoint is deprecated and should no longer be used.
                     "currency": "USD"
                 }
             }
+#}
