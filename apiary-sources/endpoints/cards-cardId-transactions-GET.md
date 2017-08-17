@@ -1,4 +1,4 @@
-### List Card Transactions Based on Card ID [GET /cards/{cardId}/transactions{?limit}{?offset}{?userSuppliedId}{?transactionType}]
+### List Card Transactions Based on Card ID [GET /cards/{cardId}/transactions{?userSuppliedId}{?transactionType}{?limit}{?offset}]
 Retrieve a paginated list of a Card's Transactions based on the Card ID.
 
 ---

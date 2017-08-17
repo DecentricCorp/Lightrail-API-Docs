@@ -1,4 +1,4 @@
-### List Cards [GET /cards/{?limit}{?offset}{?contactId}{?cardType}{?currency}{?userSuppliedId}]
+### List Cards [GET /cards/{?contactId}{?cardType}{?currency}{?userSuppliedId}{?limit}{?offset}]
 Retrieve a paginated list of Cards. The search can be narrowed down based on various parameters.
 
 ---
@@ -8,14 +8,14 @@ Retrieve a paginated list of Cards. The search can be narrowed down based on var
              Authorization: Bearer <YOUR_ACCESS_TOKEN>
    
 + Parameter
-    + limit (number, optional) - {{pagination.limit}}
-    + offset (number, optional) - {{pagination.offset}}
 {#    + categoryKey (string, optional) - A key of a Category. 
     + categoryValue (string, optional) - A value of a Category.  #}
     + contactId (string, optional) - Retrieve only the Cards belonging to a specific Contact.
     + cardType (string, optional) - {{card.cardType}}
     + currency (string, optional) - {{currency}}
     + userSuppliedId (string, optional) - Retrieve the Card created with a specific `userSuppliedId`. Note that since `userSuppliedId`s are unique, this guarantees that exactly one Card will be returned if it exists. 
+    + limit (number, optional) - {{pagination.limit}}
+    + offset (number, optional) - {{pagination.offset}}
 
 + Response 200
     + Attributes 
