@@ -4,7 +4,7 @@ This section will go over the basic steps to make your first Lightrail API call.
 ### Authorization
 
 In order to use the API endpoints, you need an API key to identify yourself. You can find your test or production API key in the _API_ tab under _Account Settings_ after you log in to your Lightrail account. 
-If you do not have a Lightrail account yet, <em><a href="https://www.lightrail.com/#gform" target="_blank">contact us to request a demo</a></em>. 
+If you do not have a Lightrail account yet, you can <em><a href="https://www.lightrail.com/app/#/register" target="_blank">create one</a></em>. 
 
 Note that in your account settings, you will be in test mode by default which will provide a test API key. This allows you to make calls to the API without affecting your production system and its statistics.
 Once you are ready for production, you can toggle to switch off the test mode at which point you will find a new production API key. 
@@ -22,7 +22,7 @@ The base URL for the Lightrail API is `https://api.lightrail.com/v1/`.
 Once you have your test API key, you can hit the `ping` endpoint to invoke your first API call using a REST client. Here is what the command looks like using `curl`:
 
 ```sh
-curl https://www.lightrail.com/v1/ping -H "Authorization: Bearer <apiKey>"
+curl https://www.lightrail.com/v1/ping --header "Authorization: Bearer <apiKey>"
 ``` 
 
 A successful response means your API key works fine and you are ready to go. 
