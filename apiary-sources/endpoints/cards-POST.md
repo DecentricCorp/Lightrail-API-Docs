@@ -84,13 +84,19 @@ Create a Card of type `GIFT_CARD`.
     + Body
     
             {
-              "userSuppliedId":"giftcard1",
-              "cardType":"GIFT_CARD",
-              "currency":"USD",
-              "initialValue":500,
-              "categories": {
-                "city":"seattle"
-              }
+                "userSuppliedId": "account-d37e",
+                "programId": "program-06d0",
+                "initialValue" : 5000,
+                "cardType" : "GIFT_CARD",
+                "startDate" : "2017-08-01T00:27:02.910Z",
+                "expires" : "2017-10-01T00:27:02.910Z", 
+                "metadata": {
+                    "orderId": "x72a3sx5e",
+                    "transactionId": "tr2re3t0y2r3u0w6r",
+                    "recipientEmail" : "test@test.ca",
+                    "purchaserName" : "Alice Liddell",
+                    "purchaserEmail" : "alice@wonderland.ca"
+                 }
             }
         
 + Response 200
@@ -100,25 +106,25 @@ Create a Card of type `GIFT_CARD`.
     + Body
 
             {
-              "card":{
-                "cardId":"card-d4xxbf",
-                "userSuppliedId":"giftcard1",
-                "contactId":null,
-                "dateCreated":"2017-07-28T21:59:15.325Z",
-                "categories":[
-                  {
-                    "categoryId":"category-59xx67",
-                    "key":"city",
-                    "value":"seattle"
-                  },
-                  {
-                    "categoryId":"category-3dxxc3",
-                    "key":"giftbit_order",
-                    "value":"2017-07-28"
-                  }
-                ],
-                "cardType":"GIFT_CARD",
-                "currency":"USD"
-              }
+                "card":{
+                    "cardId": "card-6207",
+                    "userSuppliedId": "account-d37",
+                    "contactId": null,
+                    "dateCreated": "2017-08-01T22:15:42.123Z",
+                    "categories":[
+                        {
+                            "categoryId": "category-94d0",
+                            "key": "giftbit_order",
+                            "value": "2017-08-02"
+                        },
+                        {
+                            "categoryId": "category-67fe",
+                            "key": "giftbit_program",
+                            "value": "program-06d0"
+                        }
+                    ],
+                    "cardType": "GIFT_CARD",
+                    "currency": "USD"
+                }
             }
 
