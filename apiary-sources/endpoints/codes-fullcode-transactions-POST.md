@@ -13,7 +13,7 @@ so you need to save the `cardId` from the response to this call in order to even
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
 
     + Attributes
         + value (number) - {{transaction.value}}

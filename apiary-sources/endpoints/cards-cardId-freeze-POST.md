@@ -8,7 +8,7 @@ Freeze a Card, preventing all transactions until unfrozen.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
 
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}}

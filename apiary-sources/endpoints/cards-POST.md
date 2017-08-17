@@ -5,7 +5,8 @@ Create a Card of type `ACCOUNT_CARD` which is associated with an existing Contac
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
+            
     + Attributes 
         + userSuppliedId (string, required) - {{userSuppliedId}}
         + cardType (string, required) - ACCOUNT_CARD
@@ -68,7 +69,8 @@ Create a Card of type `GIFT_CARD`.
 
     + Headers
 
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
+            
     + Attributes 
         + userSuppliedId (string, required) - {{userSuppliedId}}
         + cardType (string, required) - GIFT_CARD

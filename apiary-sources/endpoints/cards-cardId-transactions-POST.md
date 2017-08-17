@@ -9,7 +9,7 @@ Transactions can be created as pending which locks the value required for the Tr
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
 
     + Attributes
         + value (number) - {{transaction.value}}

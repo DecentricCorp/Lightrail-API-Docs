@@ -9,7 +9,7 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
 
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}}

@@ -9,7 +9,7 @@ Capture a pending Transaction, thereby collecting the value withheld by the pend
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
             
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}}

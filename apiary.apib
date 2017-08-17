@@ -247,7 +247,7 @@ Use the `/ping` endpoint to to health-check the API and test whether your API ke
 + Request (application/json)
     + Headers
 
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
 + Response 200
     + Attributes
@@ -309,7 +309,7 @@ Retrieve a paginated list of Cards. The search can be narrowed down based on var
 + Request (application/json)
     + Headers
     
-             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+             Authorization: Bearer <API_KEY>
    
 + Parameter
 
@@ -392,7 +392,7 @@ Retrieve the Card object by its `cardId`.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
 + Response 200
 
@@ -431,7 +431,8 @@ Create a Card of type `ACCOUNT_CARD` which is associated with an existing Contac
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
+            
     + Attributes 
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
         + cardType (string, required) - ACCOUNT_CARD
@@ -494,7 +495,8 @@ Create a Card of type `GIFT_CARD`.
 
     + Headers
 
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
+            
     + Attributes 
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
         + cardType (string, required) - GIFT_CARD
@@ -565,7 +567,7 @@ Retrieve the `fullcode` associated with a Gift Card.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
 + Response 200
     + Attributes 
@@ -590,7 +592,7 @@ Update the Contact associated with a Card, effectively transferring the Card to 
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
             
     + Attributes
         + contactId (string, required) - The unique identifier of the new Contact to whom the card must be assigned.
@@ -636,7 +638,7 @@ If a card has been created as inactive, you can use this endpoint to activate.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
@@ -679,7 +681,7 @@ Freeze a Card, preventing all transactions until unfrozen.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
@@ -722,7 +724,7 @@ Unfreeze a frozen Card, re-enabling the creation of transactions.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
     + Attributes
         + userSuppliedId (string, required): Endpoint-unique idempotency ID provided by the client.
@@ -765,7 +767,7 @@ Cancel a Card permanently.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
             
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
@@ -819,7 +821,7 @@ Retrieve a paginated list of Contacts.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
             
 + Parameters 
     + email (string, optional) - The contact's email.
@@ -874,7 +876,7 @@ Retrieve a paginated list of Contacts.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
             
     
 + Response 200
@@ -902,7 +904,8 @@ Creates a new Contact.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
+            
     + Attributes 
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
         + email (string, optional) - The contact's email.
@@ -948,7 +951,7 @@ Updates a Contact.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
             
     + Attributes
         + email (string, optional) 
@@ -993,7 +996,7 @@ Retrieve a paginated list of a Contact's Cards.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
     
 + Response 200
     + Attributes
@@ -1052,7 +1055,7 @@ Transactions can be created as pending which locks the value required for the Tr
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
     + Attributes
         + value (number) - A negative or positive integer indicating the value of the transaction in the smallest unit for the currency, e.g. cents for USD.
@@ -1129,7 +1132,7 @@ so you need to save the `cardId` from the response to this call in order to even
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
     + Attributes
         + value (number) - A negative or positive integer indicating the value of the transaction in the smallest unit for the currency, e.g. cents for USD.
@@ -1201,7 +1204,7 @@ Capture a pending Transaction, thereby collecting the value withheld by the pend
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
             
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
@@ -1249,7 +1252,7 @@ Voids a pending Transaction by unlocking the value withheld by the pending Trans
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
             
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client. 
@@ -1297,7 +1300,8 @@ Refund a Transaction by reversing its effect.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
+            
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
     
@@ -1350,7 +1354,7 @@ Retrieve a paginated list of a Card's Transactions based on the Card ID.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
     
 + Response 200
     + Attributes
@@ -1460,7 +1464,7 @@ Retrieve a paginated list of a Card's Transactions based on the Gift Card's `ful
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
     
 + Response 200
     + Attributes
@@ -1522,7 +1526,7 @@ Retrieve a particular Transaction by its ID based on the `cardId`.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
     
 + Response 200
     + Attributes
@@ -1573,7 +1577,7 @@ Retrieves a particular Transaction by its ID based on the `fullcode`.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
     
 + Response 200
     + Attributes
@@ -1617,7 +1621,7 @@ Retrieve a Card's balance based on its `cardId`.
 + Request (application/json)
     + Headers
 
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
 + Response 200
     + Attributes (Balance)
@@ -1655,7 +1659,7 @@ Retrieve a Card's balance using the Gift Card's `fullcode`.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
     
 + Response 200
     + Attributes (Balance)
@@ -1697,7 +1701,7 @@ Retrieve a paginated list of a Card's ValueStores.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
 + Response 200
     + Attributes
@@ -1735,7 +1739,7 @@ Retrieve a paginated list of a Card's ValueStores.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
     
 + Response 200
@@ -1765,7 +1769,7 @@ Adds a ValueStore from a Promotion Program to a Card.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
@@ -1814,7 +1818,7 @@ Freeze a Card's ValueStore, preventing all transactions against that ValueStore 
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
@@ -1859,7 +1863,7 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
@@ -1904,7 +1908,7 @@ Permanently cancels a Card's ValueStore.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
 
     + Attributes
         + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
@@ -1950,7 +1954,7 @@ Retrieves a paginated list of all Lightrail Programs belonging to the user.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            Authorization: Bearer <API_KEY>
     
 + Parameters
     + limit (number, optional) - For pagination. The maximum number of results to return at once. 

@@ -10,7 +10,7 @@ Retrieve a particular Transaction by its ID based on the `cardId`.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
     
 + Response 200
     + Attributes

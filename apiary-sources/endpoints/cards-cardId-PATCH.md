@@ -8,7 +8,7 @@ Update the Contact associated with a Card, effectively transferring the Card to 
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
             
     + Attributes
         + contactId (string, required) - The unique identifier of the new Contact to whom the card must be assigned.

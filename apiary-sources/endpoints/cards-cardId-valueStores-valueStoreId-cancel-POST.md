@@ -9,7 +9,7 @@ Permanently cancels a Card's ValueStore.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
 
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}}

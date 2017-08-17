@@ -5,7 +5,7 @@ Retrieve a paginated list of Cards. The search can be narrowed down based on var
 + Request (application/json)
     + Headers
     
-             Authorization: Bearer <YOUR_ACCESS_TOKEN>
+             {{header.authorization}}
    
 + Parameter
 {#    + categoryKey (string, optional) - A key of a Category. 

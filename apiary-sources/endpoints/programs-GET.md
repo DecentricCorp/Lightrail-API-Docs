@@ -4,7 +4,7 @@ Retrieves a paginated list of all Lightrail Programs belonging to the user.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
     
 + Parameters
     + limit (number, optional) - {{pagination.limit}}
