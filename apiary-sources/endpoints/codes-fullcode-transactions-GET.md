@@ -1,10 +1,14 @@
-### List Card Transactions Based on Gift Code [GET /codes/{fullcode}/transactions{?pin}]
+### List Card Transactions Based on Gift Code [GET /codes/{fullcode}/transactions{?pin}{?limit}{?offset}{?userSuppliedId}{?transactionType}]
 Retrieve a paginated list of a Card's Transactions based on the Gift Card's `fullcode`.
 
 ---
 + Parameters
     + fullcode (string, required) - The unique gift code.
     + pin (string, optional) - This is required if the fullcode has a pin.
+    + userSuppliedId (string, optional) - return the transaction with the specific `userSuppliedId`. Note that this guarantees a unique transaction in the response if it exists.
+    + transactionType (string, optional) - return only transactions of a specific type.
+    + limit (number, optional) - {{pagination.limit}}
+    + offset (number, optional) - {{pagination.offset}}
 
 + Request (application/json)
     + Headers
