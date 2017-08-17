@@ -5,7 +5,7 @@ Retrieve a paginated list of Contacts.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
             
 + Parameters 
     + email (string, optional) - The contact's email.

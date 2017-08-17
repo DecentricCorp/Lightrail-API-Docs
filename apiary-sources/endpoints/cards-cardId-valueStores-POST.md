@@ -8,7 +8,7 @@ Adds a ValueStore from a Promotion Program to a Card.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
 
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}}

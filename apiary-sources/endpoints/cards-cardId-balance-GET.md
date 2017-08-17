@@ -8,7 +8,7 @@ Retrieve a Card's balance based on its `cardId`.
 + Request (application/json)
     + Headers
 
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
 
 + Response 200
     + Attributes (Balance)

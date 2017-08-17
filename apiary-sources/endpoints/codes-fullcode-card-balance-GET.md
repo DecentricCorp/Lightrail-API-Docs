@@ -10,7 +10,7 @@ Retrieve a Card's balance using the Gift Card's `fullcode`.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
     
 + Response 200
     + Attributes (Balance)

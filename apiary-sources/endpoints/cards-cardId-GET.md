@@ -8,7 +8,7 @@ Retrieve the Card object by its `cardId`.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
 
 + Response 200
 

@@ -5,7 +5,8 @@ Creates a new Contact.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
+            
     + Attributes 
         + userSuppliedId (string, required) - {{userSuppliedId}}
         + email (string, optional) - The contact's email.

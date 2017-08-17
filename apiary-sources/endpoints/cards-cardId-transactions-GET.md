@@ -12,7 +12,7 @@ Retrieve a paginated list of a Card's Transactions based on the Card ID.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
     
 + Response 200
     + Attributes

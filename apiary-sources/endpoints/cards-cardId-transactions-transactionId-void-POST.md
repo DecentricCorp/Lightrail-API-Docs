@@ -9,7 +9,7 @@ Voids a pending Transaction by unlocking the value withheld by the pending Trans
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
             
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}} 

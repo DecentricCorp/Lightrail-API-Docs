@@ -9,7 +9,7 @@ Freeze a Card's ValueStore, preventing all transactions against that ValueStore 
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
 
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}}

@@ -8,7 +8,7 @@ Updates a Contact.
 + Request (application/json)
     + Headers
     
-            Authorization: Bearer <YOUR_ACCESS_TOKEN>
+            {{header.authorization}}
             
     + Attributes
         + email (string, optional) 
