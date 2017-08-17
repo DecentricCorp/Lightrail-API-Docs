@@ -302,7 +302,7 @@ The `cardId` should be stored as it's used in many subsequent requests - such as
 In use cases where the recipient requires a gift code, the `fullcode` should be supplied. 
 
 ---
-### List Cards [GET /cards/{?limit}{?offset}{?contactId}{?cardType}{?currency}{?userSuppliedId}]
+### List Cards [GET /cards/{?contactId}{?cardType}{?currency}{?userSuppliedId}{?limit}{?offset}]
 Retrieve a paginated list of Cards. The search can be narrowed down based on various parameters.
 
 ---
@@ -312,15 +312,15 @@ Retrieve a paginated list of Cards. The search can be narrowed down based on var
              Authorization: Bearer <YOUR_ACCESS_TOKEN>
    
 + Parameter
-    + limit (number, optional) - For pagination. The maximum number of results to return at once. 
-      + Default: 100
-    + offset (number, optional) - For pagination. The offset of the first results in the total results. 
-      + Default: 0
 
     + contactId (string, optional) - Retrieve only the Cards belonging to a specific Contact.
     + cardType (string, optional) - `ACCOUNT_CARD`, `GIFT_CARD`.
     + currency (string, optional) - The three-character ISO-4217 currency.
     + userSuppliedId (string, optional) - Retrieve the Card created with a specific `userSuppliedId`. Note that since `userSuppliedId`s are unique, this guarantees that exactly one Card will be returned if it exists. 
+    + limit (number, optional) - For pagination. The maximum number of results to return at once. 
+      + Default: 100
+    + offset (number, optional) - For pagination. The offset of the first results in the total results. 
+      + Default: 0
 
 + Response 200
     + Attributes 
@@ -812,7 +812,7 @@ Cancel a Card permanently.
 Contacts can be attached to Cards to help you keep track of who is interacting with your Cards.
 
 ---
-### List Contacts [GET /contacts{?limit}{?offset}{?email}{?firstName}{?lastName}{?userSuppliedId}]
+### List Contacts [GET /contacts{?email}{?firstName}{?lastName}{?userSuppliedId}{?limit}{?offset}]
 Retrieve a paginated list of Contacts.
 
 ---
@@ -822,14 +822,14 @@ Retrieve a paginated list of Contacts.
             Authorization: Bearer <YOUR_ACCESS_TOKEN>
             
 + Parameters 
+    + email (string, optional) - The contact's email.
+    + firstName (string, optional) - The contact's first name.
+    + lastName (string, optional) - The contact's last name.
+    + userSuppliedId (string, required) - Retrieve the Contact created with a specific `userSuppliedId`. Note that since `userSuppliedId`s are unique, this guarantees that exactly one Contact will be returned if it exists.
     + limit (number, optional) - For pagination. The maximum number of results to return at once. 
       + Default: 100
     + offset (number, optional) - For pagination. The offset of the first results in the total results. 
       + Default: 0
-    + email (string, optional) - The contact's email.
-    + firstName (string, optional) - The contact's first name.
-    + lastName (string, optional) - The contact's last name.
-    + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
     
 + Response 200
     + Attributes
@@ -1334,7 +1334,7 @@ Refund a Transaction by reversing its effect.
             
 
 
-### List Card Transactions Based on Card ID [GET /cards/{cardId}/transactions{?limit}{?offset}{?userSuppliedId}{?transactionType}]
+### List Card Transactions Based on Card ID [GET /cards/{cardId}/transactions{?userSuppliedId}{?transactionType}{?limit}{?offset}]
 Retrieve a paginated list of a Card's Transactions based on the Card ID.
 
 ---
@@ -1443,7 +1443,7 @@ Retrieve a paginated list of a Card's Transactions based on the Card ID.
               }
             }
 
-### List Card Transactions Based on Gift Code [GET /codes/{fullcode}/transactions{?pin}{?limit}{?offset}{?userSuppliedId}{?transactionType}]
+### List Card Transactions Based on Gift Code [GET /codes/{fullcode}/transactions{?pin}{?userSuppliedId}{?transactionType}{?limit}{?offset}]
 Retrieve a paginated list of a Card's Transactions based on the Gift Card's `fullcode`.
 
 ---
