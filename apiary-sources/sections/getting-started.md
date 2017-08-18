@@ -27,3 +27,8 @@ curl https://www.lightrail.com/v1/ping --header "Authorization: Bearer <apiKey>"
 
 A successful response means your API key works fine and you are ready to go. 
 If you are curious about the response content, check out the [`ping` endpoint documentation](#ping-endpoint-anchor).
+
+### Next Step
+If you want to get a more in-depth understanding of the Lightrail system, continue reading the next section on [Lightrail Object Model](#use-cases-anchor). 
+If you would like to get started on implementing one of the common use-cases for Lightrail, you can jump to the [Use-Cases Section](#use-cases-anchor) and follow a step-by-step guide. 
+If at any point you felt like you need to take a step back and get a better understanding of Lightrail concepts, you can always go back to the [Lightrail Object Model](#use-cases-anchor).

@@ -12,6 +12,7 @@ Lightrail is designed to power and enhance any use-case of stored value.  We are
 
 In each scenario, the power of Lightrail Promotions allows you to incentivize and motivate your users. Lightrail also provides a rich analysis interface which will give you more insight into your programs.
 #}
+<a name="use-cases-anchor"></a>
 ## Common Use-Cases
 
 The following sections dive into Lightrail's most common use-cases. Feel free to skip to the section relevant to you. If you're not sure which applies to you, please don't hesitate to ask!

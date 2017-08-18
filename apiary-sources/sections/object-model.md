@@ -1,5 +1,8 @@
+<a name="object-model-anchor"></a>
+
 ## The Lightrail Object Model
-The full API object model is here for your reference. Depending on your use-case, you may not need to use every object/endpoint. Read on for use-case elaboration
+The full API object model is here for your reference. Depending on your use-case, you may not need to use every object/endpoint. 
+Read on for use-case elaboration
 
 ![Lightrail Object Model](http://resources.giftbit.com/api/embeddedimages/Lightrail_Object_Model_(stacked).png)
 
