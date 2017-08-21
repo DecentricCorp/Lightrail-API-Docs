@@ -40,8 +40,15 @@ curl https://www.lightrail.com/v1/ping --header "Authorization: Bearer <apiKey>"
 A successful response means your API key works fine and you are ready to go. 
 If you are curious about the response content, check out the [`ping` endpoint documentation](#ping-endpoint-anchor).
 
+### Next Step
+- More in-depth understanding of the Lightrail system: [Lightrail Object Model](#use-cases-anchor). 
+- Get started on implementing one of the common use-cases for Lightrail: [Common Use-Cases](#use-cases-anchor). 
+
+<a name="object-model-anchor"></a>
+
 ## The Lightrail Object Model
-The full API object model is here for your reference. Depending on your use-case, you may not need to use every object/endpoint. Read on for use-case elaboration
+The full API object model is here for your reference. Depending on your use-case, you may not need to use every object/endpoint. 
+Read on for use-case elaboration
 
 ![Lightrail Object Model](http://resources.giftbit.com/api/embeddedimages/Lightrail_Object_Model_(stacked).png)
 
@@ -65,6 +72,7 @@ They are used when implementing a customer account credit or points program and 
 Since Account Cards do not have a `fullcode`, their value is interacted with using the Card object. 
 
 
+<a name="use-cases-anchor"></a>
 ## Common Use-Cases
 
 The following sections dive into Lightrail's most common use-cases. Feel free to skip to the section relevant to you. If you're not sure which applies to you, please don't hesitate to ask!
