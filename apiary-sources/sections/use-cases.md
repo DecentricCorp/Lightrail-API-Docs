@@ -60,6 +60,8 @@ For more information on this functionality, please contact hello@lightrail.com.
 
 Note, there may be additional endpoints you'd need to use depending on your use-case. 
 
+<a name="use-cases-account-credits-anchor"></a>
+
 ### Use-Case 2: Power an Account Credits or Points Program
 
 Another common use-case is one in which Lightrail manages value attached to your customers. 
