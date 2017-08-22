@@ -38,7 +38,7 @@ Various interactions with the Lightrail system take place in the form of _Transa
 
 Lightrail also supports the _pending_ withdraw Transactions. A pending withdrawal withholds the funds temporarily until eventually they are collected via a subsequent _capture_ transaction, or canceled via a _void_ transaction. 
 
-Posting transactions against a Card is [primarily](https://jsapi.apiary.io/apis/giftbitcurrencyapi/reference/0/transactions/create-transaction-based-on-card-id.html) done via its `cardId`. However, to facilitate processing Gift Card redemptions at the checkout which is one of the most common Gift Card use-cases, Lightrail also provides [an endpoint](https://jsapi.apiary.io/apis/giftbitcurrencyapi/reference/0/transactions/create-transaction-based-on-gift-code.html) for posting Transactions against a Card by its `fullcode`. To improve security, this endpoint only allows _withdrawals_.
+Posting transactions against a Card is [primarily](#post-transaction-by-cardid-anchor) done via its `cardId`. However, to facilitate processing Gift Card redemption at the checkout which is one of the most common Gift Card use-cases, Lightrail also provides [an endpoint](#post-transaction-by-fullcode-anchor) for posting Transactions against a Card by its `fullcode`. To improve security, this endpoint only allows _withdrawals_.
 
 One of the features of the Lightrail API is encapsulating the Card Value Stores at the time of Transaction. While you can add many promotional attached Value Stores to Cards, you do not need to worry about the logic of splitting withdrawals against the many Value Stores that may exist on the Card when posting Transactions and Lightrail's simple Transaction interface automatically handles that logic for you. For example, if there is $30 in the principal Value Store and another $5 attached Value Store from a promotional _Back to School_ program, when attempting a $15 withdrawal, Lightrail automatically decides the break-down of this amount against existing Value Stores and you do not have to specify or even be aware of that. In this case, for example, Lightrail will prioritize the spending of the $5 value which is closer to its expiry date, and then, proceed to charge the remaining $10 from the principal Value Store.  
 
@@ -46,12 +46,25 @@ One of the features of the Lightrail API is encapsulating the Card Value Stores 
 
 As the name implies, Gift Cards represent a value created as a gift. Lightrail Gift Cards have a `fullcode`,  a confidential, unique, and unguessable alpha-numeric code, which can be used as the evidence of possession of the Gift Card by its recipient. Lightrail allows balance-checking and value redemption based on the `fullcode`. This facilitates the checkout use-case in which the recipient of the Gift Card would manually enter the `fullcode` to redeem its value towards a purchase.
 
-Since knowing the the `fullcode` implies possession of the Card, the `fullcode` is often delivered to the Gift Card's recipient in confidence. To further ensure this confidentiality and minimize the risk of accidentally revealing it in the course of passing JSON objects to the browser, aside from one designated specifically to retrieving the `fullcode`, no other Lightrail API endpoint returns the `fullcode` in its response object.   
+Since knowing the the `fullcode` implies possession of the Card, the `fullcode` is often delivered to the Gift Card's recipient in confidence. To further ensure this confidentiality and minimize the risk of accidentally revealing it in the course of passing JSON objects to the browser, aside from [the one endpoint](#get-fullcode-anchor) designated specifically to retrieving the `fullcode`, no other Lightrail API endpoint returns the `fullcode` in its response object.   
 
 ### Account Cards and Contacts 
-Account Cards represent a value associated with an individual customer, known in Lightrail as a _Contact_. An Account Card can essentially be thought of as a customer's account, and therefore, are suitable for implementing customer account credit or points programs. To further facilitate this model, Lightrail enforces a one-card-per-currency-per-customer constraint on Account Cards so that each Contact can only have one account per each currency. This assumption makes handling transactions against account credits simpler as will be discussed in the [Accounts Credit Use-Case](#use-cases-account-credits-anchor).
+Account Cards represent values associated with an individual customer, known in Lightrail as a _Contact_. An Account Cards can essentially be thought of as a customer's accounts, making them the suitable mechanism for implementing customer account credit or points programs. To further facilitate this, Lightrail enforces a one-card-per-currency-per-customer constraint on Account Cards so that each Contact can only have one account per each currency. This assumption makes handling transactions against account credits simpler as will be discussed in the [Accounts Credit Use-Case](#use-cases-account-credits-anchor).
 Unlike Gift Cards, Account Cards do not have a `fullcode` and interactions with their value is only possible via the Card object interface.
 
+### Redemption Rules
+
+Redemption rules are a powerful feature of Lightrail which enable setting extra conditions on promotional programs, and thereby, on Value Stores that are derived from them. 
+
+Redemption Rules can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$5 off if you buy two or more pairs of jeans." Currently, you can define such Redemption Rules at the time of creating a new Lightrail Program in the Lightrail Web App. 
+
+When transacting against a Card, Redemption Rules determine whether or not each of the Card's Value Stores is redeemable to pay towards the transaction value. Every rule is essentially a Boolean expression which will be evaluated against the `metadata` provided by the transaction; if the rule evaluates to `true`, that Value Store is available for that Transaction. For example, the rule for a $10 promotion value if the customer spends at least $100 can be written as:
+
+`metadata.cart.total >= 10000` 
+
+in which the `cart` is a custom JSON object provided by your system as part of the `metadata` on Transactions, recording some details about the cart object in your e-commerce store. When this rule is added to a Program, a $10 Value Store derived from this Program will only be available to those Transactions which comes with a `cart` object in which the `total` attribute is greater than 10000 cents.
+
+Check out the in-depth <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md" target="_blank">Redemption Rules documentation</a> for further details.
 
 
 {#
