@@ -13,34 +13,24 @@ A Card aggregates different values each of which is represented by a `valueStore
 
 Each Card has at least one value store, known as the `principal` value store which holds the primary value of the Card and is issued at the time of card creation. Cards may also have many `attached` value stores which are created and attached to the Card as part of different promotional programs. 
 
-Attached value stores may come and go as you create different promotional programs based on your business model. These attached value stores are added to the Card, and may eventually expire or get canceled. The principal value store, however, lasts throughout the lifetime of the Card. Once the principal value store is expired or canceled, the Card is also considered expired or canceled.
+Attached Value Stores are temporary; they are added to the Card as you create different promotional programs based on your business model, and may eventually expire or get canceled. The Principal Value Store, however, lasts throughout the lifetime of the Card. Once the Principal Value Store is expired or canceled, the Card is also considered expired or canceled.
 
-For example, a customer can buy a gift card with a principal value of $30 which never expires. Later, and in order to encourage the recipient to spend the gift value,  you may add an attached a promotional $5 value to this card as part of your _Back to School_ campaign, only valid for the last week of August. While this attached value store will expire at the end of August, the principal valueStore will still retain its value.
+For example, a customer can buy a gift card with a principal value of $30 which never expires. Later, and in order to encourage the recipient to spend the gift value,  you may attach a $5 promotional value to this Card as part of your _Back to School_ campaign, only valid in the last week of August. While this attached Value Store is active, the Card holder can spend $35 with the Card; when the attached Value Store expires at the end of August, the principal Value Store will still be valid and the Card can still spend up to $30.
 
 
-###Programs
-A Lightrail _Program_ is a template for issuing Value Stores which specifies their general attributes, such as currency, validity period, minimum/maximum amount, and the constraints that apply to spending them, known as _redemption rules_. 
+### Programs
+A Lightrail _Program_ is a template for issuing Value Stores which specifies their general attributes, such as currency, validity period, minimum/maximum amount, and the constraints that apply to spending them, known as _Redemption Rules_. 
 
 Lightrail recognizes that issuing value seldom happens in isolation and is usually part of a broader organized context which is encapsulated in the concept of Program. Therefore, when creating a new Value Store, you always need to specify its reference  `program` object to which it belongs. As an analogy, think of Programs as minting facilities and Value Stores as coins. Valid coins can only be created by a minting facility and are subject to its broader rules and restrictions.
 
-Programs are broadly divided into two types which is encoded in their `type` attribute: 
+Lightrail currently supports two types of Programs which are differentiated based on their `type` attribute: 
 
-- _Principal Programs_ are used to organize and create  `principal` value stores, namely to create new cards, and
-- _Promotional Programs_ are used to create `attached` value stores which can be added to existing cards and provide some additional promotional value to the card holder.
+- _Principal Programs_ are used to organize and create  `principal` Value Stores, namely to create new Cards, and
+- _Promotional Programs_ are used to create `attached` Value Stores which can be added to existing cards and provide some additional promotional value to the card holder.
 
-Programs are also an great way to group, organize, and analyze values. For example, you may want to know how many people took advantage of your _Back to School_ promotions and how it affected your sales. The Lightrail Web App provides various stats and analyses for the values created in each Program. 
+Programs are also a great way to group, organize, and analyze values. For example, you may want to know how many people took advantage of your _Back to School_ promotions and how it affected your sales. The Lightrail Web App provides various stats and analyses for the values created in each Program. 
 
 Currently, you can only create programs using the Lightrail Web App.
-
-### Transactions
-
-Various interactions with the Lightrail system take place in the form of _Transactions_. The most common such Transactions are _funding_,  _withdrawal_, and _refund_ which, respectively, add, deduce, and return some value to a Card. Some other interactions such as Card activation, cancellation, and freezing/unfreezing are also modelled as Transactions.
-
-Lightrail also supports the _pending_ withdraw Transactions. A pending withdrawal withholds the funds temporarily until eventually they are collected via a subsequent _capture_ transaction, or canceled via a _void_ transaction. 
-
-Posting transactions against a Card is [primarily](#post-transaction-by-cardid-anchor) done via its `cardId`. However, to facilitate processing Gift Card redemption at the checkout which is one of the most common Gift Card use-cases, Lightrail also provides [an endpoint](#post-transaction-by-fullcode-anchor) for posting Transactions against a Card by its `fullcode`. To improve security, this endpoint only allows _withdrawals_.
-
-One of the features of the Lightrail API is encapsulating the Card Value Stores at the time of Transaction. While you can add many promotional attached Value Stores to Cards, you do not need to worry about the logic of splitting withdrawals against the many Value Stores that may exist on the Card when posting Transactions and Lightrail's simple Transaction interface automatically handles that logic for you. For example, if there is $30 in the principal Value Store and another $5 attached Value Store from a promotional _Back to School_ program, when attempting a $15 withdrawal, Lightrail automatically decides the break-down of this amount against existing Value Stores and you do not have to specify or even be aware of that. In this case, for example, Lightrail will prioritize the spending of the $5 value which is closer to its expiry date, and then, proceed to charge the remaining $10 from the principal Value Store.  
 
 ### Gift Cards 
 
@@ -51,6 +41,16 @@ Since knowing the the `fullcode` implies possession of the Card, the `fullcode` 
 ### Account Cards and Contacts 
 Account Cards represent values associated with an individual customer, known in Lightrail as a _Contact_. An Account Cards can essentially be thought of as a customer's accounts, making them the suitable mechanism for implementing customer account credit or points programs. To further facilitate this, Lightrail enforces a one-card-per-currency-per-customer constraint on Account Cards so that each Contact can only have one account per each currency. This assumption makes handling transactions against account credits simpler as will be discussed in the [Accounts Credit Use-Case](#use-cases-account-credits-anchor).
 Unlike Gift Cards, Account Cards do not have a `fullcode` and interactions with their value is only possible via the Card object interface.
+
+### Transactions
+
+Various interactions with the Lightrail system take place in the form of _Transactions_. The most common such Transactions are _funding_, _withdrawal_, and _refund_. Some other interactions such as Card _activation_, _cancellation_, and _freezing_/_unfreezing_ are also modelled as Transactions.
+
+Lightrail also supports a two-step _pending_ withdrawal. A pending withdraw Transaction withholds the funds temporarily until eventually they are collected via a subsequent _capture_, or canceled via a _void_ Transaction. 
+
+Posting Transactions against a Card is [primarily](#post-transaction-by-cardid-anchor) done via its `cardId`. However, to facilitate processing Gift Card redemption at the checkout which is one of the most common Gift Card use-cases, Lightrail also provides [an endpoint](#post-transaction-by-fullcode-anchor) for posting Transactions against a Card by its `fullcode`. To improve security, this endpoint only allows _withdrawals_.
+
+One of the features of the Lightrail API is encapsulating the Card Value Stores at the time of Transaction. While you can add many promotional attached Value Stores to Cards, you do not need to worry about the logic of splitting withdrawals against the many Value Stores that may exist on the Card when posting Transactions and Lightrail's simple Transaction interface automatically handles that logic for you. For example, if there is $30 in the principal Value Store and another $5 attached Value Store from a promotional _Back to School_ program, when attempting a $15 withdrawal, Lightrail automatically decides the break-down of this amount against existing Value Stores and you do not have to specify or even be aware of that. In this case, for example, Lightrail will prioritize the spending of the $5 value which is closer to its expiry date, and then, proceed to charge the remaining $10 from the principal Value Store.  
 
 ### Redemption Rules
 
