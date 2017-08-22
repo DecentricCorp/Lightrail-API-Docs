@@ -50,21 +50,23 @@ Lightrail also supports a two-step _pending_ withdrawal. A pending withdraw Tran
 
 Posting Transactions against a Card is [primarily](#post-transaction-by-cardid-anchor) done via its `cardId`. However, to facilitate processing Gift Card redemption at the checkout which is one of the most common Gift Card use-cases, Lightrail also provides [an endpoint](#post-transaction-by-fullcode-anchor) for posting Transactions against a Card by its `fullcode`. To improve security, this endpoint only allows _withdrawals_.
 
-One of the features of the Lightrail API is encapsulating the Card Value Stores at the time of Transaction. While you can add many promotional attached Value Stores to Cards, you do not need to worry about the logic of splitting withdrawals against the many Value Stores that may exist on the Card when posting Transactions and Lightrail's simple Transaction interface automatically handles that logic for you. For example, if there is $30 in the principal Value Store and another $5 attached Value Store from a promotional _Back to School_ program, when attempting a $15 withdrawal, Lightrail automatically decides the break-down of this amount against existing Value Stores and you do not have to specify or even be aware of that. In this case, for example, Lightrail will prioritize the spending of the $5 value which is closer to its expiry date, and then, proceed to charge the remaining $10 from the principal Value Store.  
+One of the features of the Lightrail API is encapsulating the Card Value Stores behind a simple interface at the time of Transaction. While you can add many promotional attached Value Stores to Cards, at Transaction time, you do not need to worry about the logic of splitting withdrawals against the many Value Stores that may exist on the Card and Lightrail transaction processing logic automatically handles that logic for you. 
+
+For example, if there is $30 in the principal Value Store and another $5 attached Value Store from a promotional _Back to School_ program, when attempting a $15 withdrawal, Lightrail automatically decides the break-down of this amount against existing Value Stores and you do not have to specify or even be aware of them. In this case, for example, Lightrail will prioritize the spending of the $5 value which is closer to its expiry date, and then, charges the remaining $10 from the principal Value Store.  
 
 ### Redemption Rules
 
-Redemption rules are a powerful feature of Lightrail which enable setting extra conditions on promotional programs, and thereby, on Value Stores that are derived from them. 
+Redemption Rules are a powerful feature of Lightrail which enable setting various sophisticated conditions in promotional programs, and thereby, on Value Stores that are derived from them. 
 
-Redemption Rules can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$5 off if you buy two or more pairs of jeans." Currently, you can define such Redemption Rules at the time of creating a new Lightrail Program in the Lightrail Web App. 
+Redemption Rules can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$15 off if you buy two or more pairs of jeans." Currently, you can define such Redemption Rules at the time of creating a new Lightrail Program in the Lightrail Web App. 
 
-When transacting against a Card, Redemption Rules determine whether or not each of the Card's Value Stores is redeemable to pay towards the transaction value. Every rule is essentially a Boolean expression which will be evaluated against the `metadata` provided by the transaction; if the rule evaluates to `true`, that Value Store is available for that Transaction. For example, the rule for a $10 promotion value if the customer spends at least $100 can be written as:
+When transacting against a Card, Redemption Rules determine whether or not each of the Card's Value Stores is redeemable in paying towards the transaction value. Every rule is essentially a Boolean expression which will be evaluated against the `metadata` provided by the transaction; the Value Store will be available for spending on that Transaction only if the rule evaluates to `true`. For example, the rule for a $5 promotion value if the customer spends at least $100 can be written as:
 
 `metadata.cart.total >= 10000` 
 
-in which the `cart` is a custom JSON object provided by your system as part of the `metadata` on Transactions, recording some details about the cart object in your e-commerce store. When this rule is added to a Program, a $10 Value Store derived from this Program will only be available to those Transactions which comes with a `cart` object in which the `total` attribute is greater than 10000 cents.
+in which the `cart` is a custom JSON object provided by your system as part of the `metadata` on Transactions. When this rule is added to a Program, a $5 Value Store derived from this Program will only be available to those Transactions which come with a `cart` object in which the `total` attribute is greater than $100. The following diagram depicts this process. Check out the in-depth <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md" target="_blank">Redemption Rules documentation</a> for further details.
 
-Check out the in-depth <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md" target="_blank">Redemption Rules documentation</a> for further details.
+![Lightrail Object Model](https://giftbit.github.io/Lightrail-API-Docs/assets/transaction-valuestores.svg)
 
 
 {#
