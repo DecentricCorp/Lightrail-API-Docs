@@ -56,9 +56,7 @@ For example, if there is $30 in the principal Value Store and another $5 attache
 
 ### Redemption Rules
 
-Redemption Rules are a powerful feature of Lightrail which enable setting various sophisticated conditions in promotional programs, and thereby, on Value Stores that are derived from them. 
-
-Redemption Rules can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$15 off if you buy two or more pairs of jeans." Currently, you can define such Redemption Rules at the time of creating a new Lightrail Program in the Lightrail Web App. 
+Redemption Rules are a powerful feature of Lightrail which enable setting various sophisticated conditions in promotional programs, and thereby, on Value Stores that are derived from them. Redemption Rules can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$15 off if you buy two or more pairs of jeans." Currently, you can define such Redemption Rules at the time of creating a new Lightrail Program in the Lightrail Web App. 
 
 When transacting against a Card, Redemption Rules determine whether or not each of the Card's Value Stores is redeemable in paying towards the transaction value. Every rule is essentially a Boolean expression which will be evaluated against the `metadata` provided by the transaction; the Value Store will be available for spending on that Transaction only if the rule evaluates to `true`. For example, the rule for a $5 promotion value if the customer spends at least $100 can be written as:
 
@@ -68,47 +66,3 @@ in which the `cart` is a custom JSON object provided by your system as part of t
 
 ![Transaction, Value Stores, and Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/assets/transaction-valustores.svg)
 
-
-
-{#
-
-### Lightrail Cards and Value Stores: The Core Objects
-
-The `card` is the core concept in the Lightrail model and provides the main interface for 
-storing, maintaining, and interacting with any sort of value that your business wishes to issue.
-
-A `card` aggregates different types of values each of which is modeled as a `valueStore`. 
-Each card has at least one value store, known as the `principal` value store which holds the primary 
-value of the card and is issued at the time of card creation. Each card may also have many `attached` value stores 
-which are created and attached to the card as part of different promotional programs.
-
-For example, a customer can buy a gift card with a principal value of USD 30 which never expires. 
-Later, and in order to encourage the recipient to spending the gift value,  
-you can add an attached value of USD 5 to this card as part of your _Back to School_ campaign and 
-only valid for the last week of August. 
-While this attached `valueStore` will expire at the end of August, the principal `valueStore`
-will still maintain its value.   
-
-Attached value stores can come and go as you create different promotional programs suitable 
-for you business, but the principal value store remains throughout the lifetime of the card. 
-Once the principal value store is expired or canceled, the card is considered expired or canceled.
-
-###Programs
-Lightrail `programs` are templates for issuing values by specifying overall attributes 
-of the value, such as its currency, its validity period, and the constraints that apply to its spending, known as 
-_redemption rules_.
-
-There are two types of Cards: Gift Cards and Account Cards. 
-These are both represented as a Card but with a different `cardType` attribute. 
-
-#### Gift Cards
-
-Gift Cards, as you might guess, are used when implementing a gift card program. Gift Cards have a `fullcode` which is a unique and unguessable alpha-numeric code that can be distributed to a recipient. 
-In a standard gift card program, the recipient would manually enter the `fullcode` during the checkout process.
-
-#### Account Cards
-
-Account Cards represent value that is attached to a Contact. 
-They are used when implementing a customer account credit or points program and can be thought of as a customer's account.
-Since Account Cards do not have a `fullcode`, their value is interacted with using the Card object. 
-#}
