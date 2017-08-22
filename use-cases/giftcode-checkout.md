@@ -41,7 +41,7 @@ After determining the `giftCodeShare`, proceed with the following steps:
 
 The following sequence diagram summarizes these steps.
 
-![redemption-seq-diagram](https://giftbit.github.io/Lightrail-API-Docs/use-cases/assets/redemption-seq-diagram.svg)
+![redemption-seq-diagram](https://giftbit.github.io/Lightrail-API-Docs/assets/redemption-seq-diagram.svg)
 
 ### Errors and Edge Cases
 
