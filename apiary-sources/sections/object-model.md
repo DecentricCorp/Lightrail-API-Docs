@@ -6,7 +6,7 @@ Note that depending on your use-case you may only need some of these objects and
 If you prefer to start with something more hands-on, feel free to move on to [Common Use-Cases](#use-cases-anchor).   
 
 
-![Lightrail Object Model](http://resources.giftbit.com/api/embeddedimages/Lightrail_Object_Model_(stacked).png)
+![Lightrail Object Model](https://giftbit.github.io/Lightrail-API-Docs/assets/lightrail-objects.svg)
 
 ### Core Objects: Lightrail Cards and Value Stores: 
 
