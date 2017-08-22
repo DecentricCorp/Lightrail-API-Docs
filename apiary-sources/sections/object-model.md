@@ -66,7 +66,8 @@ When transacting against a Card, Redemption Rules determine whether or not each 
 
 in which the `cart` is a custom JSON object provided by your system as part of the `metadata` on Transactions. When this rule is added to a Program, a $5 Value Store derived from this Program will only be available to those Transactions which come with a `cart` object in which the `total` attribute is greater than $100. The following diagram depicts this process. Check out the in-depth <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md" target="_blank">Redemption Rules documentation</a> for further details.
 
-![Transaction, Value Stores, and Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/assets/transaction-valuestores.svg)
+![Transaction, Value Stores, and Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/assets/transaction-valustores.svg)
+
 
 
 {#
