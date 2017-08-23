@@ -30,9 +30,12 @@ Lightrail can easily power your account credit or customer rewards programs. Som
 - Creating a new Contact and Issuing New Accounts
 - View Account Details and Balance
 - Charge or Fund an Account
+- Create and Attach a Promotion to an Account
 - Redeem Account Value at the Checkout
 
-For a step-by-step discussion of how to implement these use-cases, check out our [detailed implementation guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md). Note that points programs can be implemented identically by setting the currency to points. 
+For a step-by-step discussion of how to implement these use-cases, check out our [Account Credits Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md). 
+
+Note that points programs can be implemented identically by setting up Account Cards with their currency set to points, i.e. `XXX` according to the ISO-4217 standard. 
 
 #### Common Requests in Account Credits or Points Program
 

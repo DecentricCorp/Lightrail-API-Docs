@@ -38,8 +38,13 @@ Currently, you can only create programs using the Lightrail Web App but the API 
 
 ### Account Cards and Contacts
 
-Account Cards represent values associated with an individual customer, known in Lightrail as a _Contact_. Account Cards can essentially be thought of as a customer's account, making them suitable for implementing customer account credit or points programs. To further facilitate this, Lightrail enforces a one-card-per-currency-per-customer constraint on Account Cards so that each Contact can only have one account per each currency. This assumption makes handling transactions against account credits simpler as will be discussed in the [Account Credit Use-Case](#use-cases-account-credits-anchor).
+Account Cards represent values associated with an individual customer, known in Lightrail as a _Contact_. Account Cards can essentially be thought of as a customer's account, making them suitable for implementing customer account credit or points programs. 
+
+To further facilitate this, Lightrail enforces a one-card-per-currency-per-customer constraint on Account Cards so that each Contact can only have one account per each currency. This assumption makes handling transactions against account credits simpler as will be discussed in the [Account Credit Use-Case](#use-cases-account-credits-anchor).
+
 Unlike Gift Cards, Account Cards do not have a `fullcode` and interaction with their value is only possible via the Card object interface.
+
+Note that in order to simplify issuing them, unlike Gift Cards, Lightrail does not require specifying a Program for Account Cards creation. To keep these calls simpler, Lightrail creates a default Program under the hood for each currency; the principal Value Store of all of the Account Cards in each currency are derived from that default Program. 
 
 ### Gift Cards 
 
