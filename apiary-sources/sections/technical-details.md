@@ -2,7 +2,7 @@
 
 ### Idempotency 
 
-Ensuring idempotency means to have the option that if the same request is sent more than once, it will not result in repeated actions on the server. This is an important feature for RESTful APIs as it enables the client to safely repeat a potentially failed request without the fear of repeating its consequences. For example, if the call to post a _drawdown_ Transaction ends in a network failure, and you are not sure whether it was failed before or after reaching the server and updating the Card balance, you need to be able to repeat this request without worrying about charging the Card twice.
+Ensuring idempotency means to have the option of repeating a request in a way that it will not result in repeated actions on the server. This is an important feature for RESTful APIs as it enables the client to safely repeat a potentially failed request without the fear of duplicated consequences. For example, if the call to post a _drawdown_ Transaction encounters a network failure and you are not sure whether it was failed before or after reaching the server, you need to be able to repeat this request without worrying about charging the Card twice.
 
 Lightrail defines`userSuppliedId`, a client-provided attribute which is a required in any API endpoint that is not naturally idempotent. When using the same `userSuppliedId`, Lightrail guarantees that the requested operation is only invoked once, regardless of how many times the request is repeated. This provides a mechanism for you to _retry_ when a request times out or fails for unknown reasons. 
 
