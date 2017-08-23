@@ -9,7 +9,7 @@ The full API object model is here for your reference. We will discuss these obje
 
 The Card is the core concept in the Lightrail model and provides the main interface for storing, maintaining, and interacting with any sort of value that your business wishes to issue. Currently, there are two types of cards in Lightrail, _Gift Cards_ and _Account Cards_, which are distinguished based on the value of the `cardType` attribute on the `card` object. We will discuss these two types of cards in a bit.
 
-A Card aggregates different values each of which is represented by a _Value Store_. Value Stores represent a specific instance of issued value and its attributes, such as its amount, currency, and validity period.
+A Card aggregates different values each of which is represented by a _Value Store_. Value Stores represent a specific instance of issued value and its attributes, such as its amount and validity period.  
 
 Each Card has at least one Value Store, known as the `principal` Value Store which holds the primary value of the Card and is issued at the time of card creation. Cards may also have many `attached` value stores which are created and attached to the Card in the course of different promotional programs. 
 
@@ -28,9 +28,11 @@ Lightrail currently supports two types of Programs which are differentiated base
 - _Principal Programs_ are used to organize and create  `principal` Value Stores, namely to create new Cards, and
 - _Promotional Programs_ are used to create `attached` Value Stores which can be added to existing cards and provide some additional promotional value to the card holder subject to more restrictive conditions.
 
-Note that since Cards need to have at least one Value Store, i.e. the principal Value Store, Cards cannot exist in isolation either and in order to create cards, you need at least one Principal Program to create the Principal Value Stores of your Cards which happens at the time of Card creation. 
+Note that since Cards need to have at least one Value Store, i.e. the principal Value Store, Cards are connected to Programs through their Value Stores and cannot exist in isolation. Therefore, in order to create a Card, you need at least one Principal Program to create the Principal Value Stores of your Cards (which happens automatically at the time of Card creation). 
 
-Programs are also a great way to group, organize, and analyze values. For example, you probably want to know how many people took advantage of your _Back to School_ promotions and how it affected your sales. The Lightrail Web App provides various stats and analyses for the values created in each Program. 
+Since Lightrail does not handle currency exchange, as a general integrity constraint, it expects all the Value Stores in a Card to have the same currency, i.e. derive from Programs with the same currency. For example, if you create a Card with the principal Value Store in CAD, all subsequent attached promotions must derive from CAD Programs.
+
+Programs are also a great way to organize, track, and analyze values. For example, you probably want to know how many people took advantage of your _Back to School_ promotions and how it affected your sales. The Lightrail Web App provides various reports, stats, and analyses for the values created in each Program. 
 
 Currently, you can only create programs using the Lightrail Web App but the API has [an endpoint](#get-programs-anchor) for programmatically retrieving a list of your Programs.
 
