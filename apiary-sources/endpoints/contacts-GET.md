@@ -1,3 +1,5 @@
+<a name="contact-list-anchor"></a>
+
 ### List Contacts [GET /contacts{?email}{?firstName}{?lastName}{?userSuppliedId}{?limit}{?offset}]
 Retrieve a paginated list of Contacts.
 
