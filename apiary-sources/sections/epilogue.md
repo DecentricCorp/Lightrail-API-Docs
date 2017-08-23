@@ -6,4 +6,4 @@ It is the responsibility of the API user and their organization to understand an
 This interactive documentation will provide full code samples in many popular languages and let you try out all functionality.
 
 The API Blueprint file that produces this documentation is in GitHub at https://github.com/Giftbit/Lightrail-API-Docs. 
-If you find a mistake or have a suggestion for improvement, please submit it directly via pull request.
+If you find a mistake or have a suggestion for improvement, please let us know.

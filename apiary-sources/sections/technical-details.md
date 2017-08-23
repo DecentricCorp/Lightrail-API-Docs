@@ -8,12 +8,12 @@ Lightrail defines`userSuppliedId`, a client-provided attribute which is a requir
 
 Note that the `userSuppliedId` must also be unique; if you repeat the same `userSuppliedId` with a different request, you will receive an `HTTP 409` indicating idempotency failure. 
 
-Since Lightrail persists and returns the `userSuppliedId` with the corresponding object, you can also use it as a client-side unique identifier to integrate your client-side objects with Lightrail objects. For example, you can use your local Customer ID as the `userSuppliedId` when creating a new Lightrail Contact to associate your local Customer object with the Lightrail Contact object (as opposed to saving the server-generated `contactId` with your local Customer object). You can use the`userSuppliedId` to retrieve the corresponding Contact object when necessary by searching for Contacts and providing the `userSuppliedId` as a search parameter. 
+Since Lightrail persists and returns the `userSuppliedId` with the corresponding object, you can also use it as a client-side unique identifier to integrate your client-side objects with Lightrail objects. For example, you can use your local Customer ID as the `userSuppliedId` when creating a new Lightrail Contact to associate your local Customer object with the Lightrail Contact object (as an alternative to saving the server-generated `contactId` with your local Customer object). You can use the `userSuppliedId` to retrieve the corresponding Contact object when necessary by searching for Contacts and providing the `userSuppliedId` as a search parameter. 
 
 ### Currencies 
-Lightrail uses the three-character string currency codes from the ISO-4217 standard, e.g. `USD`,` CDN`, and `AUD`. The special value of `XXX` is defined by this standard for representing any non-currency values such as points.
+Lightrail API uses the three-character currency codes from the ISO-4217 standard, e.g. `USD`,` CDN`, and `AUD`. The special value `XXX` is defined by this standard for representing any non-currency values such as points.
 
-All currency values are represented by the smallest currency unit such as cents for USD or CAD. For example, to create a Card for USD1.00, you would set the `initialValue=100`.
+All currency values are represented by the smallest currency unit, e.g. cents for USD or CAD. For example, to create a Card for USD1.00, you would set the `initialValue=100`.
 
 Note that Lightrail does not do any currency exchange and the specified currency does not influence the internal behaviour, so you have to ensure that you are using the right currency when interacting with Lightrail values. For example, if you create a Card with the principal Value Store in USD, you can only USD promotions to this Card and transact against it in USD.
 
