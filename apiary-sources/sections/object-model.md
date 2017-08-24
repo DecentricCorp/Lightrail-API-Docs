@@ -28,7 +28,7 @@ Lightrail currently supports two types of Programs which are differentiated base
 
 Note that Cards are also connected to Programs through their Value Stores and cannot exist in isolation. Therefore, before you start creating Cards, you need to set up at least one Principal Program to be used for creating the Principal Value Stores of your Cards. The Principal Value Store is created automatically in the course of Card creation and you do not need to explicitly do create it, but you have to provide the `programId` in the Card creation request. Account Cards can be an exception to this as we will see in a bit.
 
-Since Lightrail does not handle currency exchange, as a general integrity constraint, it expects all the Value Stores in a Card to have the same currency, i.e. derive from Programs with the same currency. For example, if you create a Card with the Principal Value Store in CAD, all subsequent attached promotions must derive from CAD Programs.
+Since Lightrail does not handle currency exchange, it requires a single currency for all the Value Stores on the Card. For example, if you create a Card with the Principal Value Store in CAD, all subsequent attached promotions must derive from CAD Programs.
 
 Programs are also a great way to organize, track, and analyze values. For example, you probably want to know how many people took advantage of your _Back to School_ promotions and how it affected your sales. The Lightrail Web App provides various reports, stats, and analyses for the values created in each Program. 
 
@@ -56,7 +56,7 @@ To keep creation of Account Cards simpler, Lightrail does not require specifying
 
 ### Transactions
 
-Various interactions with the Lightrail system take place in the form of _Transactions_. Some common examples are _funding_, _drawdown_, and _refund_. Some other interactions such as Card or Value Store _activation_, _cancellation_, and _freezing_/_unfreezing_ are also modelled as Transactions.
+Various interactions with the Lightrail system take place in the form of _Transactions_. Most common types of Transactions are adding or deducting value from a Card, also known as  _funding_ and _drawdown_. Some other actions on Card or Value Store are also modelled as Transactions; for example, _activation_, _cancellation_, _freezing_, and _unfreezing_.
 
 Lightrail also supports a two-step _pending_ drawdown. A pending drawdown Transaction withholds the funds temporarily until eventually they are collected via a subsequent _capture_ Transaction, or canceled via a _void_ Transaction. 
 
