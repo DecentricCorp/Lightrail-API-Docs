@@ -72,7 +72,7 @@ Redemption Rules are a powerful feature of Lightrail which enable setting variou
 
 Redemption Rules can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$15 off if you buy two or more pairs of jeans." Currently, you can define such Redemption Rules at the time of Program creation in the Lightrail Web App. 
 
-When transacting against a Card and looking to collect the fund from its different Value Stores, Redemption Rules determine whether or not each of the Card's Value Stores is spendable for that Transaction. Every rule is a Boolean expression that operates on the Transaction request object's `metadata` attribute; the Value Store will be available for spending on that Transaction only if the rule evaluates to `true`. 
+When transacting against a Card and looking to collect the funds from its different Value Stores, Redemption Rules determine whether or not each of the Card's Value Stores is spendable for that Transaction. Every rule is a Boolean expression that operates on the Transaction request object's `metadata`; the Value Store will be available for spending on that Transaction only if the rule evaluates to `true`. 
 
 Transaction `metadata` is a generic JSON object provided in the Transaction request object which represents any additional information you wish to provide and store, including contextual information on which basis redemption rules operate. This provides a very powerful and flexible mechanism to define any relevant metadata in the Transaction request and use this metadata to make decisions about unlocking promotional values. 
 
