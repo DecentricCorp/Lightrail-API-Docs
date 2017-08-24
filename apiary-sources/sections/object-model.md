@@ -11,9 +11,9 @@ The Card is the core concept in the Lightrail model and provides the main interf
 
 A Card's value is stored in an object called _Value Store_ which represents a specific instance of issued value and its attributes, such as its amount and validity period.  
 
-When a Card is created, a `principal` Value Store is automatically created and added to it. When additional promotions are added to a Card, they are represented as an `attached` Value Stores. Unlike `attached` Value Stores which are often short-lived, the `principal` Value Store is tied to the Card throughout its lifetime and represents the overall state of the Card. For example, if the principal Value Store is expired or canceled, the Card is also considered expired to canceled.
+When a Card is created, a `principal` Value Store is automatically created and added to it. When additional promotions are added to a Card, they are represented as an `attached` Value Stores. Unlike `attached` Value Stores which are often short-lived, the `principal` Value Store is tied to the Card throughout its lifetime and represents the overall state of the Card. For example, if the Principal Value Store is expired or canceled, the Card is also considered expired to canceled.
 
-For example, a customer can buy a gift card with a primary value of $30 which never expires. This is stored in its `principal` Value Store. Later, and in order to encourage the recipient to spend the gift value, you may attach a $5 promotional value to this Card as part of your _Back to School_ campaign, only valid in the last week of August. While this `attached` Value Store is active, the Card holder can spend $35 with the Card; when the attached Value Store expires at the end of August, the principal Value Store will still be valid and the Card can still spend up to $30. See [the diagram below](#transaction-valustore-anchor) for a depiction of this example.
+For example, a customer can buy a gift card with a primary value of $30 which never expires. This is stored in its `principal` Value Store. Later, and in order to encourage the recipient to spend the gift value, you may attach a $5 promotional value to this Card as part of your _Back to School_ campaign, only valid in the last week of August. While this `attached` Value Store is active, the Card holder can spend $35 with the Card; when the attached Value Store expires at the end of August, the Principal Value Store will still be valid and the Card can still spend up to $30. See [the diagram below](#transaction-valustore-anchor) for a depiction of this example.
 
 
 ### Programs
@@ -28,7 +28,7 @@ Lightrail currently supports two types of Programs which are differentiated base
 
 Note that Cards are also connected to Programs through their Value Stores and cannot exist in isolation. Therefore, before you start creating Cards, you need to set up at least one Principal Program to be used for creating the Principal Value Stores of your Cards. The Principal Value Store is created automatically in the course of Card creation and you do not need to explicitly do create it, but you have to provide the `programId` in the Card creation request. Account Cards can be an exception to this as we will see in a bit.
 
-Since Lightrail does not handle currency exchange, as a general integrity constraint, it expects all the Value Stores in a Card to have the same currency, i.e. derive from Programs with the same currency. For example, if you create a Card with the principal Value Store in CAD, all subsequent attached promotions must derive from CAD Programs.
+Since Lightrail does not handle currency exchange, as a general integrity constraint, it expects all the Value Stores in a Card to have the same currency, i.e. derive from Programs with the same currency. For example, if you create a Card with the Principal Value Store in CAD, all subsequent attached promotions must derive from CAD Programs.
 
 Programs are also a great way to organize, track, and analyze values. For example, you probably want to know how many people took advantage of your _Back to School_ promotions and how it affected your sales. The Lightrail Web App provides various reports, stats, and analyses for the values created in each Program. 
 
@@ -36,7 +36,7 @@ You can create programs using the Lightrail Web App; the API also has [an endpoi
 
 ### Contacts
 
-An individual customer is represented by the _Contact_ object in Lightrail. You can store some basic information about the individual such as their name and email address on the Contact object. Contacts can be associated with Cards in order to track and analyze different Lightrail values held by a customer as we will discuss below.
+Individual customers are represented by _Contact_ objects in Lightrail. You can store some basic information about the individual such as their name and email address on the Contact object. Contacts can be associated with Cards in order to track and analyze different Lightrail values held by a customer as we will discuss below.
 
 ### Gift Cards
 
@@ -48,13 +48,11 @@ While Contacts are not mandatory for Gift Cards, it is possible, and recommended
 
 ### Account Cards 
 
-Account Cards represent values associated with an individual customer, represented by a linked Contact object. Account Cards can essentially be thought of as a customer's account, making them suitable for implementing customer account credit or points programs. 
-
-To further facilitate this, Lightrail requires that a Contact has only one Account Card per currency. This  makes handling transactions against account credits simpler as will be discussed in the [Account Credit Use-Case](#use-cases-account-credits-anchor).
+Account Cards represent values associated with an individual customer, represented by a linked Contact object. Account Cards can essentially be thought of as a customer's account, making them suitable for implementing customer account credit or points programs. Lightrail requires that a Contact has only one Account Card per currency. This makes handling transactions against account credits simpler as will be discussed in the [Account Credit Use-Case](#use-cases-account-credits-anchor).
 
 Unlike Gift Cards, Account Cards do not have a `fullcode` and interaction with their value is only possible via the Card object interface.
 
-To keep creation of Account Cards simpler, Lightrail does not require specifying a Program for Account Card creation and uses a default Program automatically created under the hood. The principal Value Store of all of your Account Cards (in each currency) are derived from that default Program. 
+To keep creation of Account Cards simpler, Lightrail does not require specifying a Program for Account Card creation and uses a default Program automatically created under the hood. The Principal Value Store of all of your Account Cards (in each currency) are derived from that default Program. 
 
 ### Transactions
 
@@ -66,13 +64,13 @@ Transactions are [primarily](#post-transaction-by-cardid-anchor) created by `car
 
 One of the features of the Lightrail API is encapsulating the Card Value Stores behind a simple interface at the time of Transaction. While you can add many promotional attached Value Stores to Cards, at Transaction time, you do not need to worry about the logic of splitting the drawdown value against potentially many Value Stores; Lightrail transaction processing logic automatically handles that logic for you. 
 
-For example, if there is $30 in the principal Value Store and a $5 attached Value Store from a promotional _Back to School_ program, when attempting a $8 drawdown, Lightrail automatically decides the break-down of this amount against existing Value Stores and you do not have to specify or even be aware of them. In this case, for example, Lightrail will prioritize the spending of the $5 value which is closer to its expiry date, and then, charges the remaining $10 from the principal Value Store.  
+For example, if there is $30 in the Principal Value Store and a $5 attached Value Store from a promotional _Back to School_ program, when attempting a $8 drawdown, Lightrail automatically decides the break-down of this amount against existing Value Stores and you do not have to specify or even be aware of them. In this case, for example, Lightrail will prioritize the spending of the $5 value which is closer to its expiry date, and then, charges the remaining $10 from the Principal Value Store.  
 
 ### Redemption Rules
 
 Redemption Rules are a powerful feature of Lightrail which enable setting various sophisticated conditions defining when and under what conditions value can be spent. Redemption rules are defined on Programs and are applied to the Value Stores created from them.
 
-promotional programs, and thereby, on Value Stores that are derived from them. Redemption Rules can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$15 off if you buy two or more pairs of jeans." Currently, you can define such Redemption Rules at the time of Program creation in the Lightrail Web App. 
+Redemption Rules can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$15 off if you buy two or more pairs of jeans." Currently, you can define such Redemption Rules at the time of Program creation in the Lightrail Web App. 
 
 When transacting against a Card and looking to collect the fund from its different Value Stores, Redemption Rules determine whether or not each of the Card's Value Stores is spendable for that Transaction. Every rule is a Boolean expression that operates on the Transaction request object's `metadata` attribute; the Value Store will be available for spending on that Transaction only if the rule evaluates to `true`. 
 
