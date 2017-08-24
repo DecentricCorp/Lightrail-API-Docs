@@ -44,7 +44,7 @@ To further facilitate this, Lightrail enforces a one-card-per-currency-per-custo
 
 Unlike Gift Cards, Account Cards do not have a `fullcode` and interaction with their value is only possible via the Card object interface.
 
-To keep creation of Account Cards simpler, Lightrail does not require specifying a Program for Account Cards creation and uses a default Program automatically created under the hood. The principal Value Store of all of your Account Cards (in each currency) are derived from that default Program. 
+To keep creation of Account Cards simpler, Lightrail does not require specifying a Program for Account Card creation and uses a default Program automatically created under the hood. The principal Value Store of all of your Account Cards (in each currency) are derived from that default Program. 
 
 ### Gift Cards 
 
