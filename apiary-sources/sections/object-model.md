@@ -80,7 +80,7 @@ Check out the in-depth <a href="https://github.com/Giftbit/Lightrail-API-Docs/bl
 
 ### Walk-Through Example
 
-Suppose that you want to attach some promotions to some of your existing Gift Cards in order encourage customers to spend them. Since you want to boost you sales, you want this promotional value to be available only to customers who would spend at least $100.
+Suppose that you want to attach some promotions to some of your existing Gift Cards in order to encourage customers to spend them. Since you want to boost you sales, you want this promotional value to be available only to customers who would spend at least $100.
 
 This rule can be formulated as the following. Note that `cart ` is a custom metadata object defined by you:
 
@@ -98,7 +98,7 @@ At the checkout page, your e-commerece system examines the customer's cart and a
 }
 ```
 
-Once this Transaction request is received, Lightrail will search through Value Stores and evaluates their redemption rules against the Transaction `metadata`. In this case, if the `cart.total` is greater than or equal to $100 (i.e. 10000 cents), it unlocks the $5 Value Store for spending. The following diagram depicts this process.
+Once this Transaction request is received, Lightrail will iterate through the Card's Value Stores and evaluates their redemption rules against the Transaction `metadata`. In this case, if the `cart.total` is greater than or equal to $100 (i.e. 10000 cents), it unlocks the $5 Value Store for spending. The following diagram depicts this process.
 
 <a name="transaction-valustore-anchor"></a>
 
