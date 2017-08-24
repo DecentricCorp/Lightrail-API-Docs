@@ -9,58 +9,60 @@ The full API object model is here for your reference. We will discuss these obje
 
 The Card is the core concept in the Lightrail model and provides the main interface for storing, maintaining, and interacting with any sort of value that your business wishes to issue. Currently, there are two types of cards in Lightrail, _Gift Cards_ and _Account Cards_, which are distinguished based on the value of the `cardType` attribute on the `card` object. We will discuss these two types of cards in a bit.
 
-A Card aggregates different values each of which is represented by a _Value Store_. Value Stores represent a specific instance of issued value and its attributes, such as its amount and validity period.  
+A Card's value is stored in an object called _Value Store_ which represents a specific instance of issued value and its attributes, such as its amount and validity period.  
 
-Each Card has at least one Value Store, known as the `principal` Value Store which holds the primary value of the Card and is issued at the time of card creation. Cards may also have many `attached` value stores which are created and attached to the Card in the course of different promotional programs. 
+When a Card is created, a `principal` Value Store is automatically created and added to it. When additional promotions are added to a Card, they are represented as an `attached` Value Stores. Unlike `attached` Value Stores which are often short-lived, the `principal` Value Store is tied to the Card throughout its lifetime and represents the overall state of the Card. For example, if the principal Value Store is expired or canceled, the Card is also considered expired to canceled.
 
-While attached Value Stores are somewhat temporary, the principal Value Store is tied to the Card throughout its lifetime. Attached Value Stores are added to the Card as different promotional programs are created and may eventually expire or get canceled. But if the Principal Value Store of a Card is expired or canceled, the Card itself is also considered expired or canceled.
-
-For example, a customer can buy a gift card with a principal value of $30 which never expires. Later, and in order to encourage the recipient to spend the gift value,  you may attach a $5 promotional value to this Card as part of your _Back to School_ campaign, only valid in the last week of August. While this attached Value Store is active, the Card holder can spend $35 with the Card; when the attached Value Store expires at the end of August, the principal Value Store will still be valid and the Card can still spend up to $30.
+For example, a customer can buy a gift card with a primary value of $30 which never expires. This is stored in its `principal` Value Store. Later, and in order to encourage the recipient to spend the gift value, you may attach a $5 promotional value to this Card as part of your _Back to School_ campaign, only valid in the last week of August. While this `attached` Value Store is active, the Card holder can spend $35 with the Card; when the attached Value Store expires at the end of August, the principal Value Store will still be valid and the Card can still spend up to $30. See [the diagram below](#transaction-valustore-anchor) for a depiction of this example.
 
 
 ### Programs
-A Lightrail _Program_ is a template for issuing Lightrail values, i.e. Value Stores. Programs specify the general attributes of Value Stores that derive from them, such as currency, validity period, minimum/maximum amount, as well as the constraints that apply to spending them, known as _Redemption Rules_.
+A Lightrail _Program_ is a template for issuing Lightrail value, in the form of Value Stores. Programs specify the general attributes of Value Stores that derive from them, such as currency, validity period, minimum/maximum amount, as well as the constraints that apply to spending them, known as _Redemption Rules_.
 
-Lightrail recognizes that issuing value seldom happens in isolation and is usually part of a broader organized context which is encapsulated by the concept of Program. Therefore, when creating a new Value Store, you always need to specify its reference  `program` object to which it belongs. As an analogy, think of Programs as minting facilities and Value Stores as coins. Just as valid coins can only be created by a minting facility, Lightrail values can only be issued as part of a Program and are subject to its broader rules and restrictions. 
+Lightrail recognizes that issuing value seldom happens in isolation and is usually part of a broader context which we call a Program. Therefore, whenever a new Value Store is created (e.g. at the time of Card creation or attaching promotions) you need to specify the Program used for creating that Value Store. As an analogy, think of Programs as minting facilities and Value Stores as coins. Just as valid coins can only be created by a minting facility, Lightrail values can only be issued as part of a Program and are subject to its broader rules and restrictions. 
 
 Lightrail currently supports two types of Programs which are differentiated based on their `type` attribute: 
 
 - _Principal Programs_ are used to organize and create  `principal` Value Stores, namely to create new Cards, and
 - _Promotional Programs_ are used to create `attached` Value Stores which can be added to existing cards and provide some additional promotional value to the card holder subject to more restrictive conditions.
 
-Since Cards need to have at least one Value Store, i.e. the principal Value Store, Cards are also connected to Programs through their Value Stores and cannot exist in isolation. Therefore, in order to create a Card, you need at least one Principal Program to create the Principal Value Stores for your Cards. Note that the Principal Value Store is created automatically at the time of Card creation and you do not need to explicitly do this, but you have to provide the `programId` when creating a new Card. 
+Note that Cards are also connected to Programs through their Value Stores and cannot exist in isolation. Therefore, before you start creating Cards, you need to set up at least one Principal Program to be used for creating the Principal Value Stores of your Cards. The Principal Value Store is created automatically in the course of Card creation and you do not need to explicitly do create it, but you have to provide the `programId` in the Card creation request. Account Cards can be an exception to this as we will see in a bit.
 
 Since Lightrail does not handle currency exchange, as a general integrity constraint, it expects all the Value Stores in a Card to have the same currency, i.e. derive from Programs with the same currency. For example, if you create a Card with the principal Value Store in CAD, all subsequent attached promotions must derive from CAD Programs.
 
 Programs are also a great way to organize, track, and analyze values. For example, you probably want to know how many people took advantage of your _Back to School_ promotions and how it affected your sales. The Lightrail Web App provides various reports, stats, and analyses for the values created in each Program. 
 
-Currently, you can only create programs using the Lightrail Web App but the API has [an endpoint](#get-programs-anchor) for programmatically retrieving a list of your Programs.
+You can create programs using the Lightrail Web App; the API also has [an endpoint](#get-programs-anchor) for programmatically retrieving the list of your Programs.
 
-### Account Cards and Contacts
+### Contacts
 
-Account Cards represent values associated with an individual customer, known in Lightrail as a _Contact_. Account Cards can essentially be thought of as a customer's account, making them suitable for implementing customer account credit or points programs. 
+An individual customer is represented by the _Contact_ object in Lightrail. You can store some basic information about the individual such as their name and email address on the Contact object. Contacts can be associated with Cards in order to track and analyze different Lightrail values held by a customer as we will discuss below.
 
-To further facilitate this, Lightrail enforces a one-card-per-currency-per-customer constraint on Account Cards so that each Contact can only have one account per each currency. This assumption makes handling transactions against account credits simpler as will be discussed in the [Account Credit Use-Case](#use-cases-account-credits-anchor).
+### Gift Cards
+
+As the name implies, Gift Cards represent a value created as a gift. Lightrail Gift Cards have a `fullcode`,  a  unique and unguessable alpha-numeric code which can be used by the Gift Card recipient to redeem its value.
+
+Since anyone who knows the `fullcode` can redeem the Gift Card value, the `fullcode` is often delivered to the Gift Card's recipient in confidence. To minimize the risk of its exposure (e.g. in the course of passing JSON object to the browser) only [one specific Lightrail endpoint](#get-fullcode-anchor) returns the `fullcode` and other endpoints only return the last four characters of the code when necessary. For similar reasons, we recommend that you refrain from persisting the `fullcode` in your database or logs.
+
+While Contacts are not mandatory for Gift Cards, it is possible, and recommended to associate a Gift Card with a Contact when you know the recipient. This will allow tracking all Lightrail values available to a customer both programmatically via the API and in the Lightrail Web App.
+
+### Account Cards 
+
+Account Cards represent values associated with an individual customer, represented by a linked Contact object. Account Cards can essentially be thought of as a customer's account, making them suitable for implementing customer account credit or points programs. 
+
+To further facilitate this, Lightrail requires that a Contact has only one Account Card per currency. This  makes handling transactions against account credits simpler as will be discussed in the [Account Credit Use-Case](#use-cases-account-credits-anchor).
 
 Unlike Gift Cards, Account Cards do not have a `fullcode` and interaction with their value is only possible via the Card object interface.
 
 To keep creation of Account Cards simpler, Lightrail does not require specifying a Program for Account Card creation and uses a default Program automatically created under the hood. The principal Value Store of all of your Account Cards (in each currency) are derived from that default Program. 
 
-### Gift Cards 
-
-As the name implies, Gift Cards represent a value created as a gift. Lightrail Gift Cards also have a `fullcode`,  a confidential, unique, and unguessable alpha-numeric code, which can be used as the evidence of possession of the Gift Card by its recipient. Lightrail allows balance-checking and value redemption based on the `fullcode` to facilitate the checkout use-case in which the recipient of the Gift Card would enter the `fullcode` to redeem its value towards a purchase.
-
-Since knowing the the `fullcode` implies possession of the Card, the `fullcode` is often delivered to the Gift Card's recipient in confidence. To further ensure the confidentiality of the `fullcode` and to minimize the risk of accidentally revealing it in the course of passing JSON objects around and to the browser, aside from [the one endpoint](#get-fullcode-anchor) designated specifically to retrieving the `fullcode`, no other Lightrail API endpoint returns the `fullcode` in its response object. For the same reasons, we also recommend that you do not persist the `fullcode` in your system.
-
-While Contacts are not mandatory for Gift Cards, it is possible, and recommended to associate a Gift Card with a Contact if you know the individual who will receive of the Gift Card. This will enable you to keep track of all Lightrail values available to a customer both programmatically via the API and in the Lightrail Web App.
-
 ### Transactions
 
-Various interactions with the Lightrail system take place in the form of _Transactions_. The most common such Transactions are _funding_, _drawdown_, and _refund_. Some other interactions such as Card or Value Store _activation_, _cancellation_, and _freezing_/_unfreezing_ are also modelled as Transactions.
+Various interactions with the Lightrail system take place in the form of _Transactions_. Some common examples are _funding_, _drawdown_, and _refund_. Some other interactions such as Card or Value Store _activation_, _cancellation_, and _freezing_/_unfreezing_ are also modelled as Transactions.
 
 Lightrail also supports a two-step _pending_ drawdown. A pending drawdown Transaction withholds the funds temporarily until eventually they are collected via a subsequent _capture_ Transaction, or canceled via a _void_ Transaction. 
 
-Posting Transactions against a Card is [primarily](#post-transaction-by-cardid-anchor) done via its `cardId`. However, to facilitate processing Gift Card redemption at the checkout which is one of the most common Gift Card use-cases, Lightrail also provides [an endpoint](#post-transaction-by-fullcode-anchor) for posting Transactions against a Card by its `fullcode`. To improve security, this endpoint only allows drawdown Transactions.
+Transactions are [primarily](#post-transaction-by-cardid-anchor) created by `cardId`.  But to simplify Gift Card redemption at the checkout, Lightrail also provides [an endpoint](#post-transaction-by-fullcode-anchor) for creating Transactions by a Card's `fullcode`. To improve security, this endpoint only allows drawdown Transactions.
 
 One of the features of the Lightrail API is encapsulating the Card Value Stores behind a simple interface at the time of Transaction. While you can add many promotional attached Value Stores to Cards, at Transaction time, you do not need to worry about the logic of splitting the drawdown value against potentially many Value Stores; Lightrail transaction processing logic automatically handles that logic for you. 
 
@@ -68,13 +70,39 @@ For example, if there is $30 in the principal Value Store and a $5 attached Valu
 
 ### Redemption Rules
 
-Redemption Rules are a powerful feature of Lightrail which enable setting various sophisticated conditions in promotional programs, and thereby, on Value Stores that are derived from them. Redemption Rules can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$15 off if you buy two or more pairs of jeans." Currently, you can define such Redemption Rules at the time of creating a new Lightrail Program in the Lightrail Web App. 
+Redemption Rules are a powerful feature of Lightrail which enable setting various sophisticated conditions defining when and under what conditions value can be spent. Redemption rules are defined on Programs and are applied to the Value Stores created from them.
 
-When transacting against a Card, Redemption Rules determine whether or not each of the Card's Value Stores is redeemable in paying towards the transaction value. Every rule is essentially a Boolean expression which will be evaluated against the `metadata` provided by the transaction; the Value Store will be available for spending on that Transaction only if the rule evaluates to `true`. For example, the rule for a $5 promotion value if the customer spends at least $100 can be written as:
+promotional programs, and thereby, on Value Stores that are derived from them. Redemption Rules can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$15 off if you buy two or more pairs of jeans." Currently, you can define such Redemption Rules at the time of Program creation in the Lightrail Web App. 
+
+When transacting against a Card and looking to collect the fund from its different Value Stores, Redemption Rules determine whether or not each of the Card's Value Stores is spendable for that Transaction. Every rule is a Boolean expression that operates on the Transaction request object's `metadata` attribute; the Value Store will be available for spending on that Transaction only if the rule evaluates to `true`. 
+
+Transaction `metadata` is a generic JSON object provided in the Transaction request object which represents any additional information you wish to provide and store, including contextual information on which basis redemption rules operate. This provides a very powerful and flexible mechanism to define any relevant metadata in the Transaction request and use this metadata to make decisions about unlocking promotional values. 
+
+Check out the in-depth <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md" target="_blank">Redemption Rules documentation</a> for further details.
+
+### Walk-Through Example
+
+Suppose that you want to attach some promotions to some of your existing Gift Cards in order encourage customers to spend them. Since you want to boost you sales, you want this promotional value to be available only to customers who would spend at least $100.
+
+This rule can be formulated as the following. Note that `cart ` is a custom metadata object defined by you:
 
 `metadata.cart.total >= 10000` 
 
-in which the `cart` is a custom JSON object provided by your system as part of the `metadata` on Transactions. When this rule is added to a Program, a $5 Value Store derived from this Program will only be available to those Transactions which come with a `cart` object in which the `total` attribute is greater than or equal to $100 (i.e. 10000 cents). The following diagram depicts this process. Check out the in-depth <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md" target="_blank">Redemption Rules documentation</a> for further details.
+After you create a new Promotion Program with this redemption rule, you can create a new $5 Value Store derived from this Program and attach it to some Gift Cards, thereby giving them a $5 promotional value subject to this redemption rule. 
+
+At the checkout page, your e-commerece system examines the customer's cart and accordingly provides a `cart` object in the `metadata` attribute in the Transaction request object. For example:
+
+```json
+{"cart": 
+ {
+   "total":10350
+ }
+}
+```
+
+Once this Transaction request is received, Lightrail will search through Value Stores and evaluates their redemption rules against the Transaction `metadata`. In this case, if the `cart.total` is greater than or equal to $100 (i.e. 10000 cents), it unlocks the $5 Value Store for spending. The following diagram depicts this process.
+
+<a name="transaction-valustore-anchor"></a>
 
 ![Transaction, Value Stores, and Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/assets/transaction-valustores.svg)
 
