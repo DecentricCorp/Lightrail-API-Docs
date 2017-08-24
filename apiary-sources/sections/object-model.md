@@ -28,7 +28,7 @@ Lightrail currently supports two types of Programs which are differentiated base
 - _Principal Programs_ are used to organize and create  `principal` Value Stores, namely to create new Cards, and
 - _Promotional Programs_ are used to create `attached` Value Stores which can be added to existing cards and provide some additional promotional value to the card holder subject to more restrictive conditions.
 
-Note that since Cards need to have at least one Value Store, i.e. the principal Value Store, Cards are connected to Programs through their Value Stores and cannot exist in isolation. Therefore, in order to create a Card, you need at least one Principal Program to create the Principal Value Stores of your Cards (which happens automatically at the time of Card creation). 
+Since Cards need to have at least one Value Store, i.e. the principal Value Store, Cards are also connected to Programs through their Value Stores and cannot exist in isolation. Therefore, in order to create a Card, you need at least one Principal Program to create the Principal Value Stores for your Cards. Note that the Principal Value Store is created automatically at the time of Card creation and you do not need to explicitly do this, but you have to provide the `programId` when creating a new Card. 
 
 Since Lightrail does not handle currency exchange, as a general integrity constraint, it expects all the Value Stores in a Card to have the same currency, i.e. derive from Programs with the same currency. For example, if you create a Card with the principal Value Store in CAD, all subsequent attached promotions must derive from CAD Programs.
 
@@ -44,7 +44,7 @@ To further facilitate this, Lightrail enforces a one-card-per-currency-per-custo
 
 Unlike Gift Cards, Account Cards do not have a `fullcode` and interaction with their value is only possible via the Card object interface.
 
-Note that in order to simplify issuing them, unlike Gift Cards, Lightrail does not require specifying a Program for Account Cards creation. To keep these calls simpler, Lightrail creates a default Program under the hood for each currency; the principal Value Store of all of the Account Cards in each currency are derived from that default Program. 
+To keep creation of Account Cards simpler, Lightrail does not require specifying a Program for Account Cards creation and uses a default Program automatically created under the hood. The principal Value Store of all of your Account Cards (in each currency) are derived from that default Program. 
 
 ### Gift Cards 
 
