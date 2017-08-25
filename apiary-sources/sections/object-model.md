@@ -5,7 +5,7 @@ The full API object model is here for your reference. We will discuss these obje
 
 ![Lightrail Object Model](https://giftbit.github.io/Lightrail-API-Docs/assets/lightrail-objects.svg)
 
-### Core Objects: Lightrail Cards and Value Stores: 
+### Core Objects: Cards and Value Stores
 
 The Card is the core concept in the Lightrail model and provides the main interface for storing, maintaining, and interacting with any sort of value that your business wishes to issue. Currently, there are two types of cards in Lightrail, _Gift Cards_ and _Account Cards_, which are distinguished by their `cardType` attribute. We will discuss these two types of cards in a bit.
 
