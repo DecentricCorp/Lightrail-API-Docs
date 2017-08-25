@@ -1,51 +1,53 @@
 ## Implementation Details
 
-### Coding for Idempotency and the `userSuppliedId` Field
+### Idempotency 
 
-The API is fully idempotent on the `userSuppliedId` field, which is a required parameter for all endpoint operations that result in a change of state on the Lightrail side (POST, PUT, PATCH).  
-Therefore, in the case of a non-received response from the API or other unknown condition, it is safe and recommended to retry the request with the same `userSuppliedId`.
+Ensuring idempotency means providing the option of repeating a request in a way that it will not result in repeated actions on the server. This is an important feature for RESTful APIs as it enables the client to safely repeat a potentially failed request without the fear of repeated consequences. 
 
-For example, your customer is using a `fullcode` in your checkout.  
-You POST to the _/codes/{fullcode}/transactions_ endpoint to mark the use, but get a network timeout and are unable to process the response. 
-As a result, your system doesn't know if Lightrail successfully received your POST and recorded the transaction. 
-With idempotency, you do not need any lookups or other complicated error handling to see if the original API call succeeded. 
+For example, if the call to post a _drawdown_ Transaction encounters a network failure and you are not sure whether it failed before or after reaching the server, you would want to be able to repeat this request without worrying about charging the Card multiple times. 
 
-You can simply retry the same call (as many times as needed) with the same `userSuppliedId`, and get the same 200 response upon success whether or not a previous request went through. 
-Our server will do the operation once and only once for that `userSuppliedId`.
+Lightrail supports idempotency via `userSuppliedId`, a unique string value provided by the client. This is required parameter by every API endpoint which is not naturally idempotent. When using the same `userSuppliedId`, Lightrail guarantees that the requested operation is only invoked once, regardless of how many times the request is received. This provides a mechanism for you to _retry_ when a request times out or fails for unknown reasons. 
 
-Given the above, it is important you think about how to structure your `userSuppliedId`s and error handling so that you are always sending a unique value for different logical requests, but the same one for any retries.  
+Note that the `userSuppliedId` must also be unique to the request; if you repeat the same `userSuppliedId` with a different request, you will receive an `HTTP 409` error indicating idempotency failure. 
 
-Attempting to reuse a `userSuppliedId` but providing different request parameters will result in a 409 error.
+Here is an example of a _drawdown_ request which includes a `userSuppliedId`. No matter how many time this request is received by the server, it will charge the Card only once. Moreover, if you try posting a different Transaction (e.g. with a different value) using this `userSuppliedId` you will get an error. 
 
-### About Currency Value, Currency Type, and No-Currency Use (Such as Points)
-Where currency type (eg. USD, CDN, AUD) is required or returned, the API expects/uses 3 character uppercase codes conforming to the ISO-4217 standard. 
-Lightrail does not do any currency conversion nor does currency influence internal behavior; rather, currency allows you to issue and track cards in different currencies as you choose.
+```json
+POST https://www.lightrail.com/v1/cards/{cardId}/transactions
+{
+  "userSuppliedId": "tx-2403423",
+  "value": -13500,
+  "currency": "USD"
+}
+```
 
-In all cases where value is concerned, you need to provide the amount in the smallest currency unit. 
-For most, this is the amount in cents (or pence, penny, or similarly named unit). For example, to create a Card for USD1.00, you would set the initialValue=100 (100 cents).
+Since Lightrail persists and returns the `userSuppliedId` with the corresponding object, you can also use it as a client-side unique identifier to link your client-side objects to Lightrail objects. For example, you can use your local Customer ID as the `userSuppliedId` when creating a new Lightrail Contact to associate your local Customer object with the Lightrail Contact object (as an alternative to saving the server-generated `contactId` with your local Customer object). You can use the `userSuppliedId` to retrieve the corresponding Contact object when necessary by [searching Contacts](#contact-list-anchor) and providing the `userSuppliedId` as a search parameter. 
 
-For zero-decimal currencies or use with non-currency applications such as points, use the regular whole denomination. 
-For example, for ¥1, you should set initialValue=1 (1 JPY), since ¥1 is the smallest currency unit.
+### Currencies 
+Lightrail API uses the three-character currency codes from the ISO-4217 standard, e.g. `USD`,` CDN`, and `AUD`. The special value `XXX` is defined by this standard for representing any non-currency values such as points.
 
-### About Dates
-The API expects all dates in request parameters to conform to the ISO-8601 format, specifically "yyyy-MM-dd'T'HH:mm:ss.SSSZ".  You can see examples in this documentation.
+All currency values are represented by the smallest currency unit, e.g. cents for USD or CAD. For example, to create a Card for USD1.00, you would set the `initialValue=100`.
 
-This allows you to control things such as Code expiry in fine granularity to the time zone of your choosing. 
-All responses will always be given in this same format.
+Lightrail does not do any form of currency exchange and only enforces the consistency of currencies among connected Lightrail objects. For example, if you create a Card with the principal Value Store in USD, you can only attach USD promotions to this Card and transact against it in USD. Note that Lightrail Transaction endpoints do not presume a default currency and you must provide the currency explicitly when posting a Transaction.
+
+### Dates
+Lightrail uses the `yyyy-MM-dd'T'HH:mm:ss.SSSZ` format from the ISO-8601 standard for all dates. This allows you to control things such as value expiry dates in fine granularity to the time zone of your choosing. You can see various examples of date values in the endpoint documentation. 
 
 ### Handling Error Responses
 
 Clients should always check the HTTP status code of the response and act accordingly if the response is not a 200.
 
-Error response JSON will be in the following format:
-- status: (number) - will match the HTTP response code.    
-- message: (string, optional) - a descriptive error message if one is available
-- code: (string, optional) - a code that can be provided to Lightrail support if troubleshooting help is needed
+The response JSON object in case of an error will be in the following format:
+- `status`: (number) - echoing the HTTP response code.    
+- `message`: (string, optional) - a descriptive error message if one is available. 
+- `messageCode`: (string, optional) - a code for the error that can be consumed programmatically.
+
+Note that the error `message` is intended to be shown to an end user; it may change from time to time to improve clarity and might be translated into other languages. For programmatic use, you should use the `messageCode` which reliably corresponds to the particular error case and is not subject to change without notice.
 
 #### Example error responses:
-| Status | Description         | Message                                                                                                                                          | 
-|:-------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| `400`  | bad request         | Failed to create card due to error during code creation. Response from code creation: Bad Request. Missing Required Parameter 'initialValue'.    | 
-| `401`  | unauthorized        | Unauthorized.                                                                                                                                    |
-| `409`  | idempotency failure | A different transaction with the same userSuppliedId already exists.                                                                             |
-| `429`  | throttled failure   | Too many requests.                                                              
+| Status | Description         | Message                                  |
+| :----- | ------------------- | ---------------------------------------- |
+| `400`  | bad request         | `Missing required parameter 'userSuppliedId'` |
+| `401`  | unauthorized        | `Unauthorized.`                          |
+| `409`  | idempotency failure | `A different transaction with the same userSuppliedId already exists.` |
+| `429`  | rate-limit failure  | `Too many requests.`                     |

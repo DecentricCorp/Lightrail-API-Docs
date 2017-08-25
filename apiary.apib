@@ -16,7 +16,7 @@ This section will go over the basic steps to make your first Lightrail API call.
 ### Authorization
 
 In order to use the API endpoints, you need an API key to identify yourself. You can find your test or production API key in the _API_ tab under _Account Settings_ after you log in to your Lightrail account. 
-If you do not have a Lightrail account yet, you can <em><a href="https://www.lightrail.com/app/#/register" target="_blank">create one</a></em>. 
+If you do not have a Lightrail account yet, you can <a href="https://www.lightrail.com/app/#/register" target="_blank">create one</a>. 
 
 Note that in your account settings, you will be in test mode by default which will provide a test API key. This allows you to make calls to the API without affecting your production system and its statistics.
 Once you are ready for production, you can toggle to switch off the test mode at which point you will find a new production API key. 
@@ -43,209 +43,254 @@ If you are curious about the response content, check out the [`ping` endpoint do
 ### Next Step
 - More in-depth understanding of the Lightrail system: [Lightrail Object Model](#use-cases-anchor). 
 - Get started on implementing one of the common use-cases for Lightrail: [Common Use-Cases](#use-cases-anchor). 
+- Check out the existing client libraries and plugins: [Lightrail Integrations](#integrations-anchor).
 
 <a name="object-model-anchor"></a>
-
 ## The Lightrail Object Model
-The full API object model is here for your reference. Depending on your use-case, you may not need to use every object/endpoint. 
-Read on for use-case elaboration
+The full API object model is here for your reference. We will discuss these objects and their relationships in this section. Depending on your use-case you may only need some of these objects and the corresponding endpoints. If you prefer to start with something more hands-on, feel free to move on to [Common Use-Cases](#use-cases-anchor).   
 
-![Lightrail Object Model](http://resources.giftbit.com/api/embeddedimages/Lightrail_Object_Model_(stacked).png)
 
-### Lightrail Cards: The Core Object
+![Lightrail Object Model](https://giftbit.github.io/Lightrail-API-Docs/assets/lightrail-objects.svg)
 
-The Card is a fundamental object in the Lightrail API and provides the functionality for managing branded currency. 
-The concept of a Card can represent any sort of value that your business wishes to issue. 
-Simply stated, a Card is a device for which value can be attached and transacted against. 
+### Core Objects: Lightrail Cards and Value Stores: 
 
-There are two types of Cards: Gift Cards and Account Cards. These are both represented as a Card but with a different `cardType` attribute. 
+The Card is the core concept in the Lightrail model and provides the main interface for storing, maintaining, and interacting with any sort of value that your business wishes to issue. Currently, there are two types of cards in Lightrail, _Gift Cards_ and _Account Cards_, which are distinguished by their `cardType` attribute. We will discuss these two types of cards in a bit.
 
-#### Gift Cards
+A Card's value is stored in an object called a _Value Store_ which represents a specific instance of issued value and its attributes, such as its amount and validity period.  
 
-Gift Cards, as you might guess, are used when implementing a gift card program. Gift Cards have a `fullcode` which is a unique and unguessable alpha-numeric code that can be distributed to a recipient. 
-In a standard gift card program, the recipient would manually enter the `fullcode` during the checkout process.
+When a Card is created, a `principal` Value Store is automatically created and added to it. When additional promotions are added to a Card, they are represented as `attached` Value Stores. Unlike `attached` Value Stores which are often short-lived, the `principal` Value Store is tied to the Card throughout its lifetime and represents the overall state of the Card. For example, if the Principal Value Store is expired or canceled, the Card is also considered expired or canceled.
 
-#### Account Cards
+For example, a customer can buy a gift card with a primary value of $30 which never expires. This is stored in the Card's `principal` Value Store. Later, and in order to encourage the recipient to spend the gift value, you may attach a $5 promotional value to this Card as part of your _Back to School_ campaign, only valid in the last week of August. While this `attached` Value Store is active, the Card holder can spend $35 with the Card; when the attached Value Store expires at the end of August, the Principal Value Store will still be valid and the Card can still be used up to $30. See [the diagram below](#transaction-valustore-anchor) for a depiction of this example.
 
-Account Cards represent value that is attached to a Contact. 
-They are used when implementing a customer account credit or points program and can be thought of as a customer's account.
-Since Account Cards do not have a `fullcode`, their value is interacted with using the Card object. 
+
+### Programs
+A Lightrail _Program_ is a template for issuing Lightrail value, in the form of Value Stores. Programs specify the general attributes of Value Stores that derive from them, such as currency, validity period, minimum/maximum amount, as well as the constraints that apply to spending them, known as _Redemption Rules_.
+
+Lightrail recognizes that issuing value seldom happens in isolation and is usually part of a broader context which we call a Program. Therefore, whenever a new Value Store is created (e.g. at the time of Card creation or attaching promotions) you need to specify the Program used for creating that Value Store. As an analogy, think of Programs as minting facilities and Value Stores as coins. Just as valid coins can only be created by a minting facility, Lightrail values can only be issued as part of a Program and are subject to its broader rules and restrictions. 
+
+Lightrail currently supports two types of Programs which are differentiated based on their `type` attribute: 
+
+- _Principal Programs_ are used to organize and create  `principal` Value Stores, namely to create new Cards, and
+- _Promotional Programs_ are used to create `attached` Value Stores which can be added to existing cards and provide some additional promotional value to the card holder subject to more restrictive conditions.
+
+Note that Cards are also connected to Programs through their Value Stores and cannot exist in isolation. Therefore, before you start creating Cards, you need to set up at least one Principal Program to be used for creating the Principal Value Stores of your Cards. The Principal Value Store is created automatically in the course of Card creation, but you have to provide the `programId` in the Card creation request. Account Cards can be an exception to this as we will see in a bit.
+
+Since Lightrail does not handle currency exchange, it requires a single currency for all the Value Stores on the Card. For example, if you create a Card with the Principal Value Store in CAD, all subsequent attached promotions must derive from CAD Programs.
+
+Programs are also a great way to organize, track, and analyze values. For example, you probably want to know how many people took advantage of your _Back to School_ promotions and how it affected your sales. The Lightrail Web App provides various reports, stats, and analyses for the values created in each Program. 
+
+You can create programs using the Lightrail Web App; the API also has [an endpoint](#get-programs-anchor) for programmatically retrieving the list of your Programs.
+
+### Contacts
+
+Individual customers are represented by _Contact_ objects in Lightrail. You can store some basic information about the individual such as their name and email address on the Contact object. Contacts can be associated with Cards in order to track and analyze different Lightrail values held by a customer as we will discuss below.
+
+### Gift Cards
+
+As the name implies, Gift Cards represent a value created as a gift. Lightrail Gift Cards have a `fullcode`,  a  unique and unguessable alpha-numeric code which can be used by the Gift Card recipient to redeem its value.
+
+Since anyone who knows the `fullcode` can redeem the Gift Card value, the `fullcode` is often delivered to the Gift Card's recipient in confidence. To minimize the risk of its exposure (e.g. in the course of passing JSON objects to the browser) only [one specific Lightrail endpoint](#get-fullcode-anchor) returns the `fullcode` and other endpoints only return the last four characters of the code when necessary. For similar reasons, we recommend that you refrain from persisting the `fullcode` in your database or logs.
+
+While Contacts are not mandatory for Gift Cards, it is possible and recommended to associate a Gift Card with a Contact when you know the recipient. This will enable tracking all Lightrail values available to a customer both programmatically via the API and in the Lightrail Web App.
+
+### Account Cards 
+
+Account Cards represent values associated with an individual customer, represented by a linked Contact object. Account Cards can essentially be thought of as a customer's account, making them suitable for implementing customer account credit or points programs. Lightrail requires that a Contact has only one Account Card per currency. This makes handling transactions against account credits simpler as will be discussed in the [Account Credit Use-Case](#use-cases-account-credits-anchor).
+
+Unlike Gift Cards, since Account Cards are tied to a known customer, they do not have a `fullcode` and interaction with their value is only possible via the Card object interface.
+
+To keep creation of Account Cards simpler, Lightrail does not require specifying a Program for Account Card creation and uses a default Program automatically created under the hood. The Principal Value Stores of all of your Account Cards (in each currency) are derived from that default Program. 
+
+### Transactions
+
+Various interactions with the Lightrail system take place in the form of _Transactions_. The most common types of Transactions are adding or deducting value from a Card, also known as  _funding_ and _drawdown_. Some other actions on Cards or Value Stores are also modelled as Transactions; for example, _activation_, _cancellation_, _freezing_, and _unfreezing_.
+
+Lightrail supports a two-step _pending_ drawdown. A pending drawdown Transaction withholds the funds temporarily until eventually they are collected via a subsequent _capture_ Transaction, or canceled via a _void_ Transaction. 
+
+Transactions are [primarily](#post-transaction-by-cardid-anchor) created by `cardId`.  But to simplify Gift Card redemption at the checkout, Lightrail also provides [an endpoint](#post-transaction-by-fullcode-anchor) for creating Transactions by a Card's `fullcode`. To improve security, this endpoint only allows drawdown Transactions.
+
+One of the features of the Lightrail API is encapsulating the Card Value Stores behind a simple interface at the time of Transaction. While you can add many promotional attached Value Stores to Cards, at Transaction time, you do not need to worry about the logic of splitting the drawdown value against potentially many Value Stores; Lightrail transaction processing automatically handles this for you. 
+
+For example, if there is $30 in the Principal Value Store and a $5 attached Value Store from a promotional _Back to School_ program, when attempting a $8 drawdown, Lightrail automatically decides the break-down of this amount against existing Value Stores and you do not have to specify or even be aware of them. In this case, for example, Lightrail will prioritize the spending of the $5 value which is closer to its expiry date, and then, charges the remaining $3 from the Principal Value Store.  
+
+### Redemption Rules
+
+Redemption Rules are a powerful feature of Lightrail which enable setting various sophisticated conditions defining when and under what conditions value can be spent. Redemption rules are defined on Programs and are applied to the Value Stores created from them.
+
+Redemption Rules can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$15 off if you buy two or more pairs of jeans." Currently, Redemption Rules are defined at the time of Program creation in the Lightrail Web App. 
+
+When transacting against a Card and looking to collect the funds from its different Value Stores, Redemption Rules determine whether or not each of the Card's Value Stores is spendable for that Transaction. Every rule is a Boolean expression that operates on the Transaction request object's `metadata`; the Value Store will be available for spending on that Transaction only if the rule evaluates to `true`. 
+
+Transaction `metadata` is a generic JSON object provided in the Transaction request object which represents any additional information you wish to provide and store, including contextual information on which basis redemption rules operate. This provides a very powerful and flexible mechanism to define any relevant metadata in the Transaction request and use this metadata to make decisions about unlocking promotional values. 
+
+Check out the in-depth <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md" target="_blank">Redemption Rules documentation</a> for further details.
+
+### Walk-Through Example
+
+Suppose that you want to attach some promotions to some of your existing Gift Cards in order to encourage customers to spend them. Since you want to boost your sales, you want this promotional value to be available only to customers who would spend at least $100.
+
+This rule can be formulated as the following. Note that `cart ` is a custom metadata object defined by you:
+
+`metadata.cart.total >= 10000` 
+
+After you create a new Promotion Program with this redemption rule, you can create a new $5 Value Store derived from this Program and attach it to some Gift Cards, thereby giving them a $5 promotional value subject to this redemption rule. 
+
+At the checkout page, your e-commerce system examines the customer's cart and accordingly provides a `cart` object in the `metadata` attribute in the Transaction request object. For example:
+
+```json
+{"cart": 
+ {
+   "total":10350
+ }
+}
+```
+
+Once this Transaction request is received, Lightrail will iterate through the Card's Value Stores and evaluate their redemption rules against the Transaction `metadata`. In this case, if the `cart.total` is greater than or equal to $100 (i.e. 10000 cents), it unlocks the $5 Value Store for spending. The following diagram depicts this process.
+
+<a name="transaction-valustore-anchor"></a>
+
+![Transaction, Value Stores, and Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/assets/transaction-valustores.svg)
 
 
 <a name="use-cases-anchor"></a>
 ## Common Use-Cases
+This section reviews some of the most common use-cases supported by Lightrail in order to help you navigate and find the more detailed step-by-step guides discussing the detailed flow for each use-case. If your use-case is not listed here or if you need assistance about some particular details in your use-case feel free to contact us at hello@lightrail.com.
 
-The following sections dive into Lightrail's most common use-cases. Feel free to skip to the section relevant to you. If you're not sure which applies to you, please don't hesitate to ask!
+### Powering Gift Cards
 
-Also note, the ability to incentivize your users or recipients through Lightrail Card Promotions is available for both Gift Cards and Account Cards. 
-Detailed information for Card Promotions and how it can be applied to either use-case can be found in the following [Create and Attach Promotions](#create-and-attach-promotions-anchor) section. 
+Powering Gift Cards is one of the main of Lightrail. Some of the most common use-cases for Gift Cards are the following. For an step-by-step guide to implementing each use-case, follow the link: 
 
-Looking to import your existing codes into the Lightrail system? We support that. Please let us know to find out more. 
-
-### Use-Case 1: Powering Your Gift Card Program
- 
-A common use-case for the Lightrail API is one in which Lightrail powers your gift cards. 
-
-For example, suppose your business is an online e-commerce platform and you want to enable your customers to purchase gift cards.
-When a customer purchases a gift card, you would create a Gift Card in the Lightrail API. You would retrieve the Gift Card's `fullcode` and deliver it to the customer.
-Your store's checkout process would need to allow customers the opportunity to enter the `fullcode` of any gift cards they have.
-When completing the purchase you would create a Transaction using the customer entered `fullcode`, redeeming the required value from the Gift Card, completing the transaction. 
-
-Is your store is running on an established e-commerce platform? 
-Lightrail supports popular e-commerce platforms and has dedicated integrations teams here to support you.
-
-Lightrail enables fine-grained control of the rules for which Gift Cards can be issued using Gift Card Programs.
-
-#### Lightrail Gift Card Programs
-
-A Gift Card Program describes the rules and restrictions that apply to the Gift Cards created from that Program. 
-For example, a Gift Card Program might declare that all Gift Cards are issued in USD, with an `initialValue` in the range of $5 - 100, and never expire. 
-
-To create a Gift Card, it must be created using a Gift Card Program. 
-You may create Gift Card Programs within the <a href="https://www.lightrail.com/app/#/programs" target="_blank">Gift Card</a> section of the Lightrail web application. 
-Gift Card Programs are also used to structure and organize related Gift Cards, and also improve tracking of activity within your account. 
-
-Gift Card Programs also provide the flexibility to add integrators. Adding integrators allows you to lend permission so another party can create and issue Gift Cards from your Gift Card Program. 
-For more information on this functionality, please contact hello@lightrail.com.
+- [Issue a Gift Card](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/gift-card.md)
+- Create and Attach a Promotion to a Gift Card
+- View Card Details and Balance
+- [Redeem a Gift Card value at the Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md)
 
 #### Common Requests in Gift Card Integration
 
-| Action                        | Endpoint                            | Verb   | Body                                                                                                                | 
-|:------------------------------|-------------------------------------|--------|---------------------------------------------------------------------------------------------------------------------|
-| Create Gift Card              | `/v1/cards`                         | `POST` | `{'userSuppliedId':'gc1', 'cardType':'GIFT_CARD', 'programId':'program-123', 'initialValue':500, 'currency':'USD'}` | 
-| Retrieve `fullcode`           | `/v1/cards/<cardId>/fullcode`       | `GET`  |                                                                                                                     |
-| Check Balance                 | `/v1/codes/<fullcode>/card/balance` | `GET`  |                                                                                                                     |
-| Create Transaction            | `/v1/codes/<fullcode>/transactions` | `POST` | `{'userSuppliedId':'tx1', 'value':-10, 'currency':'USD'}`                                                           | 
-| Retrieve Transaction History  | `/v1/codes/<fullcode>/transactions` | `GET`  |                                                                                                                     | 
+| Action                       | Endpoint                            | Verb   | Body                                     |
+| :--------------------------- | ----------------------------------- | ------ | ---------------------------------------- |
+| Create Gift Card             | `/v1/cards`                         | `POST` | `{'userSuppliedId':'gc1', 'cardType':'GIFT_CARD', 'programId':'program-123', 'initialValue':500, 'currency':'USD'}` |
+| Retrieve `fullcode`          | `/v1/cards/<cardId>/fullcode`       | `GET`  |                                          |
+| Check Balance                | `/v1/codes/<fullcode>/card/balance` | `GET`  |                                          |
+| Create Transaction           | `/v1/codes/<fullcode>/transactions` | `POST` | `{'userSuppliedId':'tx1', 'value':-10, 'currency':'USD'}` |
+| Retrieve Transaction History | `/v1/codes/<fullcode>/transactions` | `GET`  |                                          |
 
-Note, there may be additional endpoints you'd need to use depending on your use-case. 
+<a name="use-cases-account-credits-anchor"></a>
 
-### Use-Case 2: Power an Account Credits or Points Program
+### Powering an Account Credits
 
-Another common use-case is one in which Lightrail manages value attached to your customers. 
+Lightrail can easily power your account credit or customer rewards programs. Some of the most common use-cases for account credits are the following. 
 
-For example, suppose you'd like to enable your users to earn points within your platform.
-Once a user has earned enough points perhaps you'd like to allow them to spend their points and choose a reward.
-In this use-case, you would create a Contact in the Lightrail API followed by creating an Account Card for that Contact.
-This Account Card would be used to track the customer's points. 
-As a customer earns or spends value, you would add or subtract value by creating Transactions against the Account Card in the Lightrail API.
+- Creating a new Contact and Issuing New Accounts
+- View Account Details and Balance
+- Charge or Fund an Account
+- Create and Attach a Promotion to an Account
+- Redeem Account Value at the Checkout
+
+For a step-by-step discussion of how to implement these use-cases, check out our [Account Credits Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md). 
+
+Note that points programs can be implemented identically by setting up Account Cards with their currency set to points, i.e. `XXX` according to the ISO-4217 standard. 
 
 #### Common Requests in Account Credits or Points Program
 
-| Action                             | Endpoint                                                                   | Verb   | Body                                                                                               | 
-|:-----------------------------------|----------------------------------------------------------------------------|--------|----------------------------------------------------------------------------------------------------|
-| Create Contact                     | `/v1/contacts`                                                             | `POST` | `{'userSuppliedId':'ct1', 'email':'name@example.com'}`                                             | 
-| Create Account Card                | `/v1/cards`                                                                | `POST` | `{'userSuppliedId':'ac1', 'cardType':'ACCOUNT_CARD', 'contactId':'contact-123', 'currency':'XXX'}` | 
-| Check Balance                      | `/v1/cards/<cardId>/balance`                                               | `GET`  |                                                                                                    |
-| Create Transaction                 | `/v1/cards/<cardId>/transactions`                                          | `POST` | `{'userSuppliedId':'tx1', 'value':-10, 'currency':'XXX'}`                                          | 
-| Retrieve Transaction History       | `/v1/cards/<cardId>/transactions`                                          | `GET`  |                                                                                                    | 
-| Retrieve Account Card from Contact | `/v1/cards?contactId=<contactId>&currency=<currency>&cardType=ACCOUNT_CARD`| `GET`  |                                                                                                    |
-
-Note, in these example calls, the currency is set to `XXX` to represent points although `USD` or any other valid currency code could be used if you wanted to track a dollar figure.
-Also, in this sort of use-case, we recommend storing the Account Card's `cardId` with your customer's account within your application. 
-This will remove an unnecessary lookup each time you want to update a customer's points.
-
-If this use-case fits your need for points, a great way to reward your customers is offer them gift cards from top brands through <a href="https://www.giftbit.com" target="_blank">Giftbit’s Rewards API.</a>
-
-<a name="create-and-attach-promotions-anchor"></a>
-## Create and Attach Promotions
-
-In addition to the many capabilities Lightrail provides out of the box, Lightrail gives you the ability to attach Promotions to Cards, allowing you to incentivize and motivate your users or recipients. 
-Promotions work by adding temporary value to your cards with special redemption rules. 
-Promotions can be used in both the gift card and account credit use-cases. 
-
-Promotions are created from a Promotion Program which can be created from the <a href="https://www.lightrail.com/app/#/promotions" target="_blank">Promotions</a> section of the Lightrail web application. 
-Similar to a Gift Card Program, they enable you to restrict promotion properties such the allowed value ranges, currency, and custom expiry. 
-A Card is always created with a `PRINCIPAL` ValueStore. When promotions are attached, they are represented as `ATTACHED` ValueStores.
-
-### How Promotions Fit Into the Lightrail Object Model
-
-For example, suppose you've created a $10 USD Card. It could be either a Gift Card or an Account Card. Below is a model of the newly created objects.
-
-![Promotion Object Model Part1](http://resources.giftbit.com/api/embeddedimages/Lightrail_Promitions_Object_Model_p1.png)
-
-Perhaps you want to add a $5 promotion that will be valid for the next 10 days to incentivize the recipient to spend their value. As you can see below, a new ValueStore is attached to Card. 
-
-![Promotion Object Model Part2](http://resources.giftbit.com/api/embeddedimages/Lightrail_Promitions_Object_Model_p2.png)
-
-Suppose the recipient spends $8 USD within the 10-day limit. Below you can see how the balances of the ValueStore and in turn the balance of the Card is affected.
-
-![Promotion Object Model Part3](http://resources.giftbit.com/api/embeddedimages/Lightrail_Promitions_Object_Model_p3.png)
-
-This example illustrates that when Transactions are created against Cards that have multiple ValueStores, any valid ValueStore will be transacted against in order of expiry. 
-As you can see, Lightrail automatically handles the complexity of taking value from the correct ValueStore.
-
-### Redemption Rules
-
-Redemption rules are a powerful feature of Lightrail which enable setting extra conditions on promotions. 
-When transacting against a card, redemption rules determine whether or not a promotion can be used for the transaction. 
-The rules operate on the transaction details including `metadata`. 
-The `metadata` field is a flexible JSON structure that can store any additional information about a transaction such as its payment method or cart items. 
-Redemption rules, therefore, can unlock powerful marketing promotions such as: "$5 off when you buy a red hat," or "$20 off if you spend more than $100."
-
-Check out the extended <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md" target="_blank">redemption rules documentation</a> for more information.
+| Action                             | Endpoint                                 | Verb   | Body                                     |
+| :--------------------------------- | ---------------------------------------- | ------ | ---------------------------------------- |
+| Create Contact                     | `/v1/contacts`                           | `POST` | `{'userSuppliedId':'ct1', 'email':'name@example.com'}` |
+| Create Account Card                | `/v1/cards`                              | `POST` | `{'userSuppliedId':'ac1', 'cardType':'ACCOUNT_CARD', 'contactId':'contact-123', 'currency':'XXX'}` |
+| Retrieve Account Card from Contact | `/v1/cards?contactId=<contactId>&currency=<currency>&cardType=ACCOUNT_CARD` | `GET`  |                                          |
+| Check Balance                      | `/v1/cards/<cardId>/balance`             | `GET`  |                                          |
+| Create Transaction                 | `/v1/cards/<cardId>/transactions`        | `POST` | `{'userSuppliedId':'tx1', 'value':-10, 'currency':'XXX'}` |
+| Retrieve Transaction History       | `/v1/cards/<cardId>/transactions`        | `GET`  |                                          |
 
 ## Implementation Details
 
-### Coding for Idempotency and the `userSuppliedId` Field
+### Idempotency 
 
-The API is fully idempotent on the `userSuppliedId` field, which is a required parameter for all endpoint operations that result in a change of state on the Lightrail side (POST, PUT, PATCH).  
-Therefore, in the case of a non-received response from the API or other unknown condition, it is safe and recommended to retry the request with the same `userSuppliedId`.
+Ensuring idempotency means providing the option of repeating a request in a way that it will not result in repeated actions on the server. This is an important feature for RESTful APIs as it enables the client to safely repeat a potentially failed request without the fear of repeated consequences. 
 
-For example, your customer is using a `fullcode` in your checkout.  
-You POST to the _/codes/{fullcode}/transactions_ endpoint to mark the use, but get a network timeout and are unable to process the response. 
-As a result, your system doesn't know if Lightrail successfully received your POST and recorded the transaction. 
-With idempotency, you do not need any lookups or other complicated error handling to see if the original API call succeeded. 
+For example, if the call to post a _drawdown_ Transaction encounters a network failure and you are not sure whether it failed before or after reaching the server, you would want to be able to repeat this request without worrying about charging the Card multiple times. 
 
-You can simply retry the same call (as many times as needed) with the same `userSuppliedId`, and get the same 200 response upon success whether or not a previous request went through. 
-Our server will do the operation once and only once for that `userSuppliedId`.
+Lightrail supports idempotency via `userSuppliedId`, a unique string value provided by the client. This is required parameter by every API endpoint which is not naturally idempotent. When using the same `userSuppliedId`, Lightrail guarantees that the requested operation is only invoked once, regardless of how many times the request is received. This provides a mechanism for you to _retry_ when a request times out or fails for unknown reasons. 
 
-Given the above, it is important you think about how to structure your `userSuppliedId`s and error handling so that you are always sending a unique value for different logical requests, but the same one for any retries.  
+Note that the `userSuppliedId` must also be unique to the request; if you repeat the same `userSuppliedId` with a different request, you will receive an `HTTP 409` error indicating idempotency failure. 
 
-Attempting to reuse a `userSuppliedId` but providing different request parameters will result in a 409 error.
+Here is an example of a _drawdown_ request which includes a `userSuppliedId`. No matter how many time this request is received by the server, it will charge the Card only once. Moreover, if you try posting a different Transaction (e.g. with a different value) using this `userSuppliedId` you will get an error. 
 
-### About Currency Value, Currency Type, and No-Currency Use (Such as Points)
-Where currency type (eg. USD, CDN, AUD) is required or returned, the API expects/uses 3 character uppercase codes conforming to the ISO-4217 standard. 
-Lightrail does not do any currency conversion nor does currency influence internal behavior; rather, currency allows you to issue and track cards in different currencies as you choose.
+```json
+POST https://www.lightrail.com/v1/cards/{cardId}/transactions
+{
+  "userSuppliedId": "tx-2403423",
+  "value": -13500,
+  "currency": "USD"
+}
+```
 
-In all cases where value is concerned, you need to provide the amount in the smallest currency unit. 
-For most, this is the amount in cents (or pence, penny, or similarly named unit). For example, to create a Card for USD1.00, you would set the initialValue=100 (100 cents).
+Since Lightrail persists and returns the `userSuppliedId` with the corresponding object, you can also use it as a client-side unique identifier to link your client-side objects to Lightrail objects. For example, you can use your local Customer ID as the `userSuppliedId` when creating a new Lightrail Contact to associate your local Customer object with the Lightrail Contact object (as an alternative to saving the server-generated `contactId` with your local Customer object). You can use the `userSuppliedId` to retrieve the corresponding Contact object when necessary by [searching Contacts](#contact-list-anchor) and providing the `userSuppliedId` as a search parameter. 
 
-For zero-decimal currencies or use with non-currency applications such as points, use the regular whole denomination. 
-For example, for ¥1, you should set initialValue=1 (1 JPY), since ¥1 is the smallest currency unit.
+### Currencies 
+Lightrail API uses the three-character currency codes from the ISO-4217 standard, e.g. `USD`,` CDN`, and `AUD`. The special value `XXX` is defined by this standard for representing any non-currency values such as points.
 
-### About Dates
-The API expects all dates in request parameters to conform to the ISO-8601 format, specifically "yyyy-MM-dd'T'HH:mm:ss.SSSZ".  You can see examples in this documentation.
+All currency values are represented by the smallest currency unit, e.g. cents for USD or CAD. For example, to create a Card for USD1.00, you would set the `initialValue=100`.
 
-This allows you to control things such as Code expiry in fine granularity to the time zone of your choosing. 
-All responses will always be given in this same format.
+Lightrail does not do any form of currency exchange and only enforces the consistency of currencies among connected Lightrail objects. For example, if you create a Card with the principal Value Store in USD, you can only attach USD promotions to this Card and transact against it in USD. Note that Lightrail Transaction endpoints do not presume a default currency and you must provide the currency explicitly when posting a Transaction.
+
+### Dates
+Lightrail uses the `yyyy-MM-dd'T'HH:mm:ss.SSSZ` format from the ISO-8601 standard for all dates. This allows you to control things such as value expiry dates in fine granularity to the time zone of your choosing. You can see various examples of date values in the endpoint documentation. 
 
 ### Handling Error Responses
 
 Clients should always check the HTTP status code of the response and act accordingly if the response is not a 200.
 
-Error response JSON will be in the following format:
-- status: (number) - will match the HTTP response code.    
-- message: (string, optional) - a descriptive error message if one is available
-- code: (string, optional) - a code that can be provided to Lightrail support if troubleshooting help is needed
+The response JSON object in case of an error will be in the following format:
+- `status`: (number) - echoing the HTTP response code.    
+- `message`: (string, optional) - a descriptive error message if one is available. 
+- `messageCode`: (string, optional) - a code for the error that can be consumed programmatically.
+
+Note that the error `message` is intended to be shown to an end user; it may change from time to time to improve clarity and might be translated into other languages. For programmatic use, you should use the `messageCode` which reliably corresponds to the particular error case and is not subject to change without notice.
 
 #### Example error responses:
-| Status | Description         | Message                                                                                                                                          | 
-|:-------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
-| `400`  | bad request         | Failed to create card due to error during code creation. Response from code creation: Bad Request. Missing Required Parameter 'initialValue'.    | 
-| `401`  | unauthorized        | Unauthorized.                                                                                                                                    |
-| `409`  | idempotency failure | A different transaction with the same userSuppliedId already exists.                                                                             |
-| `429`  | throttled failure   | Too many requests.                                                              
+| Status | Description         | Message                                  |
+| :----- | ------------------- | ---------------------------------------- |
+| `400`  | bad request         | `Missing required parameter 'userSuppliedId'` |
+| `401`  | unauthorized        | `Unauthorized.`                          |
+| `409`  | idempotency failure | `A different transaction with the same userSuppliedId already exists.` |
+| `429`  | rate-limit failure  | `Too many requests.`                     |
+
+<a name="integrations-anchor"></a>
+## Integrations
+
+Here is the list of Lightrail integrations for different technologies and languages. If you are planning to integrate with Lightrail, before embarking on development check out this list to see if we already have a client library or plugin suitable for your project.
+
+### Languages
+
+#### Java
+
+- [Lightrail Java Client](https://github.com/Giftbit/lightrail-client-java)
+- [Lightrail Stripe Integration for Java](https://github.com/Giftbit/lightrail-stripe-java)
+
+#### PHP
+
+- [Lightrail WooCommerce Plugin](https://wordpress.org/plugins/lightrail-for-woocommerce/)
+
+### Third-Party Platforms
+
+#### Stripe
+
+- [Lightrail Stripe Integration for Java](https://github.com/Giftbit/lightrail-stripe-java)
+
+#### WooCommerce
+
+- [Lightrail WooCommerce Plugin](https://wordpress.org/plugins/lightrail-for-woocommerce/)
+
+
+  ​
+
 
 ### Legal Responsibilities
-The Lightrail API provides flexibility to implement multiple currency solutions (gift cards, unique promo codes, credit refunds, etc). 
-It is the responsibility of the API user and their organization to understand and follow the jurisdictions and laws that govern all aspects of their implementation.
+The Lightrail API provides a flexible infrastructure to implement various branded currency solutions, including gift cards, unique promo codes, account credits, refunds, etc. It is the responsibility of the API users and their organization to understand and comply with the laws and regulations in their jurisdiction in all aspects of their implementation.
 
 ### A Note on the Documentation
-This interactive documentation will provide full code samples in many popular languages and let you try out all functionality.
-
-The API Blueprint file that produces this documentation is in GitHub at https://github.com/Giftbit/Lightrail-API-Docs. 
-If you find a mistake or have a suggestion for improvement, please submit it directly via pull request.
+This interactive documentation provides full code samples in many popular languages and enables you to directly make test calls and checkout the API functionality. The sources for the API Blueprint file that produces this documentation can be found on our [GitHub Repository](https://github.com/Giftbit/Lightrail-API-Docs/tree/master/apiary-sources). If you notice any issues or have a suggestion for improvement, feel free to contact us or create a pull request.
 
 ## Ping and Health Check [/ping]
 Use the `/ping` endpoint to to health-check the API and test whether your API key is working correctly. 
@@ -565,6 +610,8 @@ Create a Card of type `GIFT_CARD`.
             }
 
 
+<a name="get-fullcode-anchor"></a>
+
 ### Retrieve fullcode for Gift Card [GET /cards/{cardId}/fullcode]
 Retrieve the `fullcode` associated with a Gift Card. 
 
@@ -822,6 +869,8 @@ Cancel a Card permanently.
 Contacts can be attached to Cards to help you keep track of who is interacting with your Cards.
 
 ---
+<a name="contact-list-anchor"></a>
+
 ### List Contacts [GET /contacts{?email}{?firstName}{?lastName}{?userSuppliedId}{?limit}{?offset}]
 Retrieve a paginated list of Contacts.
 
@@ -1052,6 +1101,7 @@ Note that only gift cards have an associated `fullcode`.
 
 
 ---
+<a name="post-transaction-by-cardid-anchor"></a>
 ### Create Transaction Based on Card ID [POST /cards/{cardId}/transactions]
 Creates a transaction against a Card based on its `cardId`.
 Transactions can be created as pending which locks the value required for the Transaction until it is either captured or voided. 
@@ -1124,6 +1174,8 @@ Transactions can be created as pending which locks the value required for the Tr
               }
             }
 
+
+<a name="post-transaction-by-fullcode-anchor"></a>
 
 ### Create Transaction Based on Gift Code [POST /codes/{fullcode}/transactions{?pin}]
 Creates a transaction against a Card based on the Gift Card's `fullcode`.
@@ -1956,6 +2008,8 @@ Permanently cancels a Card's ValueStore.
 This endpoint can be used to retrieve information about your existing Gift Card and Promotion Programs.
 
 ---
+<a name="get-programs-anchor"></a>
+
 ### List Programs [GET /programs{?limit}{?offset}]
 Retrieves a paginated list of all Lightrail Programs belonging to the user. 
 

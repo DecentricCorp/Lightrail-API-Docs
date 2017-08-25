@@ -15,4 +15,6 @@ Contact us anytime at hello@lightrail.com —we are here to help you solidify yo
 
 {% include 'sections/technical-details.md' %}
 
+{% include 'sections/integrations.md' %}
+
 {% include 'sections/epilogue.md' %}
