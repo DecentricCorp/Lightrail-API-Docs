@@ -7,5 +7,3 @@ Note that only gift cards have an associated `fullcode`.
 {% include 'endpoints/cards-cardId-balance-GET.md' %}
 
 {% include 'endpoints/codes-fullcode-card-balance-GET.md' %}
-
-{% include 'endpoints/codes-fullcode-balance-GET.md' %}
