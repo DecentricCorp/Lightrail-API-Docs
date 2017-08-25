@@ -1,5 +1,3 @@
-<a name="ping-endpoint-anchor"></a>
-
 ### Ping [GET]
 + Request (application/json)
     + Headers
