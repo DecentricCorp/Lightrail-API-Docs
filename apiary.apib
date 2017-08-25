@@ -52,7 +52,7 @@ The full API object model is here for your reference. We will discuss these obje
 
 ![Lightrail Object Model](https://giftbit.github.io/Lightrail-API-Docs/assets/lightrail-objects.svg)
 
-### Core Objects: Lightrail Cards and Value Stores: 
+### Core Objects: Cards and Value Stores
 
 The Card is the core concept in the Lightrail model and provides the main interface for storing, maintaining, and interacting with any sort of value that your business wishes to issue. Currently, there are two types of cards in Lightrail, _Gift Cards_ and _Account Cards_, which are distinguished by their `cardType` attribute. We will discuss these two types of cards in a bit.
 
@@ -1178,7 +1178,9 @@ Transactions can be created as pending which locks the value required for the Tr
 
 
 
-### Create Transaction Based on Gift Code [POST /codes/{fullcode}/transactions{?pin}] <a name="post-transaction-by-fullcode-anchor"></a>
+### Create Transaction Based on Gift Code [POST /codes/{fullcode}/transactions{?pin}] 
+
+<a name="post-transaction-by-fullcode-anchor"></a>
 
 Creates a transaction against a Card based on the Gift Card's `fullcode`.
 Transactions can be created as pending which locks the value required for the Transaction until it is either captured or voided.
