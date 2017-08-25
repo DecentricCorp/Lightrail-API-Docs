@@ -38,7 +38,7 @@ curl https://www.lightrail.com/v1/ping --header "Authorization: Bearer <apiKey>"
 ``` 
 
 A successful response means your API key works fine and you are ready to go. 
-If you are curious about the response content, check out the [`ping` endpoint documentation](#ping-endpoint-anchor).
+If you are curious about the response content, check out the [`ping` endpoint documentation](#ping-anchor).
 
 ### Next Step
 - More in-depth understanding of the Lightrail system: [Lightrail Object Model](#use-cases-anchor). 
@@ -292,10 +292,9 @@ The Lightrail API provides a flexible infrastructure to implement various brande
 ### A Note on the Documentation
 This interactive documentation provides full code samples in many popular languages and enables you to directly make test calls and checkout the API functionality. The sources for the API Blueprint file that produces this documentation can be found on our [GitHub Repository](https://github.com/Giftbit/Lightrail-API-Docs/tree/master/apiary-sources). If you notice any issues or have a suggestion for improvement, feel free to contact us or create a pull request.
 
+<a name="ping-anchor"></a>
 ## Ping and Health Check [/ping]
 Use the `/ping` endpoint to to health-check the API and test whether your API key is working correctly. 
-
-<a name="ping-endpoint-anchor"></a>
 
 ### Ping [GET]
 + Request (application/json)
