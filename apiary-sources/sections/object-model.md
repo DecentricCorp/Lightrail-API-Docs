@@ -7,11 +7,11 @@ The full API object model is here for your reference. We will discuss these obje
 
 ### Core Objects: Lightrail Cards and Value Stores: 
 
-The Card is the core concept in the Lightrail model and provides the main interface for storing, maintaining, and interacting with any sort of value that your business wishes to issue. Currently, there are two types of cards in Lightrail, _Gift Cards_ and _Account Cards_, which are distinguished based on the value of the `cardType` attribute on the `card` object. We will discuss these two types of cards in a bit.
+The Card is the core concept in the Lightrail model and provides the main interface for storing, maintaining, and interacting with any sort of value that your business wishes to issue. Currently, there are two types of cards in Lightrail, _Gift Cards_ and _Account Cards_, which are distinguished by their `cardType` attribute. We will discuss these two types of cards in a bit.
 
 A Card's value is stored in an object called a _Value Store_ which represents a specific instance of issued value and its attributes, such as its amount and validity period.  
 
-When a Card is created, a `principal` Value Store is automatically created and added to it. When additional promotions are added to a Card, they are represented as `attached` Value Stores. Unlike `attached` Value Stores which are often short-lived, the `principal` Value Store is tied to the Card throughout its lifetime and represents the overall state of the Card. For example, if the Principal Value Store is expired or canceled, the Card is also considered expired to canceled.
+When a Card is created, a `principal` Value Store is automatically created and added to it. When additional promotions are added to a Card, they are represented as `attached` Value Stores. Unlike `attached` Value Stores which are often short-lived, the `principal` Value Store is tied to the Card throughout its lifetime and represents the overall state of the Card. For example, if the Principal Value Store is expired or canceled, the Card is also considered expired or canceled.
 
 For example, a customer can buy a gift card with a primary value of $30 which never expires. This is stored in the Card's `principal` Value Store. Later, and in order to encourage the recipient to spend the gift value, you may attach a $5 promotional value to this Card as part of your _Back to School_ campaign, only valid in the last week of August. While this `attached` Value Store is active, the Card holder can spend $35 with the Card; when the attached Value Store expires at the end of August, the Principal Value Store will still be valid and the Card can still be used up to $30. See [the diagram below](#transaction-valustore-anchor) for a depiction of this example.
 
@@ -42,7 +42,7 @@ Individual customers are represented by _Contact_ objects in Lightrail. You can 
 
 As the name implies, Gift Cards represent a value created as a gift. Lightrail Gift Cards have a `fullcode`,  a  unique and unguessable alpha-numeric code which can be used by the Gift Card recipient to redeem its value.
 
-Since anyone who knows the `fullcode` can redeem the Gift Card value, the `fullcode` is often delivered to the Gift Card's recipient in confidence. To minimize the risk of its exposure (e.g. in the course of passing JSON object to the browser) only [one specific Lightrail endpoint](#get-fullcode-anchor) returns the `fullcode` and other endpoints only return the last four characters of the code when necessary. For similar reasons, we recommend that you refrain from persisting the `fullcode` in your database or logs.
+Since anyone who knows the `fullcode` can redeem the Gift Card value, the `fullcode` is often delivered to the Gift Card's recipient in confidence. To minimize the risk of its exposure (e.g. in the course of passing JSON objects to the browser) only [one specific Lightrail endpoint](#get-fullcode-anchor) returns the `fullcode` and other endpoints only return the last four characters of the code when necessary. For similar reasons, we recommend that you refrain from persisting the `fullcode` in your database or logs.
 
 While Contacts are not mandatory for Gift Cards, it is possible and recommended to associate a Gift Card with a Contact when you know the recipient. This will enable tracking all Lightrail values available to a customer both programmatically via the API and in the Lightrail Web App.
 
@@ -50,7 +50,7 @@ While Contacts are not mandatory for Gift Cards, it is possible and recommended 
 
 Account Cards represent values associated with an individual customer, represented by a linked Contact object. Account Cards can essentially be thought of as a customer's account, making them suitable for implementing customer account credit or points programs. Lightrail requires that a Contact has only one Account Card per currency. This makes handling transactions against account credits simpler as will be discussed in the [Account Credit Use-Case](#use-cases-account-credits-anchor).
 
-Unlike Gift Cards, Account Cards do not have a `fullcode` and interaction with their value is only possible via the Card object interface.
+Unlike Gift Cards, since Account Cards are tied to a known customer, they do not have a `fullcode` and interaction with their value is only possible via the Card object interface.
 
 To keep creation of Account Cards simpler, Lightrail does not require specifying a Program for Account Card creation and uses a default Program automatically created under the hood. The Principal Value Stores of all of your Account Cards (in each currency) are derived from that default Program. 
 
