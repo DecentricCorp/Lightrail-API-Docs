@@ -56,7 +56,7 @@ To keep creation of Account Cards simpler, Lightrail does not require specifying
 
 ### Transactions
 
-Various interactions with the Lightrail system take place in the form of _Transactions_. Most common types of Transactions are adding or deducting value from a Card, also known as  _funding_ and _drawdown_. Some other actions on Card or Value Store are also modelled as Transactions; for example, _activation_, _cancellation_, _freezing_, and _unfreezing_.
+Various interactions with the Lightrail system take place in the form of _Transactions_. The most common types of Transactions are adding or deducting value from a Card, also known as  _funding_ and _drawdown_. Some other actions on Cards or Value Stores are also modelled as Transactions; for example, _activation_, _cancellation_, _freezing_, and _unfreezing_.
 
 Lightrail supports a two-step _pending_ drawdown. A pending drawdown Transaction withholds the funds temporarily until eventually they are collected via a subsequent _capture_ Transaction, or canceled via a _void_ Transaction. 
 
