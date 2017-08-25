@@ -1,8 +1,9 @@
 
 ### Retrieve fullcode for Gift Card [GET /cards/{cardId}/fullcode]
+<a name="get-fullcode-anchor"></a>
+
 Retrieve the `fullcode` associated with a Gift Card. 
 
-<a name="get-fullcode-anchor"></a>
 
 ---
 + Parameters 
