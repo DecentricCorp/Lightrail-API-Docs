@@ -38,6 +38,8 @@ Currently, `currency` is also a required parameter which is for the purpose of c
 
 Optionally, you can specify an `initialValue`. This value must comply with the rules of the Promotion Program, e.g. be within the allowed value range.
 
+Other optional attributes in the request are `startDate` and `expires` which specify the validity period of the Promotion if it is different from the defaults set by the Program. Note that if specified, these values still need to be within the range set by the Promotion Program.
+
 Here is a sample request and response call: 
 
 ```json
@@ -49,11 +51,11 @@ POST https://api.lightrail.com/v1/cards/{cardId}/valueStores
   "initialValue": 150
 }
 ```
-The response object to this call includes both the `userSuppliedId` and a server-generated `valueStoreId` which you can persist and use in other operations regarding the Value Store such as _canceling_ or _freezing_ it. 
+The response object to this call includes a server-generated `valueStoreId` which you can persist and use in other operations regarding the Value Store such as _canceling_ or _freezing_ it. 
 
 ```json
 {
-  "valueStore":{
+  "valueStore": {
     "cardId": "card-6dxx89",
     "valueStoreId": "value-e3xxce",
     "valueStoreType": "ATTACHED",
