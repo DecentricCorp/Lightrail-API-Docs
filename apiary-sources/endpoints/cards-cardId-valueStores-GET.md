@@ -1,9 +1,12 @@
-### List ValueStores [GET /cards/{cardId}/valueStores]
+### List ValueStores [GET /cards/{cardId}/valueStores{?limit}{?offset}]
 Retrieve a paginated list of a Card's ValueStores.
 
 ---
 + Parameters
     + cardId (string, required) - {{card.cardId}}
+    + limit (number, optional) - {{pagination.limit}}
+    + offset (number, optional) - {{pagination.offset}}
+        
 
 + Request (application/json)
     + Headers
