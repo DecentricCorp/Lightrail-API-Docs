@@ -93,7 +93,9 @@ Traditional email services provide an SMTP interface but for sending emails usin
 
 For creating a new gift card, you need to provide the `programId` for the program to which the gift card will belong and specify that the card type is `GIFT_CARD`. 
 
-You also need to provide a `userSuppliedId` which is a client-side unique value to guarantee idempotence, i.e. to ensure that repeating the call with the same parameters will not lead to repeated server-side actions. Initial value and start and expiry dates are optional parameters.
+You also need to provide a `userSuppliedId` which is a client-side unique value to guarantee idempotency, i.e. to ensure that repeating the call with the same parameters will not lead to repeated server-side actions. 
+
+Initial value and start and expiry dates are optional parameters.
 
 Note that you can provide a JSON object as `metadata`. Technically, this metadata will be recorded with the initial transaction which funds the card with its initial value.
 
