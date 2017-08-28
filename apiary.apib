@@ -1797,11 +1797,15 @@ Retrieve a paginated list of a Card's ValueStores.
             }
 
 
-### Show ValueStore [GET /cards/{cardId}/valueStores/{valueStoreId}]
+### Show ValueStore [GET /cards/{cardId}/valueStores/{valueStoreId}{?limit}{?offset}]
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
     + valueStoreId (string, required) - The Lightrail ValueStore ID.
-
+    + limit (number, optional) - For pagination. The maximum number of results to return at once. 
+      + Default: 100
+    + offset (number, optional) - For pagination. The offset of the first results in the total results. 
+      + Default: 0
+    
 + Request (application/json)
     + Headers
     
