@@ -2,7 +2,10 @@
 
 ## Introduction
 
-This document is a quick guide to creating and distributing new Lightrail gift cards. The focus of this document is implementing this use-case by directly calling the Lightrail API. If you are looking for client libraries specific to a language or technology, check out our [client libraries and integrations](https://github.com/Giftbit/Lightrail-API-Docs#client-libraries-and-integrations).
+This document is a quick guide to creating and distributing new Lightrail gift cards. The focus of this document is to provide a quick step-by-step guide to implementing this use-case by directly calling the Lightrail API. 
+
+- If you would like to learn more about Lightrail concepts, checkout the [Lightrail Object Model](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#use-cases-anchor)
+- If you are looking for client libraries specific to a language or technology, check out our [Client Libraries and Integrations](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#integrations-anchor).
 
 ## Concepts
 
