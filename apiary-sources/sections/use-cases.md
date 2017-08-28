@@ -7,7 +7,7 @@ This section reviews some of the most common use-cases supported by Lightrail in
 Powering Gift Cards is one of the main of Lightrail. Some of the most common use-cases for Gift Cards are the following. For an step-by-step guide to implementing each use-case, follow the link: 
 
 - [Issue a Gift Card](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/gift-card.md)
-- Create and Attach a Promotion to a Gift Card
+- [Create and Attach Promotions to Cards](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md)
 - View Card Details and Balance
 - [Redeem a Gift Card value at the Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md)
 
