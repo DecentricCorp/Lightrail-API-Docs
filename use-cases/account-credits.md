@@ -2,7 +2,10 @@
 
 ## Introduction
 
-This document is a quick guide to implementing account credits powered by Lightrail. The focus of this document is implementing these use-cases by directly calling the Lightrail API. If you are looking for client libraries specific to a language or technology, check out our [integration projects](https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/Integrations.md).
+This document is a quick guide to implementing account credits powered by Lightrail. The focus of this document is to provide a quick step-by-step guide to implementing this use-case by directly calling the Lightrail API. 
+
+- If you would like to learn more about Lightrail concepts, checkout the [Lightrail Object Model](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#use-cases-anchor)
+- If you are looking for client libraries specific to a language or technology, check out our [Client Libraries and Integrations](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#integrations-anchor).
 
 ## Concepts
 
