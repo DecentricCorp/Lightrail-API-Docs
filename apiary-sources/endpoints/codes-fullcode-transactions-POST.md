@@ -22,7 +22,7 @@ so, when creating a pending Transaction you need to save the `cardId` from the r
             {{header.authorization}}
 
     + Attributes
-        + value (number) - {{transaction.value}} Must be negative (drawdown).
+        + value (number) - A negative indicating the value of the transaction in the smallest unit for the currency, e.g. cents for USD.
         + currency (required) - {{currency}}
         + metadata (Metadata, optional) - {{transaction.metadata}}
         + pending (boolean, optional) - {{transaction.pending}}

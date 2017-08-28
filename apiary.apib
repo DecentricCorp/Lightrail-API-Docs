@@ -1203,7 +1203,7 @@ so, when creating a pending Transaction you need to save the `cardId` from the r
             Authorization: Bearer <API_KEY>
 
     + Attributes
-        + value (number) - A negative or positive integer indicating the value of the transaction in the smallest unit for the currency, e.g. cents for USD. Must be negative (drawdown).
+        + value (number) - A negative indicating the value of the transaction in the smallest unit for the currency, e.g. cents for USD.
         + currency (required) - The three-character ISO-4217 currency.
         + metadata (Metadata, optional) - A key-value JSON object to store additional information. The `giftbit_*` namespace for keys is reserved. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`.
         + pending (boolean, optional) - If `true`, the transaction will be created as pending, i.e. the value will be locked until it is either captured or voided. The default is `false`.
