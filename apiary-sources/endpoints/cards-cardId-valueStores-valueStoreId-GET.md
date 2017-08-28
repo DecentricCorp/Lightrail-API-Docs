@@ -1,10 +1,8 @@
-### Show ValueStore [GET /cards/{cardId}/valueStores/{valueStoreId}{?limit}{?offset}]
+### Show ValueStore [GET /cards/{cardId}/valueStores/{valueStoreId}]
 + Parameters
     + cardId (string, required) - {{card.cardId}}
     + valueStoreId (string, required) - The Lightrail ValueStore ID.
-    + limit (number, optional) - {{pagination.limit}}
-    + offset (number, optional) - {{pagination.offset}}
-    
+
 + Request (application/json)
     + Headers
     
