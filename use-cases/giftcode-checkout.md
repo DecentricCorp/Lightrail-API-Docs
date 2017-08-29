@@ -2,11 +2,11 @@
 
 ## Introduction
 
-This document is a quick guide to processing Lightrail value redemption (e.g. gift codes or customer account credits) at the order checkout. We discuss the main flow based on gift codes; using a Lightrail account credit instead of a gift code is straightforwardly similar and will be briefly discussed [at the end](#using-account-credits).   
+This document is a quick guide to processing Lightrail value redemption (e.g. Gift Cards or customer Account Credits) at the order checkout. We discuss the main flow based on Gift Cards; the flow for Account Credit is straightforwardly similar and will be briefly discussed [at the end](#using-account-credits).   
 
 The focus of this document is to provide a quick step-by-step guide to implementing this use-case by directly calling the Lightrail API. 
 
-- If you would like to learn more about Lightrail concepts, checkout the [Lightrail Object Model](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#object-model-anchor)
+- If you would like to learn more about Lightrail concepts, check out the [Lightrail Object Model](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#object-model-anchor)
 - If you are looking for client libraries specific to a language or technology, check out our [Client Libraries and Integrations](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#integrations-anchor).
 
 ## Use-Case
