@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document is a quick guide to processing Lightrail value redemption (e.g. Gift Cards or customer Account Credits) at the order checkout. We discuss the main flow based on Gift Cards; the flow for Account Credit is straightforwardly similar and will be briefly discussed [at the end](#using-account-credits).   
+This document is a quick guide to processing Lightrail value redemption (e.g. Gift Cards or customer Account Credits) at the order checkout. We discuss the main flow based on Gift Cards; the flow for Account Credits is straightforwardly similar and will be briefly discussed [at the end](#using-account-credits).   
 
 The focus of this document is to provide a quick step-by-step guide to implementing this use-case by directly calling the Lightrail API. 
 
