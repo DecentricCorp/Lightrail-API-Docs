@@ -26,7 +26,7 @@ Note that Lightrail values, including promotions, are always created as part of 
 
 You can start a promotion by creating a _Promotion Program_ in the Lightrail Web App. The Program specifies some overall attributes of the promotion such as currency, validity period, value range, and redemption rules. For example, you can create a _Back to School_ promotion Program with values in USD, valid only in the last week of August. 
 
-Once you have a Promotion Program, you can create promotional values based on that and attach them to existing Cards. The value will be subject to the rules and conditions set by the program. 
+Once you have a Promotion Program, you can create promotional values based on it and attach them to existing Cards. The value will be subject to the rules and conditions set by the program. 
 
 ## Detailed Flow
 
@@ -120,4 +120,3 @@ POST https://api.lightrail.com/v1/cards/{cardId}/valueStores/{valueStoreId}/canc
   }
 }
 ```
-
