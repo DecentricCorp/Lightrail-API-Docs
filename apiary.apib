@@ -1897,7 +1897,7 @@ Freeze a Card's ValueStore, preventing all transactions against that ValueStore 
     + Body 
     
             {
-                "userSuppliedId":"tx-122"
+                "userSuppliedId":"case-320"
             }
     
 + Response 200
@@ -1910,7 +1910,7 @@ Freeze a Card's ValueStore, preventing all transactions against that ValueStore 
                 "transaction":{
                     "transactionId": "transaction-3fxxe1",
                     "value": -50,
-                    "userSuppliedId": "freeze-valueStore-1",
+                    "userSuppliedId": "case-320",
                     "dateCreated": "2017-06-05T16:36:56.321Z",
                     "transactionType": "FREEZE",
                     "transactionAccessMethod": "CARDID",
@@ -1942,7 +1942,7 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
     + Body 
     
             {
-                "userSuppliedId":"tx-122"
+                "userSuppliedId":"case-320-resolved"
             }
     
 + Response 200
@@ -1955,7 +1955,7 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
                 "transaction":{
                     "transactionId": "transaction-f7xx82",
                     "value": 50,
-                    "userSuppliedId": "unfreeze-valueStore-1",
+                    "userSuppliedId": "ccase-320-resolved",
                     "dateCreated": "2017-06-05T16:37:57.218Z",
                     "transactionType": "UNFREEZE",
                     "transactionAccessMethod": "CARDID",
@@ -1987,7 +1987,7 @@ Permanently cancels a Card's ValueStore.
     + Body 
     
             {
-                "userSuppliedId":"tx-122"
+                "userSuppliedId":"case-122"
             }
     
 + Response 200
@@ -2000,7 +2000,7 @@ Permanently cancels a Card's ValueStore.
                 "transaction":{
                     "transactionId": "transaction-7fxx89",
                     "value": -50,
-                    "userSuppliedId": "cancel-valueStore-1",
+                    "userSuppliedId": "case-122",
                     "dateCreated": "2017-06-05T16:39:06.679Z",
                     "transactionType": "CANCELLATION",
                     "transactionAccessMethod": "CARDID",

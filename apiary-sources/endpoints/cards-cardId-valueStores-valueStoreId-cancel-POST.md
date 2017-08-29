@@ -17,7 +17,7 @@ Permanently cancels a Card's ValueStore.
     + Body 
     
             {
-                "userSuppliedId":"tx-122"
+                "userSuppliedId":"case-122"
             }
     
 + Response 200
@@ -30,7 +30,7 @@ Permanently cancels a Card's ValueStore.
                 "transaction":{
                     "transactionId": "transaction-7fxx89",
                     "value": -50,
-                    "userSuppliedId": "cancel-valueStore-1",
+                    "userSuppliedId": "case-122",
                     "dateCreated": "2017-06-05T16:39:06.679Z",
                     "transactionType": "CANCELLATION",
                     "transactionAccessMethod": "CARDID",

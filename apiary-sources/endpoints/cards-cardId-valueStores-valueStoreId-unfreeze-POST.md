@@ -17,7 +17,7 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
     + Body 
     
             {
-                "userSuppliedId":"tx-122"
+                "userSuppliedId":"case-320-resolved"
             }
     
 + Response 200
@@ -30,7 +30,7 @@ Unfreeze a Card's frozen ValueStore, re-enabling the creation of transactions ag
                 "transaction":{
                     "transactionId": "transaction-f7xx82",
                     "value": 50,
-                    "userSuppliedId": "unfreeze-valueStore-1",
+                    "userSuppliedId": "ccase-320-resolved",
                     "dateCreated": "2017-06-05T16:37:57.218Z",
                     "transactionType": "UNFREEZE",
                     "transactionAccessMethod": "CARDID",
