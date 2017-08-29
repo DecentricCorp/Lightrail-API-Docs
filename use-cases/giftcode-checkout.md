@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document is a quick guide to processing Lightrail value redemption (e.g. Gift Cards or customer Account Credits) at the order checkout. We discuss the main flow based on Gift Cards; the flow for Account Credits is straightforwardly similar and will be briefly discussed [at the end](#using-account-credits).   
+This document is a quick guide to processing Lightrail value redemption (e.g. Gift Cards or customer Account Credits) at the order checkout. 
 
 The focus of this document is to provide a quick step-by-step guide to implementing this use-case by directly calling the Lightrail API. 
 
@@ -11,36 +11,46 @@ The focus of this document is to provide a quick step-by-step guide to implement
 
 ## Use-Case
 
-Redemption at the checkout is perhaps the most common use-case for a gift code. After creating an order, a customer who has previously received a gift code can redeem it at the checkout so that the value of the gift code can pay for part, or all of the order balance.
+Redemption at the checkout is perhaps the most common use-case for Gift Cards and Account Credits. After creating an order and getting to the checkout page, the customer can choose to redeem the value of a Gift Card or Account towards fully or partially paying the order balance.
 
-The common flow for this is to provide the customer with a space to enter the gift code at the checkout page and determine the value of the gift code. Once the order is confirmed the gift code is charged up to its full value and any remainder is paid using a third-party payment method such as a credit card.
+For Gift Cards, the common flow is to provide a space for the customer to enter the Gift Card's `fullcode` at the checkout page and redeeming its value towards paying for the order. For Account Credits, usually the account's available balance is shown and the customer gets to choose how much of the order they would like to pay by redeeming value from their account.   
+
+Once the order is confirmed the Gift Card or the Account is charged and any remainder is paid using a third-party payment method such as a credit card.
+
+We discuss the flow based on Gift Cards first; the flow for Account Credits is very similar and will be briefly discussed [afterwards](#using-account-credits). If you only need to implement one of these cases, feel free to jump to the respective section.
+
 ## High-Level Flow
 
-Based on this, the high-level steps to implement this use-case are as follows:
+To implement this use-case you need to follow these high-level steps: 
 
-- Determine the value of the gift code.
-- Determine the gift code's share in paying for the order and whether or not there is any remainder to be charged to another payment method.
-- Charge the gift code and complete the order payment if the gift code has enough value to cover the whole order.
-- Otherwise, follow an auth-capture protocol: first post a pending charge on the gift code, and then attempt to charge the third-party payment method for the remainder. If the third-party payment is successful, collect the pending transaction on the gift code and complete the order payment. If the third-party payment fails, cancel the pending transaction on the gift code and declare failure for the order payment.
+- Capture the Gift Card by its `fullcode` or determine `cardId` of the Account Card.
+- Determine the value of the Gift Card or Account Card.
+- Determine the Card's share in paying for the order and whether or not there is any remainder to be charged to another payment method.
+- If the Card's share covers the whole order, charge the Card and complete the order payment, otherwise, follow an _preauthorize-capture_ protocol: 
+  - Post a _pending_ charge on the Card.
+  - Attempt to charge the third-party payment method for the remainder. 
+  - If the third-party payment is successful, _capture_ the pending transaction on the gift code and complete the order payment. If the third-party payment fails, _void_ the pending transaction on the Card and declare that the order payment has failed.
 
 ## Detailed Flow
 
-The API calls for handling this use-case are discussed below. More details for each API endpoint and sample requests/responses are provided in the next section but for a complete reference and further details, check out the [Lightrail API docs](https://www.lightrail.com/docs/).
+The API calls for handling this use-case are discussed below. More details for each API endpoint and sample requests/responses are provided in the next section. 
 
-**Step 1:** Determine `orderBalance` and `orderCurrency` for the order at hand and collect the `giftCode` from the customer.
+**Step 1:** Determine `orderTotal` and `orderCurrency` for the order at hand and collect the Gift Card's `fullcode` from the customer.
 
-**Step 2:** Use the [Code Balance API endpoint](#code-balance-endpoint) to determine the available value of the code (`giftCodeValue`).
+**Step 2:** Use the [Code Balance API endpoint](#code-balance-endpoint) to determine the available value of the Gift Card; call it `giftValue`. Based on the value of `giftValue`, determine whether there is any remainder to be charged to a third-party payment method:
 
-**Step 3:** If `giftCodeValue >= orderBalance` , meaning the gift code value is enough to pay for the entire order, use the [Code Transaction API endpoint](#code-transaction-endpoint)  to charge the code with `orderBalance`. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If there is an error with this transaction, notify the customer that the checkout was not successful. 
+`remainder = orderBalance - giftValue`
 
-**Step 4:** If `giftCodeValue < orderBalance`, meaning the gift code value is not enough to pay for the entire order, the gift code will pay for part of the balance (`giftCodeShare`) and the remainder (i.e. `orderBalance - giftCodeShare`) should be paid by another payment method. Usually, `giftCodeShare` is the value of the gift code, i.e. the maximum it can pay.
+**Step 3:** If `remainder <= 0` , the entire order can be paid by the Gift Card, so use the [Code Transaction API endpoint](#code-transaction-endpoint) to charge the Gift Card for the amount of `orderTotal`. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If the transaction fails, notify the customer that the checkout was not successful. 
 
-After determining the `giftCodeShare`, proceed with the following steps: 
+If `remainder > 0`, the gift code value is not sufficient to pay for the entire order, so the Gift Card pays only for part of the order and the `remainder` must be paid another payment method vie the following steps:
 
-- Use the [Code Transaction API endpoint](#code-transaction-endpoint) to create a `pending` charge on the gift code with the value of `giftCodeShare`. Save the `transactionId` and the `cardId` from the response object.
-- Attempt to charge the third-party payment method with the remainder of the order balance, i.e.`orderBalance - giftCodeShare`.
-- If the the third-party payment is successful, use the [Card Transaction API endpoint](#card-transaction-endpoint) to capture the pending charge on the gift code. You need to provide the `cardId` and the original `transactionId` from the response to the pending transaction in this step.
-- If the third-party payment fails, use the [Card Transaction API endpoint](#card-transaction-endpoint) to cancel the pending charge on the gift code.  You need to provide the `cardId` and the original `transactionId` from the response to the pending transaction in this step.
+- Use the [Code Transaction API endpoint](#code-transaction-endpoint) to create a `pending` drawdown transaction on the Gift Card with the value of `giftValue`. Save the `transactionId` and the `cardId` from the response object.
+
+
+- Attempt to charge the third-party payment method with `remainder`.
+- If the the third-party payment is successful, use the [Card Transaction API endpoint](#card-transaction-endpoint) to _capture_ the pending transaction on the Gift Card. You will need the `cardId` and the original `transactionId` from the response to the pending transaction in this step.
+- If the third-party payment fails, use the [Card Transaction API endpoint](#card-transaction-endpoint) to _void_ the pending transaction on the Gift Card. You need to provide the `cardId` and the original `transactionId` from the response to the pending transaction in this step.
 
 The following sequence diagram summarizes these steps.
 
@@ -48,78 +58,87 @@ The following sequence diagram summarizes these steps.
 
 ### Errors and Edge Cases
 
-**Step 2:**  At the time of checking the value of the gift code, read its `state`, and its `currency` from the response object and prompt the user with an error if:
+**Step 2:**  When checking the value of the Gift Card, read its `state`, and its `currency` from the response object and prompt the user with an error if:
 
-- The gift code `state` is not `ACTIVE`, 
-- its currency does not match `orderCurrency`, or
+- The `state` is not `ACTIVE`, 
+- The currency does not match `orderCurrency`, or
 - its available value is zero.
 
-**Step 3:** When the gift code value is not enough to pay for the entire order, the `giftCodeShare` is usually the maximum it can contribute, i.e. its value. However, since some third-party payment methods have a restriction on the minimum transaction value, if the remainder is too small, it will lead to a failure in the third-party payment. In the edge case that the remainder is too small and would not meet the minimum-transaction-value requirements of the third-party payment method, you need to adjust the split a little bit to make sure the remainder is payable by the third-party payment method. Here is a code snippet based on our [Stripe Integration](https://github.com/Giftbit/lightrail-stripe-java) for handling this logic:
+**Step 3:** When the Gift Card value is not sufficient to cover the entire order, the share of the Gift Card is usually the maximum it can contribute, i.e. its available balance. However, since some third-party payment methods have a restriction on the minimum transaction value, if the remainder is too small, the third-party payment will fail. In the edge case that the remainder is too small to meet the minimum-transaction-value requirements of the third-party payment method, you need to adjust the split a little bit to make sure the remainder is payable by the third-party payment method. Here is a code snippet based on our [Stripe Integration](https://github.com/Giftbit/lightrail-stripe-java) for handling this logic:
 
 ```php
-$giftCodeShare = min($orderBalance, $giftCodeValue);
-$stripeShare = $orderBalance - $giftCodeShare;
+$giftCardShare = min($orderBalance, $giftValue);
+$stripeShare = $orderTotal - $giftCardShare;
 if ($stripeShare > 0 && $stripeShare < STRIPE_MINIMUM_TRANSACTION_VALUE) {
   $differential = STRIPE_MINIMUM_TRANSACTION_VALUE - $stripeShare;
-  $giftCodeShare -= $differential;
-  if ($giftCodeShare < 0)
-    throw new Exception("The gift code value is too small for this transaction");
+  $giftCardShare -= $differential;
+  if ($giftCardShare < 0)
+    throw new Exception("The gift card value is too small for this transaction");
 }
 ```
 
-Note that there is a narrower edge case where the gift code value is too small to pay for the entire order, but also the order balance is so small that the remaining balance after taking out the gift code value will be too small for the third-party transaction. In these rare cases, the customer should be notified that the gift code value is too small for that transaction.
+Note that there is a narrower edge case where the Gift Card value is too small to pay for the entire order, but also the order total is so small that the remaining balance after taking out the Gift Card value will be too small for the third-party transaction. In these rare cases, the customer should be notified that the Gift Card value is too small to be spent towards that particular transaction.
 
 ## Using Account Credits
 
-Account credits are values associated with a customer; the customer usually earns these values as rewards based on different criteria, and subsequently gets to redeem the value at some point. For more details about account credits use-cases and how to implement them, check out our guide on [Account Credits Powered by Lightrail](https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/use-cases/account-credits.md).
+Account credits are values associated with a customer modelled by the Lightrail concept of Account Card. The customer usually earns reward values based on different criteria and subsequently gets to redeem these values in the checkout process. To learn more about Account Cards check out the Lightrail Object Model in our [API Docs](https://www.lightrail.com/docs/). For more details on the account credits use-cases, check out our Account Credits [Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md).
 
 ### High-Level Flow
 
 The high-level flow for redeeming a value from a customer's account credits is very similar to the gift-code flow discussed above. 
 
 - On the order checkout page, the balance of the customer's account is displayed. The customer is provided with the option to decide whether or not they would like to redeem their account balance towards paying for the order. 
-- Additionally, sometimes the customer is also given the option to select how much of the balance they would like to spend at the checkout. For example, if the customer has accrued $25 of rewards in their account, they may be given the choice to indicate they will only use $10 of it for the order checkout at hand.
-- Once the share of the account credit in the payment is determined, this value is charged to the account. If there is any remainder, charging the account should take place by following the authorize-capture flow: first post a pending charge to the account, then attempt to charge the remainder on a third-party payment method. If the third-party payment was successful capture the pending transaction on the account, otherwise void it.
+- Additionally, sometimes the customer is also given the option to select how much of the balance they would like to spend towards the order. For example, if the customer has accrued $25 worth of rewards in their account, they may be given the choice of only using $10 of it for paying towards the order at hand.
+- Once the share of the account credit in the payment is determined, this value is charged to the account. If there is any remainder, charging the account should take place by following the _preauthorize-capture_ protocol: 
+  - Post a _pending_ charge to the account.
+  - Attempt to charge the remainder on a third-party payment method. 
+  - If the third-party payment was successful _capture_ the pending transaction on the account, otherwise _void_ the pending transaction.
 
 ### Detailed Flow
 
-**Step 1:** Determine `orderBalance` and `orderCurrency` for the order at hand and determine the Lightrail `contactId` corresponding to the the customer. Usually the customer must be logged in for this to be possible.
+**Step 1:** Determine `orderTotal` and `orderCurrency` for the order at hand and determine the Lightrail `contactId` corresponding to the the customer. Normally, the customer must be logged in for this to be possible.
 
-**Step 2:** Use the [Card Search API endpoint](#card-search-endpoint) to retrieve the account Card `cardId` corresponding to the customer and the `orderCurrency`. Note that since account credits are currency-specific, you need to find the account that corresponds to the currency of the checkout. If there are no account cards for this currency, then the customer has no account value compatible to the order in question. 
+**Step 2:** Use the [Card Search API endpoint](#card-search-endpoint) to retrieve the `cardId` of the customer's Account Card for the `orderCurrency`. Note that since account credits are currency-specific, if your system supports multiple currencies, you need to find the Account Card that corresponds to the currency of the order. If there are no account cards for that currency, then the customer has no account value compatible to the order at hand. 
 
 **Step 3:** Use the [Card Balance API endpoint](#card-balance-endpoint) to determine the available balance of the account.
 
-**Step 4:** Determine the `lightrailShare` either automatically or by giving the customer the choice to decide how much from their account they would like to spend. Based on the value of `lightrailShare`, determine whether there is any remainder to be charged to a third-party payment method:
+**Step 4:** Determine the `accountShare` either automatically or by giving the customer the choice to decide how much from their account they would like to spend. Based on the value of `accountShare`, determine whether there is any remainder to be charged to a third-party payment method:
 
-`remainder = orderBalance - lightrailShare`
+`remainder = orderBalance - accountShare`
 
-**Step 5:** If `remainder==0` , meaning the entire order balance will be charged on the account, use the [Card Transaction API endpoint](#card-transaction-endpoint)  to charge the account Card with `lightrailShare`. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If there is an error with this transaction, notify the customer that the checkout was not successful. 
+**Step 5:** If `remainder == 0` , the entire order can be paid by the account, so use the [Card Transaction API endpoint](#card-transaction-endpoint) to charge the account Card with `orderBalance`. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If the transaction fails, notify the customer that the checkout was not successful. 
 
 If `remainder > 0`, proceed with the following steps: 
 
-- Use the [Card Transaction API endpoint](#card-transaction-endpoint) to create a `pending` charge on the account card with the value of `lightrailShare`. Save the `transactionId` from the response object.
+- Use the [Card Transaction API endpoint](#card-transaction-endpoint) to create a `pending` transaction on the Account Card with the value of `accountShare`. Save the `transactionId` from the response object.
 - Attempt to charge the third-party payment method for the value of `remainder`.
-- If the the third-party payment is successful, use the [Card Transaction API endpoint](#card-transaction-endpoint) to capture the pending transaction. You need to provide the account `cardId` and the original `transactionId` from the response to the pending transaction in this step.
-- If the third-party payment fails, use the [Card Transaction API endpoint](#card-transaction-endpoint) to cancel the pending transaction. You need to provide the account `cardId` and the original `transactionId` from the response to the pending transaction in this step.
+- If the the third-party payment is successful, use the [Card Transaction API endpoint](#card-transaction-endpoint) to _capture_ the pending transaction. You need to provide the Account Card's `cardId` and the original `transactionId` from the response to the pending transaction in this step.
+- If the third-party payment fails, use the [Card Transaction API endpoint](#card-transaction-endpoint) to _void_ the pending transaction. You need to provide the Account Card's `cardId` and the original `transactionId` from the response to the pending transaction in this step.
 
 ## API Endpoints
 
-### Code Balance Endpoint
+This section provides a brief overview of the API calls necessary for this use-case with example requests and responses. For a complete reference and further details about the endpoints, check out the [Lightrail API docs](https://www.lightrail.com/docs/).
 
-This endpoint provides a detailed breakdown of the gift code balance, as well as its currency and state, i.e. whether it is active. Usually, the balance of the gift code is returned in its `principal` value store, but if you are using gift codes with attached promotions (e.g. temporary promotional offers), these additional values are returned in the `attached` objects in the response. In such cases, the effective value of a gift code is the available value in its `principal` value store, plus the sum of all `attached` values that are currently active. So, in order to get the effective available value of a gift code you need to use the following logic:
+### Card Balance Endpoint
+
+This endpoint provides a detailed breakdown of a Card's balance, as well as its `currency` and `state`, i.e. whether it is active. You will need the Card's `cardId` for this call. For an Account Card, if you do not have the `cardId` you can retrieve it based on the customer's `contactId` using the [Card Search Endpoint](#card-search-endpoint), as discussed later below. For Gift Cards, you can get the balance directly based on the `fullcode` from the similar [Code Balance Endpoint](#code-balance-endpoint) discussed below.
+
+Usually, the balance of the Card is returned in its `principal` value store, but if you are using attached promotions, these additional values are returned in the `attached` objects in the response. To read more about attached promotions check out [Lightrail API docs](https://www.lightrail.com/docs/) and the [Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md) for creating promotions. 
+
+The effective value of a Card is the value of its `principal` value store, plus the sum of all active `attached` promotions. So, in order to get the effective available value of a Card  you need to use the following logic:
 
 ```php
-$giftCodeValue = $response['balance']['principal']['currentValue'];
+$cardValue = $response['balance']['principal']['currentValue'];
 foreach ($response['balance']['attached'] as $attachedValue) {
   if ($attachedValue['state'] === 'ACTIVE')
-  	$giftCodeValue += $attachedValue['currentValue'];
+  	$cardValue += $attachedValue['currentValue'];
 }
 ```
 
 Request:
 
 ```json
-GET https://api.lightrail.com/v1/codes/{giftCode}/card/balance
+GET https://api.lightrail.com/v1/cards/{cardId}/balance
 ```
 
 Response sample:
@@ -160,35 +179,37 @@ Response sample:
 }
 ```
 
-### Card Balance Endpoint
+### Code Balance Endpoint
 
-You can use the card balance endpoint to check the available value of an account Card by providing the account `cardId`. If you do not have the `cardId` you can retrieve it based on the customer's `contactId` using the [Card Search Endpoint](#card-search-endpoint), as discussed later below.
+You can use the code balance endpoint to check the available value of a Gift Card by providing its `fullcode`. 
 
 ```json
-GET https://api.lightrail.com/v1/cards/{cardId}/balance
+GET https://api.lightrail.com/v1/codes/{fullcode}/card/balance
 ```
 
-The response from this endpoint and the logic required for computing the effective available balance is similar to what is discussed above for gift codes.
+The response from this endpoint and the logic required for computing the effective available balance is similar to what is discussed above.
 
-### Code Transaction Endpoint
+### Card Transaction Endpoint
 
-This endpoint enables posting a transaction to withdraw some value from a gift code. The value should be expressed as an integer, representing the amount in the smallest unit for the currency, e.g. cents.
+#### Posting a New Transaction
 
-The `userSuppliedId` is a per-endpoint unique identifier, used to ensure idempotence. Ensuring idempotence means that if the same request is issued more than once, it will not result in repeated actions. For this use-case, we recommend using the unique order ID from your system. For further details on this, see [Lightrail API docs](https://www.lightrail.com/docs/). 
+This endpoint enables posting a transaction to withdraw some value from a Card based on its `cardId`. The value should be expressed as a negative integer, representing the amount in the smallest unit for the currency, e.g. cents.
 
-If `pending` is set to `true` in the request body, the transaction will be considered a pre-authorized transaction, and will have to be captured or voided later. 
+For Account Cards, if you do not have the `cardId` you can retrieve it by based on the customer's `contactId` using the [Card Search Endpoint](#card-search-endpoint). For Gift Cards, you can use [a similar endpoint](#code-transaction-endpoint) which enables posting transactions directly based on `fullcode` without retrieving the `cardId`.
 
-After receiving the response to a pending transaction, save the `cardId` and  `transactionId` from the response object; they will be needed later when trying to `capture` or `void` the pending transaction.
+The `userSuppliedId` is a per-endpoint unique identifier, used to ensure idempotency. Ensuring idempotency means that if the same request is issued more than once, it will not result in repeated actions on the server. For further discussions on `userSuppliedId`, see [Lightrail API docs](https://www.lightrail.com/docs/). For this use-case, we recommend that you use the unique order ID from your system as the transaction `userSuppliedId`. 
+
+If `pending` is set to `true` in the request body, the transaction will be considered a pre-authorized pending transaction and will have to be _captured_ or _voided_ later. Save the `cardId` and `transactionId` from the response of a pending transaction as you will need them for [capturing or voiding](#voiding-or-capturing-a-pending-transaction) the pending transaction later.
 
 Request Sample:
 
 ```json
-POST https://api.lightrail.com/v1/codes/{giftCode}/transactions
+POST https://api.lightrail.com/v1/cards/{cardId}/transactions
 {
   "currency": "USD",
   "value": -101
   "pending": true,
-  "userSuppliedId": "072f0701-0e68-4676-9472-c24a96f88571",
+  "userSuppliedId": "07xx71",
 }
 ```
 
@@ -196,31 +217,27 @@ Response Sample:
 
 ```json
 {
-    "transaction": {
-        "transactionId": "transaction-b4",
-        "value": -101,
-        "userSuppliedId": "072f0701-0e68-4676-9472-c24a96f88571",
-        "dateCreated": "2017-07-10T23:36:28.078Z",
-        "transactionType": "PENDING_CREATE",
-        "transactionAccessMethod": "RAWCODE",
-        "giftbitUserId": "user-08",
-        "cardId": "card-6d",
-        "currency": "USD",
-        "codeLastFour": "7KKT"
-    }
+   "transaction": {
+   "transactionId": "transaction-b4",
+     "value": -101,
+     "userSuppliedId": "07xx71",
+     "dateCreated": "2017-07-10T23:36:28.078Z",
+     "transactionType": "PENDING_CREATE",
+     "transactionAccessMethod": "RAWCODE",
+     "giftbitUserId": "user-08",
+     "cardId": "card-6d",
+     "currency": "USD",
+     "codeLastFour": "7KKT"
+   }
 }
 ```
+### Code Transaction Endpoint
 
-### Card Transaction Endpoint
+This endpoint enables posting a transaction to withdraw some value from a Gift Card based on its `fullcode`. The request and response objects are identical to that of the [Card Transaction Endpoint](#posting-a-new-transaction).
 
-#### Posting a New Transaction
-
-Posting a transaction against a card is very similar to posting a transaction against a code. The request body is similarly composed of a `value` and its `currency`, as well as a `userSuppliedId`. The response object is also a `transaction` object similar to the one shown above.
-
-If you do not have the `cardId` for a customer account you can retrieve it by based on the customer's `contactId` using the [Card Search Endpoint](#card-search-endpoint). 
-
+Request Sample:
 ```json
-POST https://api.lightrail.com/v1/cards/{cardId}/transactions
+POST https://api.lightrail.com/v1/codes/{fullcode}/transactions
 {
   "userSuppliedId": "tx-fe2d",
   "value" : 120,
@@ -230,7 +247,7 @@ POST https://api.lightrail.com/v1/cards/{cardId}/transactions
 
 #### Voiding or Capturing a Pending Transaction
 
-After posting a `pending` transaction, you can use this endpoint to either capture or void it. Note that in order to call this endpoint you will need the `cardId` (corresponding to the account card or the gift code) and the `transactionId` for the original pending transaction which are provided in the response object from the original call to create the pending transaction.
+After posting a `pending` transaction, you can use this endpoint to either capture or void it. Note that in order to call this endpoint you will need the `cardId` (of the Account Card or Gift Card) and the `transactionId` of the original pending transaction. These are are provided in the response object from the original call to create the pending transaction.
 
 Request Samples:
 
@@ -252,34 +269,34 @@ Response Sample:
 
 ```json
 {
-    "transaction": {
-        "transactionId": "transaction-a7",
-        "value": 101,
-        "userSuppliedId": "transaction-46-reverse",
-        "dateCreated": "2017-07-12T00:22:48.379Z",
-        "transactionType": "PENDING_VOID",
-        "transactionAccessMethod": "CARDID",
-        "giftbitUserId": "user-08",
-        "cardId": "card-6d",
-        "currency": "USD",
-        "parentTransactionId": "transaction-46",
-        "metadata": {
-            "giftbit_initial_transaction_id": "transaction-46"
-        },
-        "codeLastFour": "7KKT"
-    }
+   "transaction": {
+     "transactionId": "transaction-a7",
+     "value": 101,
+     "userSuppliedId": "transaction-46-reverse",
+     "dateCreated": "2017-07-12T00:22:48.379Z",
+     "transactionType": "PENDING_VOID",
+     "transactionAccessMethod": "CARDID",
+     "giftbitUserId": "user-08",
+     "cardId": "card-6d",
+     "currency": "USD",
+     "parentTransactionId": "transaction-46",
+     "codeLastFour": "7KKT",
+     "metadata": {
+       "giftbit_initial_transaction_id": "transaction-46"
+     }
+   }
 }
 ```
 
 ### Card Search Endpoint
 
-You can call the Cards Endpoint with search parameters to retrieve the account Card belonging to a Contact for a particular currency:
+You can call the this endpoint with search parameters to retrieve the account Card belonging to a Contact for a particular currency:
 
 ```json
 GET https://api.lightrail.com/v1/cards?cardType=ACCOUNT_CARD&currency={currency}&contactId={contactId}
 ```
 
-The response is in the form of search results which includes an array of `card` objects similar to the following. Note that it is guaranteed that there will be at most one `card` object in the results since there can only be one card per currency per contact: 
+The response is in the form of search results which includes an array of `card` objects. Note that since each Contact can only one Account Card per currency, it is guaranteed that there will be at most one `card` object in the results. Here is a sample response: 
 
 ```json
 {
@@ -293,12 +310,12 @@ The response is in the form of search results which includes an array of `card` 
     "currency": "USD"
     "categories":[
      {
-      "categoryId": "category-bd12dd18dfc14089b0e59ec90eb10388",
+      "categoryId": "category-bdxx88",
       "key": "giftbit_order",
       "value": "2017-07-26"
      },
      {
-      "categoryId": "category-956471f4bf82468bb3767f93fe814fc2",
+      "categoryId": "category-95xxc2",
       "key": "giftbit_program",
       "value": "program-account-USD-user-088e-TEST"
      }
@@ -314,6 +331,3 @@ The response is in the form of search results which includes an array of `card` 
  }
 }
 ```
-
-
-
