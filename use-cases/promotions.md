@@ -9,7 +9,9 @@ This document is a quick guide to adding promotions to existing Lightrail Cards.
 
 ## Concepts
 
-One of the powerful features of Lightrail is adding promotions to Cards. Promotions are auxiliary values that can be attached to existing Cards and are often temporary and subject to some conditions. Promotions are often used to encourage customers to spend their gift or account credit value by making time-limited additional value offers.
+One of the powerful features of Lightrail is the ability to add promotions to Cards. Promotions are additional values that can be attached to existing Cards and are often temporary and subject to some conditions. 
+
+Promotions are usually used to encourage customers to expedite spending their gift or account credit value by making additional time-limited offers, or to incentivize spending the value on certain items or in certain ways. For example, you can attach a $10 promotional value to an existing Gift Card, valid only for one week and redeemable only if the customer spends more than $100 on buying a certain brand of jeans and pays with a certain type of credit card. You can read more about Lightrail's powerful [Redemption Rules](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md) on promotions.
 
 ## High-Level Flow
 
