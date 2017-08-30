@@ -138,7 +138,7 @@ The successful response to this call will look like the following:
   "metadata":{
     "split-tender-partner": "lightrail",
     "split-tender-total": {total},
-    "split-tender-partner-txn-id": "{lightrailPendingTransactionId}"
+    "split-tender-partner-txn-id": {lightrailPendingTransactionId}
   }
   ...
 }
@@ -165,7 +165,7 @@ POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{lightrailPendingT
   "metadata":{
     "split-tender-partner": "stripe",
     "split-tender-total": {total},
-    "split-tender-partner-txn-id": "{stripeTransactionId}"
+    "split-tender-partner-txn-id": {stripeTransactionId}
   }
 }
 ```
