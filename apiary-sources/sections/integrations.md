@@ -23,7 +23,3 @@ Here is the list of Lightrail integrations for different technologies and langua
 #### WooCommerce
 
 - [Lightrail WooCommerce Plugin](https://wordpress.org/plugins/lightrail-for-woocommerce/)
-
-
-  ​
-
