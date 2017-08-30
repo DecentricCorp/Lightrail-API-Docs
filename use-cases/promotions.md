@@ -5,7 +5,7 @@
 This document is a quick step-by-step guide to adding promotions to existing Lightrail Cards. The focus will be on implementing this use-case by programmatically calling the Lightrail API. 
 
 - If you would like to learn more about Lightrail concepts, check out the section on Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/).
-- If you are looking for client libraries specific to a language or technology, check out our [Client Libraries and Integrations](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#integrations-anchor).
+- If you are looking for an implementation of this use-case in a specific language or technology, check out the section on Client Libraries and Integrations in the [Lightrail API Docs](https://www.lightrail.com/docs/).
 
 Note that promotions can also be created from the Promotions section of the Lightrail Web App.
 

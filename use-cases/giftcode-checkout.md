@@ -2,12 +2,10 @@
 
 ## Introduction
 
-This document is a quick guide to processing Lightrail value redemption (e.g. Gift Cards or customer Account Credits) at the order checkout. 
+This document is a quick step-by-step guide to processing Lightrail value redemption (Gift Cards or Account Credits) at the order checkout. The focus will be on implementing this use-case by programmatically calling the Lightrail API. 
 
-The focus of this document is to provide a quick step-by-step guide to implementing this use-case by directly calling the Lightrail API. 
-
-- If you would like to learn more about Lightrail concepts, check out the [Lightrail Object Model](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#object-model-anchor)
-- If you are looking for client libraries specific to a language or technology, check out our [Client Libraries and Integrations](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#integrations-anchor).
+- If you would like to learn more about Lightrail concepts, check out the section on Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/).
+- If you are looking for an implementation of this use-case in a specific language or technology, check out the section on Client Libraries and Integrations in the [Lightrail API Docs](https://www.lightrail.com/docs/).
 
 ## Use-Case
 
@@ -41,7 +39,7 @@ The API calls for handling this use-case are discussed below. More details for e
 
 `remainder = orderBalance - giftValue`
 
-**Step 3:** If `remainder <= 0` , the entire order can be paid by the Gift Card, so use the [Code Transaction API endpoint](#code-transaction-endpoint) to charge the Gift Card for the amount of `orderTotal`. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If the transaction fails, notify the customer that the checkout was not successful. 
+**Step 3:** If `remainder <= 0` , the entire order can be paid by the Gift Card, so use the [Code Transaction API endpoint](#code-transaction-endpoint) to charge the Gift Card for the amount of `orderTotal`. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If the transaction fails, the checkout is not successful. 
 
 If `remainder > 0`, the gift code value is not sufficient to pay for the entire order, so the Gift Card pays only for part of the order and the `remainder` must be paid another payment method vie the following steps:
 
@@ -106,7 +104,7 @@ The high-level flow for redeeming a value from a customer's account credits is v
 
 `remainder = orderBalance - accountShare`
 
-**Step 5:** If `remainder == 0` , the entire order can be paid by the account, so use the [Card Transaction API endpoint](#card-transaction-endpoint) to charge the account Card with `orderBalance`. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If the transaction fails, notify the customer that the checkout was not successful. 
+**Step 5:** If `remainder == 0` , the entire order can be paid by the account, so use the [Card Transaction API endpoint](#card-transaction-endpoint) to charge the account Card with `orderBalance`. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If the transaction fails, the checkout is not successful. 
 
 If `remainder > 0`, proceed with the following steps: 
 
@@ -231,7 +229,7 @@ Response Sample:
    }
 }
 ```
-### Code Transaction Endpoint
+#### Code Transaction Endpoint
 
 This endpoint enables posting a transaction to withdraw some value from a Gift Card based on its `fullcode`. The request and response objects are identical to that of the [Card Transaction Endpoint](#posting-a-new-transaction).
 
