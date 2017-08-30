@@ -237,9 +237,10 @@ Request Sample:
 ```json
 POST https://api.lightrail.com/v1/codes/{fullcode}/transactions
 {
-  "userSuppliedId": "tx-fe2d",
-  "value" : 120,
-  "currency": "USD"
+  "currency": "USD",
+  "value" : -101,
+  "pending": true,
+  "userSuppliedId": "07xx71d"
 }
 ```
 
