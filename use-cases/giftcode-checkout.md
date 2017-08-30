@@ -2,11 +2,9 @@
 
 ## Introduction
 
-This document is a quick guide to processing Lightrail value redemption (e.g. Gift Cards or customer Account Credits) at the order checkout. 
+This document is a quick step-by-step guide to processing Lightrail value redemption (e.g. Gift Cards or customer Account Credits) at the order checkout. The focus will be on implementing this use-case by programmatically calling the Lightrail API. 
 
-The focus of this document is to provide a quick step-by-step guide to implementing this use-case by directly calling the Lightrail API. 
-
-- If you would like to learn more about Lightrail concepts, check out the [Lightrail Object Model](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#object-model-anchor)
+- If you would like to learn more about Lightrail concepts, check out the section on Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/).
 - If you are looking for client libraries specific to a language or technology, check out our [Client Libraries and Integrations](https://jsapi.apiary.io/apis/giftbitcurrencyapi/introduction/getting-started/base-url.html#integrations-anchor).
 
 ## Use-Case
@@ -231,7 +229,7 @@ Response Sample:
    }
 }
 ```
-### Code Transaction Endpoint
+#### Code Transaction Endpoint
 
 This endpoint enables posting a transaction to withdraw some value from a Gift Card based on its `fullcode`. The request and response objects are identical to that of the [Card Transaction Endpoint](#posting-a-new-transaction).
 
