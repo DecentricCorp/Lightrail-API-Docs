@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document is a quick step-by-step guide to splitting a transaction between a Lightrail Card and Stripe. The focus will be on implementing this use-case by programmatically calling the Stripe and Lightrail API. 
+This document is a quick step-by-step guide to splitting a transaction between a Lightrail Card and Stripe. The focus will be on implementing this use-case by programmatically calling the Stripe and Lightrail APIs. 
 
 - For a more in-depth discussion of Lightrail value redemption, check out our guide to [Redeeming a Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md). 
 - If you would like to learn more about Lightrail concepts, check out the section on Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/).
@@ -10,51 +10,58 @@ This document is a quick step-by-step guide to splitting a transaction between a
 
 ## Concepts
 
-A _split-tender transaction_ is when a transaction is broken down into two (or more) transactions each processed by a different payment methods. In this use-case we will focus on the common case of dividing a transaction between a Lightrail Card (Gift Card or Account Card) and a credit card processed by Stripe. For example, if you are processing a $134.25 transaction and the customer would like to redeem a $30 value from their Gift Card, you need to charge $30 to the Lightrail Card and the remaining $104.25 must be charged to Stripe.
+A _split-tender_ happens when a transaction is broken down into two (or more) transactions each processed by a different payment methods. In this use-case we will focus on the common case of dividing a transaction between a Lightrail Card (Gift Card or Account Card) and a credit card processed by Stripe. For example, if you are processing a $134.25 transaction and the customer would like to redeem a $30 value from their Gift Card, you need to charge $30 to the Lightrail Card and the remaining $104.25 must be charged to Stripe.
 
-The important requirement for split-tender transactions is to process them _atomically_. This means that you should either charge neither of the sub-transaction or make sure they all go through successfully. 
+The important requirement for split-tender transactions is _atomicity_. This means that either all of the split-transactions go through successfully or none of them is charged.
 
 ## High-Level Flow
 
 The high-level steps for implementing a split-tender with Lightrail and Stripe is as the following:
 
-- Determine the payment parameters for Lightrail and Stripe payment. 
-- Determine the split, i.e. the respective shares of Lightrail and Stripe.
-- Post a _pending_ transaction to charge the Lightrail Card with its share of the split-tender transaction.
+- Determine the payment parameters for Lightrail and Stripe payments. 
+- Determine the split, i.e. the respective shares of Lightrail and Stripe. 
+- Post a _pending_ transaction to charge the Lightrail Card with its share of the split-tender.
 - Attempt charging Stripe with its share of the transaction.
   - If this succeeds, _capture_ the Lightrail pending transaction and declare success for the split-tender.
   - If this fails, _void_ the Lightrail pending transaction and declare failure for the split-tender.
+
+There are two important differeces between the calls to Lightrail and Stripe APIs to be aware of:
+
+- The Lightrail API requests require a JSON object while Stripe calls require form-encoded parameters.
+- Drawdown transactions in Lightrail are modelled as a Transaction object with a negative `value`  whereas in Stripe they are modelled as a Charge object with a positive `amount`. 
 
 ## Detailed Flow
 
 ### Determine the Parameters
 
-You will need the following Lightrail parameters (check out the [Lightrail API Docs](https://www.lightrail.com/docs/) if you need to read more about these):
+You will need the following Lightrail parameters. if you need to read more about these check out the [Lightrail API Docs](https://www.lightrail.com/docs/):
 
 - Your Lightrail `apiKey`,
 - A Lightrail `cardId` or `fullcode` to specify which Card you are charging. This is either a Gift Card or an Account Card.
 
-For Stripe, you will need the following parameters (check out the [Stripe Docs](https://stripe.com/docs/charges) if you need to read more about these):
+For Stripe, you will need the following parameters. If you need to read more about these check out [Stripe Docs](https://stripe.com/docs/charges) 
 - Your Stripe `secretKey`,
-- A Stripe `token` or `customerId` to specify which credit card you are going to charge via Stripe. Note that based on Stripe's flow you have to either use one of Stripe's browser-side methods to capture the credit card information and exchange it for a `token` or use a `customerId` for a previously-registered customer credit card.
+- A Stripe `token` or `customerId` to specify which credit card you are going to charge via Stripe. Note that based on Stripe's flow you have to either use one of Stripe's browser-side methods to capture the credit card information and exchange it for a `token`, or use a previously-registered `customerId`.
 
 
 ### Determine the Split
 
-Let's call these `lightrailShare` and `stripeShare` respectively. Depending on you use-case, there are different ways to determining the split between Lightrail and Stripe.  Here are some examples:
+Let's call these `lightrailShare` and `stripeShare` respectively. Depending on your use-case, there are different ways to determining the split between Lightrail and Stripe:
 
 - You can allow a user to manually determine the split. For example, a customer can choose how much from their account credit they would like to use towards paying for a certain order.
-- You can check the balance of the Lightrail card and use its maximum available value and charge the rest to Stripe. This is a more common user-experience for Gift Cards.
+- You can check the balance of the Lightrail card and use its maximum available value and charge the remainder to Stripe. This is a more common user experience for Gift Cards.
 
 
-Note that Stripe has a minimum transaction value requirement so you have to make sure that after the `stripeShare` is not too small. More details on this edge case has been discussed in [Redeeming a Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md). 
+If your application is facing end-users, normally, the user need to see and confirm the split before you proceed to charge the credit card. 
+
+Note that Stripe has a minimum transaction value requirement so you have to make sure that after the split, `stripeShare` is not smaller than that minimum. More details on this edge case are discussed in [Redeeming a Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md). 
 
 ### Post a Pending Transaction on Lightrail Card
 
 If you have a Lightrail `cardId`, the request will look like the following. 
 
-- Since this is a drawdown, the `value` should be a <u>negative</u> integer representing the value in the smallest unit of the currency, such as cents. 
-- The `userSuppliedId` is a unique idempotency ID that you have to determine. We recommend you use the unique identifier of an object from your workflow such as the order ID, if this is an order checkout.   
+- Since this is a drawdown, the `value` should be a <u>negative</u> integer representing the amount to be withdrawn in the smallest unit of the currency, such as cents. 
+- The `userSuppliedId` is a unique idempotency ID you need to provide. We recommend that you use the unique identifier of an object from your workflow, such as the order ID, if this is an order checkout.   
 - The `currency` must match the currency of the Card you are charging.
 
 ```json
@@ -85,7 +92,7 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-A successful response to these calls will look like the following. Depending on the endpoint there may be some other attributes in the response object which are not of significant consequence in this use-case.
+A successful response to these calls will look like the following. Depending on the endpoint there may be other attributes in the response object which are not significant in this use-case.
 
 ```Json
 {
@@ -101,7 +108,7 @@ A successful response to these calls will look like the following. Depending on 
 }
 ```
 
-From this response object, save the `transactionId` attribute. Also, if you used the `fullcode`, you now have the `cardId` in the response and you need to save this value as well.
+From this response object, save the `transactionId` attribute. Also, if you used the `fullcode`, you now have the `cardId` in the response and you need to save this value as well for the later steps.
 
 ```php
 $lightrailPendingTransactionId = $response['transaction']['transactionId'];
@@ -110,11 +117,11 @@ $lightrailCardId = $response['transaction']['cardId'];
 
 ### Charge Stripe
 
-To charge Stripe, if you have a `token` use the following call. Note that Stripe has many clients for different programming languages, so, you are likely to make this call using the client library. 
+To charge Stripe, you need to make a call similar to the following. Note that Stripe has many client libraries for different programming languages, so you are likely able to make this call via a suitable client library for your project. 
 
-Note that unlike Lightrail, the value of the `amount` parameter in the Stripe call should be a <u>positive</u> integer. 
+An mentioned earlier, unlike Lightrail, the value of the `amount` parameter in the Stripe call should be a <u>positive</u> integer. 
 
-As you see in this example, we recommend that you use Stripe's `metadata` parameter to push additional information with this transaction indicating that this is part of a split-tender with lightrail and to record the `lightrailPendingTransactionId`.
+As you see in this example, we recommend that you use Stripe's `metadata` parameter to push additional information with this transaction indicating that it is part of a split-tender with lightrail and to record the `lightrailPendingTransactionId`.
 
 ```json
 POST https://api.stripe.com/v1/charges
@@ -126,7 +133,7 @@ amount={stripeShare}&currency=USD&source={token}&metadata[split-tender-partner]=
 
 If instead of a token you have a Stripe `customerId`, you can make a similar call by replacing the `source` parameter with `customer={customerId}`.
 
-The successful response to this call will look like the following:
+A successful response to this call will look like the following:
 
 ```Json
 {
@@ -144,7 +151,7 @@ The successful response to this call will look like the following:
 }
 ```
 
-From this response object, save the transaction `id` in order to save it later on the Lightrail capture.
+From this response object, save the transaction `id` in order to pass it as metadata to the next Lightrail call.
 
 ```php
 $stripeTransactionId = $response['id'];
@@ -152,11 +159,11 @@ $stripeTransactionId = $response['id'];
 
 ### Capture or Void Lightrail Pending Transaction
 
-If the Stripe transaction went through successfully, proceed to capture the Lightrail pending transaction by making a call similar to the following. You will need the `cardId` and the `lightrailPendingTransactionId`.
+Once the Stripe transaction went through successfully, proceed to capture the Lightrail pending transaction by making a call similar to the following. You will need the `cardId` and the `lightrailPendingTransactionId`.
 
-Note that you need a new `userSuppliedId`; if you already have a unique identifier from your system that you used for posting the pending transaction, you add a `-capture` suffix to create a new `userSuppliedId` for this call.
+You also need a new `userSuppliedId`; if you already have a unique identifier from your system that you used for posting the pending transaction, you add a `-capture` suffix to create a new `userSuppliedId` for this call.
 
-As you see in this example, we recommend that you leverage Lightrail's `metadata` attribute to push additional information with this transaction indicating that this is part of a split-tender with Stripe and to record the `stripeTransactionId`.
+As you see in this example, we recommend that you leverage Lightrail's `metadata` attribute to push additional information with this transaction indicating that it is part of a split-tender with Stripe and to record the `stripeTransactionId`.
 
 ```json
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{lightrailPendingTransactionId}/capture
