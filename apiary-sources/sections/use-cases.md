@@ -28,7 +28,7 @@ Powering Gift Cards is one of the main of Lightrail. Some of the most common use
 
 Lightrail can easily power your account credit or customer rewards programs. Some of the most common use-cases for account credits are the following. 
 
-- [Issue a New Account](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md)
+- [Create a New Contact and Issue a New Account](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md)
 - View Account Details and Balance
 - [Charge or Fund an Account](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md)
 - [Create and Attach a Promotion to an Account](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md) 
