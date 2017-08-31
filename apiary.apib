@@ -87,7 +87,7 @@ Individual customers are represented by _Contact_ objects in Lightrail. You can 
 
 ### Gift Cards
 
-As the name implies, Gift Cards represent a value created as a gift. Lightrail Gift Cards have a `fullcode`,  a  unique and unguessable alpha-numeric code which can be used by the Gift Card recipient to redeem its value.
+As the name implies, Gift Cards represent a value created as a gift. Lightrail Gift Cards have a `fullcode`,  a  unique and unguessable alpha-numeric code, also referred to as Gift Code, which can be used by the Gift Card recipient to redeem its value.
 
 Since anyone who knows the `fullcode` can redeem the Gift Card value, the `fullcode` is often delivered to the Gift Card's recipient in confidence. To minimize the risk of its exposure (e.g. in the course of passing JSON objects to the browser) only [one specific Lightrail endpoint](#get-fullcode-anchor) returns the `fullcode` and other endpoints only return the last four characters of the code when necessary. For similar reasons, we recommend that you refrain from persisting the `fullcode` in your database or logs.
 
@@ -170,7 +170,7 @@ Powering Gift Cards is one of the main of Lightrail. Some of the most common use
 | Action                       | Endpoint                            | Verb   | Body                                     |
 | :--------------------------- | ----------------------------------- | ------ | ---------------------------------------- |
 | Create Gift Card             | `/v1/cards`                         | `POST` | `{'userSuppliedId':'gc1', 'cardType':'GIFT_CARD', 'programId':'program-123', 'initialValue':500, 'currency':'USD'}` |
-| Retrieve `fullcode`          | `/v1/cards/<cardId>/fullcode`       | `GET`  |                                          |
+| Retrieve Gift Code           | `/v1/cards/<cardId>/fullcode`       | `GET`  |                                          |
 | Check Balance                | `/v1/codes/<fullcode>/card/balance` | `GET`  |                                          |
 | Create Transaction           | `/v1/codes/<fullcode>/transactions` | `POST` | `{'userSuppliedId':'tx1', 'value':-10, 'currency':'USD'}` |
 | Retrieve Transaction History | `/v1/codes/<fullcode>/transactions` | `GET`  |                                          |
@@ -282,10 +282,6 @@ Here is the list of Lightrail integrations for different technologies and langua
 
 - [Lightrail WooCommerce Plugin](https://wordpress.org/plugins/lightrail-for-woocommerce/)
 
-
-  ​
-
-
 ### Legal Responsibilities
 The Lightrail API provides a flexible infrastructure to implement various branded currency solutions, including gift cards, unique promo codes, account credits, refunds, etc. It is the responsibility of the API users and their organization to understand and comply with the laws and regulations in their jurisdiction in all aspects of their implementation.
 
@@ -352,8 +348,6 @@ Use the `/ping` endpoint to to health-check the API and test whether your API ke
 
 ## Cards [/cards/]
 The `/cards` endpoint is for use by your system to create and manage your Gift Cards and Account Cards.
-The `cardId` should be stored as it's used in many subsequent requests - such as transaction against a Card. 
-In use cases where the recipient requires a gift code, the `fullcode` should be supplied. 
 
 ---
 ### List Cards [GET /cards/{?contactId}{?cardType}{?currency}{?userSuppliedId}{?limit}{?offset}]
@@ -615,7 +609,7 @@ Create a Card of type `GIFT_CARD`.
 ### Retrieve fullcode for Gift Card [GET /cards/{cardId}/fullcode]
 <a name="get-fullcode-anchor"></a>
 
-Retrieve the `fullcode` associated with a Gift Card. 
+Retrieve the `fullcode` (also referred to as Gift Code) associated with a Gift Card. 
 
 
 ---
@@ -1100,7 +1094,7 @@ Retrieve a paginated list of a Contact's Cards.
 
 ## Transactions [/cards/{cardId}/transactions]
 These endpoints are the various ways you can create and retrieve transactions on Cards based on either their `cardId` or their `fullcode`. 
-Note that only gift cards have an associated `fullcode`.
+Note that only Gift Cards have an associated `fullcode`.
 
 
 ---
@@ -1194,7 +1188,7 @@ so, when creating a pending Transaction you need to save the `cardId` from the r
 
 ---
 + Parameters
-    + fullcode (string, required) - The unique gift code.
+    + fullcode (string, required) - The unique unguessable Gift Code.
     + pin (string, optional) - This is required if the fullcode has a pin.
 
 + Request (application/json)
@@ -1520,7 +1514,7 @@ Retrieve a paginated list of a Card's Transactions based on the Gift Card's `ful
 
 ---
 + Parameters
-    + fullcode (string, required) - The unique gift code.
+    + fullcode (string, required) - The unique unguessable Gift Code.
     + pin (string, optional) - This is required if the fullcode has a pin.
     + userSuppliedId (string, optional) - return the transaction with the specific `userSuppliedId`. Note that since `userSuppliedId`s are unique, this guarantees a unique transaction in the response if it exists.
     + transactionType (string, optional) - return only transactions of a specific type.
@@ -1638,8 +1632,8 @@ Retrieves a particular Transaction by its ID based on the `fullcode`.
 ---
 + Parameters
     + transactionId (string, required) - The Lightrail Transaction ID.
-    + fullcode (string, required) - The unique unguessable gift code.
-    + pin (string, optional) - This is required if the gift code has a pin.
+    + fullcode (string, required) - The unique unguessable Gift Code.
+    + pin (string, optional) - This is required if the fullcode has a pin.
     
 
 + Request (application/json)
@@ -1676,7 +1670,7 @@ Retrieves a particular Transaction by its ID based on the `fullcode`.
 ## Balances [/cards/{cardId}/balance/]
 These endpoints are used to get the available balance associated with a Card. 
 Depending on the context of your use-case you can check the balance either based on the `cardId` or the `fullcode`. 
-Note that only gift cards have an associated `fullcode`.
+Note that only Gift Cards have an associated `fullcode`.
 
 ---
 ### Get Balance by Card ID [GET /cards/{cardId}/balance{?asAtDate}]
@@ -1716,11 +1710,11 @@ Retrieve a Card's balance based on its `cardId`.
 
 
 ### Get Balance by Gift Code [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
-Retrieve a Card's balance using the Gift Card's `fullcode`.
+Retrieve a Card's balance using the Gift Card's `fullcode`, also referred to as Gift Code.
 
 ---
 + Parameters
-    + fullcode (string, required) - The unique unguessable gift code.
+    + fullcode (string, required) - The unique unguessable Gift Code.
     + pin (string, optional) - This is required if the fullcode has a pin.
     + asAtDate (string, optional) - The date and time at which the balance should be retrieved.
 
@@ -2114,7 +2108,7 @@ Retrieves a paginated list of all Lightrail Programs belonging to the user.
 + startDate (string, optional) - The date for which the ValueStore will become usable.
 
 ## Fullcode (object)
-+ code (string, required) - The unique unguessable gift code.
++ code (string, required) - The unique unguessable Gift Code.
 + pin (string, optional) - Card Programs can be configured to generate a pin to be used with the code.
 
 ## Transaction (object)

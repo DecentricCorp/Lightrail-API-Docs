@@ -13,7 +13,7 @@ so, when creating a pending Transaction you need to save the `cardId` from the r
 
 ---
 + Parameters
-    + fullcode (string, required) - The unique gift code.
+    + fullcode (string, required) - {{card.fullcode}}
     + pin (string, optional) - This is required if the fullcode has a pin.
 
 + Request (application/json)

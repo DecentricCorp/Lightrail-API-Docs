@@ -1,9 +1,9 @@
 ### Get Balance by Gift Code [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
-Retrieve a Card's balance using the Gift Card's `fullcode`.
+Retrieve a Card's balance using the Gift Card's `fullcode`, also referred to as Gift Code.
 
 ---
 + Parameters
-    + fullcode (string, required) - The unique unguessable gift code.
+    + fullcode (string, required) - {{card.fullcode}}
     + pin (string, optional) - This is required if the fullcode has a pin.
     + asAtDate (string, optional) - {{balance.asAtDate}}
 
