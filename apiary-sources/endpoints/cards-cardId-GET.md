@@ -21,6 +21,8 @@ Retrieve the Card object by its `cardId`.
               "card":{
                 "cardId":"card-a0xx82",
                 "userSuppliedId":"anonymous-giftcard28",
+                "cardType":"GIFT_CARD",
+                "currency":"USD",                
                 "contactId":null,
                 "dateCreated":"2017-07-28T21:21:00.606Z",
                 "categories":[
@@ -34,8 +36,6 @@ Retrieve the Card object by its `cardId`.
                     "key":"giftbit_order",
                     "value":"2017-07-28"
                   }
-                ],
-                "cardType":"GIFT_CARD",
-                "currency":"USD"
+                ]
               }
             }
