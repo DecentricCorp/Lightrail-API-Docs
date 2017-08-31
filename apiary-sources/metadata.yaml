@@ -3,6 +3,7 @@ currency: "The three-character ISO-4217 currency."
 card:
   cardType: "`ACCOUNT_CARD`, `GIFT_CARD`."
   cardId: "The Lightrail Card ID."
+  fullcode: "The unique unguessable Gift Code."
 pagination:
   limit: "For pagination. The maximum number of results to return at once. \n      + Default: 100"
   offset: "For pagination. The offset of the first results in the total results. \n      + Default: 0"

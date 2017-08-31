@@ -16,7 +16,7 @@ Powering Gift Cards is one of the main of Lightrail. Some of the most common use
 | Action                       | Endpoint                            | Verb   | Body                                     |
 | :--------------------------- | ----------------------------------- | ------ | ---------------------------------------- |
 | Create Gift Card             | `/v1/cards`                         | `POST` | `{'userSuppliedId':'gc1', 'cardType':'GIFT_CARD', 'programId':'program-123', 'initialValue':500, 'currency':'USD'}` |
-| Retrieve `fullcode`          | `/v1/cards/<cardId>/fullcode`       | `GET`  |                                          |
+| Retrieve Gift Code           | `/v1/cards/<cardId>/fullcode`       | `GET`  |                                          |
 | Check Balance                | `/v1/codes/<fullcode>/card/balance` | `GET`  |                                          |
 | Create Transaction           | `/v1/codes/<fullcode>/transactions` | `POST` | `{'userSuppliedId':'tx1', 'value':-10, 'currency':'USD'}` |
 | Retrieve Transaction History | `/v1/codes/<fullcode>/transactions` | `GET`  |                                          |

@@ -4,7 +4,7 @@ This endpoint is deprecated and should no longer be used.
 
 ---
 + Parameters
-    + fullcode (string, required) - The unique unguessable gift code.
+    + fullcode (string, required) - {{card.fullcode}}
     + pin (string, optional) - This is required if the fullcode has a pin.
     + asAtDate (string, optional) - {{balance.asAtDate}}
 

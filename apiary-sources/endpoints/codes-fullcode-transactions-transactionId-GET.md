@@ -4,8 +4,8 @@ Retrieves a particular Transaction by its ID based on the `fullcode`.
 ---
 + Parameters
     + transactionId (string, required) - {{transaction.transactionId}}
-    + fullcode (string, required) - The unique unguessable gift code.
-    + pin (string, optional) - This is required if the gift code has a pin.
+    + fullcode (string, required) - {{card.fullcode}}
+    + pin (string, optional) - This is required if the fullcode has a pin.
     
 
 + Request (application/json)

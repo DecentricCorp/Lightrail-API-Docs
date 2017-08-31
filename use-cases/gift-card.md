@@ -6,7 +6,7 @@ This document is a quick step-by-step guide to creating and distributing new Lig
 
 - If you would like to learn more about Lightrail concepts, check out the section on Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/).
 - If you are looking for an implementation of this use-case in a specific language or technology, check out the section on Client Libraries and Integrations in the [Lightrail API Docs](https://www.lightrail.com/docs/).
-- If you are looking for adding promotional values to existing Gift Cards, Check out our implementation guide for [Creating Lightrail Promotions](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md).
+- If you are looking for adding promotional values to existing Gift Cards, check out our implementation guide for [Creating Lightrail Promotions](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md).
 
 ## Concepts
 
@@ -22,7 +22,7 @@ Usually, when a Gift Card is issued, the `fullCode` is sent to the recipient by 
 
 The `cardId` on the other hand is used for all other administrative purposes such as funding the card, _freezing_ or _unfreezing_ its value, etc.
 
-Note that aside from the principal value, Lightrail also supports attaching temporary promotional values to Gift Cards. Check out our implementation guide for [Creating Lightrail Promotions](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md).
+Note that aside from the principal value, Lightrail also supports attaching temporary promotional values to Gift Cards. To learn more, check out our implementation guide for [Creating Lightrail Promotions](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md).
 
 ## Use-Case
 
@@ -62,7 +62,7 @@ Optionally, you can also specify the following information:
 
 - The `initialValue` for the Gift Card. If not specified this will default to zero and you will need to post a transaction to fund the Card later. 
 - If applicable, the Card's validity period. This is specified by stating either or both of `startDate` and `expires` parameters and must be within the validity range set by the Program.
-- A set of `metadata` to record any significant information you would like to retain with respect to the issuance of the Card, e.g. the order and transaction IDs and the recipient's information if the card is being purchased. Technically, this metadata will be recorded with the initial transaction which funds the card with its initial value.
+- A set of `metadata` to record any significant information you would like to retain with respect to the issuance of the Card, e.g. the order and transaction IDs and the recipient's information if the card is being purchased. Technically, this metadata will be recorded with the initial transaction which funds the Card with its initial value.
 - A `contactId` in case the recipient of the Gift Card is already a known customer in your system and is registered as a Lightrail Contact. To learn more about how to create Lightrail Contacts see the [Lightrail API Docs](https://www.lightrail.com/docs/).
 
 Note that since Lightrail supports creating other types of Cards using the same endpoint, you need to specify that the `cardType` is `GIFT_CARD`. 
@@ -123,8 +123,6 @@ The response is a `fullcode` object similar to the following:
 }
 ```
 
-
-
 ### Distribute the Gift Code
 
 Usually gift codes are sent to the recipient by email. If you are selling a gift code on your web site, you have to ask the customer who is purchasing the gift code to provide the gift recipient's email address.
@@ -134,4 +132,3 @@ For the contents of email, you should generally rely on a template and fill the 
 Having determined the content of the email and its recipient's email address, you can use an email service of choice to send the email and deliver the gift code. 
 
 Traditional email services provide an SMTP interface but for sending emails using a simpler RESTful interface, you may want to consider an email API service provider such as [SendWithUs](https://www.sendwithus.com/docs/quickstart) or [Amazon SES](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/sending-email.html).
-
