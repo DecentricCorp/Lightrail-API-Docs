@@ -182,7 +182,7 @@ Powering Gift Cards is one of the main of Lightrail. Some of the most common use
 
 Lightrail can easily power your account credit or customer rewards programs. Some of the most common use-cases for account credits are the following. 
 
-- [Issue a New Account](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md)
+- [Create a New Contact and Issue a New Account](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md)
 - View Account Details and Balance
 - [Charge or Fund an Account](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md)
 - [Create and Attach a Promotion to an Account](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md) 
@@ -453,6 +453,8 @@ Retrieve the Card object by its `cardId`.
               "card":{
                 "cardId":"card-a0xx82",
                 "userSuppliedId":"anonymous-giftcard28",
+                "cardType":"GIFT_CARD",
+                "currency":"USD",                
                 "contactId":null,
                 "dateCreated":"2017-07-28T21:21:00.606Z",
                 "categories":[
@@ -466,9 +468,7 @@ Retrieve the Card object by its `cardId`.
                     "key":"giftbit_order",
                     "value":"2017-07-28"
                   }
-                ],
-                "cardType":"GIFT_CARD",
-                "currency":"USD"
+                ]
               }
             }
 
@@ -2038,44 +2038,44 @@ Retrieves a paginated list of all Lightrail Programs belonging to the user.
             {
                 "programs":[
                     {
-                        "programId": "program-dexx72",
-                        "userSuppliedId": "tx56",
-                        "name": "Gift Card Program 2017",
-                        "active": true,
-                        "currency": "USD",
-                        "dateCreated": "2017-06-05T17:09:10.000Z",
-                        "programExpiresDate": null,
-                        "programStartDate": "2017-06-05T15:51:35.000Z",
-                        "codeActivePeriodInDays": null,
-                        "codeValueMin": 100,
-                        "codeValueMax": 50000,
-                        "fixedCodeValues": null,
-                        "codeEngine": "SIMPLE_STORED_VALUE",
-                        "codeConfig": "GFBT",
-                        "valueStoreType": "PRINCIPAL",
-                        "metadata": null,
-                        "timeZone": "PST",
-                        "cardType": null
+                      "programId": "program-ccxx45",
+                      "userSuppliedId": "74xxdf",
+                      "name": "Short-Lived Promo",
+                      "active": true,
+                      "currency": "USD",
+                      "dateCreated": "2017-07-04T21:12:09.000Z",
+                      "programExpiresDate": null,
+                      "programStartDate": "2017-07-04T21:11:33.000Z",
+                      "codeActivePeriodInDays": 7,
+                      "codeValueMin": 1000,
+                      "codeValueMax": 2000,
+                      "fixedCodeValues": null,
+                      "codeEngine": "SIMPLE_STORED_VALUE",
+                      "codeConfig": "DEFAULT",
+                      "valueStoreType": "ATTACHED",
+                      "metadata": null,
+                      "timeZone": "PST",
+                      "cardType": null
                     },
                     {
-                        "programId": "program-d0xx04",
-                        "userSuppliedId": "tx527",
-                        "name": "Spring Promotion 2017",
-                        "active": true,
-                        "currency": "XXX",
-                        "dateCreated": "2017-06-05T16:14:46.000Z",
-                        "programExpiresDate": null,
-                        "programStartDate": "2017-06-05T15:51:35.000Z",
-                        "codeActivePeriodInDays": 7,
-                        "codeValueMin": 1,
-                        "codeValueMax": 5000,
-                        "fixedCodeValues": null,
-                        "codeEngine": "SIMPLE_STORED_VALUE",
-                        "codeConfig": "GFBT",
-                        "valueStoreType": "ATTACHED",
-                        "metadata": null,
-                        "timeZone": "PST",
-                        "cardType": null
+                      "programId": "program-1dxxa9",
+                      "userSuppliedId": "3cxxff",
+                      "name": "USD Program",
+                      "active": true,
+                      "currency": "USD",
+                      "dateCreated": "2017-07-01T14:34:52.000Z",
+                      "programExpiresDate": null,
+                      "programStartDate": "2017-07-01T14:33:43.000Z",
+                      "codeActivePeriodInDays": null,
+                      "codeValueMin": 500,
+                      "codeValueMax": 10000,
+                      "fixedCodeValues": null,
+                      "codeEngine": "SIMPLE_STORED_VALUE",
+                      "codeConfig": "DEFAULT",
+                      "valueStoreType": "PRINCIPAL",
+                      "metadata": null,
+                      "timeZone": "PST",
+                      "cardType": null
                     }
                 ],
                 "pagination":{
