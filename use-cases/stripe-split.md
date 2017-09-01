@@ -12,7 +12,7 @@ This document is a quick step-by-step guide to splitting a transaction between a
 
 A _split-tender_ happens when a transaction is broken down into two (or more) transactions each processed by a different payment methods. In this use-case we will focus on the common case of dividing a transaction between a Lightrail Card (Gift Card or Account Card) and a credit card processed by Stripe. For example, if you are processing a $134.25 transaction and the customer would like to redeem a $30 value from their Gift Card, you need to charge $30 to the Lightrail Card and the remaining $104.25 must be charged to Stripe.
 
-The important requirement for split-tender transactions is _atomicity_. This means that either all of the split-transactions go through successfully or none of them does. In other words either all the transactions are charged or the customer is not charged at all and the split-tender fails.
+The important requirement for split-tender transactions is _atomicity_. This means that either all of the split-transactions go through successfully or none of them does. In other words either all of the transactions are charged or the customer is not charged at all and the split-tender fails.
 
 ## High-Level Flow
 
