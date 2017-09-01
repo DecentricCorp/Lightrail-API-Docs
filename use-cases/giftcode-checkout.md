@@ -1,4 +1,4 @@
-# Redeeming a Lightrail Value at Checkout
+# Redeeming Lightrail Value at Checkout
 
 ## Introduction
 
