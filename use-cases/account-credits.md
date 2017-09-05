@@ -32,25 +32,21 @@ The first step to start an account credit is to create a new account. Based on y
 - Create a new Contact using the [Contacts API Endpoint](#contacts-endpoint) if one does not already exist. Generally, you should specify some basic information about the Contact such as name and email.
 - Create an Account Card for that Contact using the [Cards API Endpoint](#cards-endpoint). You need to provide the contact ID and specify the currency. Optionally, you can also specify an initial value for the card.
 
-It is important to store the Contact ID after creating a Contact but you do not have to persist the IDs of the account Cards associated with the contact since you can retrieve them using the API.  
+We recommend that you persist the Contact ID in your system so that you can find the Lightrail Contact corresponding to your customer easily. Alternatively, you can search for a Contact based on the `userSuppliedId` as will be discussed later. You do not need to persist the Account Cards IDs of a Contact since you can retrieve them by calling the API. Persisting these IDs, however, can help you avoid making that additional API call.
 
 ### Retrieving a Contact's Account Cards
 
-The [Cards API Endpoint](#cards-endpoint) allows searching for cards which can be used for retrieving all the account Cards associated with a Contact. You can also request to find the Contact's account Card for a particular currency. 
+In most business workflows, you usually have access to the customer ID (e.g. from login information). If you persist the Contact ID in your database as, or alongside, the customer ID, you can easily retrieve the Card IDs for the customer in question by providing the Contact ID using the [Cards API Endpoint](#cards-endpoint).  If your system supports multiple currencies, you also need to identify the effective currency of your workflow and pass it as an additional parameter to the Card search endpoint in order to uniquely retrieve the Account Card for that particular currency. 
 
 ### Balance-Check
 
 For checking the balance of an account you can simply call the [Card Balance API Endpoint](#cards-balance-endpoint) and provide the corresponding Card ID. 
 
-It is common for most business workflows to have the customer ID (e.g. from login information). In such cases, if you support multiple currencies, you need to determin the currency from the context of the workflow, e.g. the cart or the order currency. Then you can retrieve the corresponding account Card ID based on the customer's Contact ID and the currency in question as discussed above. Once you have the card ID, you can use it to check the customer's balance.
-
 ### Funding and Charging
 
-Transactions to fund or charge an account are posted to the corresponding account Card by providing its Card ID and using the [Cards Transaction API Endpoint](#cards-transaction-endpoint). If you do not have the account card ID directly in your business flow, you need to retrieve it based on the Contact ID as discussed above.
+Transactions to fund or charge an account are posted to the corresponding Account Card by providing its Card ID and using the [Cards Transaction API Endpoint](#cards-transaction-endpoint). If you do not have the Account Card ID directly in your workflow, you need to retrieve it using the API and based on the Contact ID as discussed above.
 
-Funding an account is basically posting a transaction with a positive value to the corresponding account Card. Depending on your business model, this usually takes place when the customer earns some reward based on some activity, such as spending more than a certain amount at the store.
-
-Charging an account is similarly done by posting a transaction against its corresponding account Card with a negative value. The most common use-case for charging an account is redeeming the value at the store checkout. For the details on the redemption use-case, check out our detailed document on [Redemption at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/usecases/use-cases/giftcode-checkout.md).
+To fund an account, post a Transaction with a positive value to the corresponding Account Card. Depending on your business model, this usually takes place when the customer earns some reward based on some activity. To charge an account, post a Transaction against the corresponding Account Card with a negative value. The most common use-case for charging an account is redeeming the value at the store checkout. For the details on the redemption use-case, check out our detailed document on [Redemption at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md).
 
 ## API Endpoints
 
@@ -58,7 +54,7 @@ Charging an account is similarly done by posting a transaction against its corre
 
 #### Creating a New Contact
 
-To create a new contact, you need to at least provide a client-side unique identifier known as the `userSuppliedId`. The `userSuppliedId` is a per-endpoint unique identifier, used to ensure idempotence. Ensuring idempotence means that if the same request is issued more than once, it will not result in repeated actions. Optionally, you can also provide an `email`, `firstName`, and `lastName`. Here is a sample request:
+To create a new Contact, you need to provide a client-side unique identifier known as the `userSuppliedId`. The `userSuppliedId` is a per-endpoint unique identifier used to ensure idempotence. Ensuring idempotence means that if the same request is issued more than once, it will not result in repeated actions. Optionally, you can also provide an `email`, `firstName`, and `lastName`. Here is a sample request:
 
 ```json
 POST https://www.lightrail.com/v1/contacts
@@ -101,7 +97,7 @@ Alternatively, you can retrieve a contact based on its `userSuppliedId` by makin
 GET https://www.lightrail.com/v1/contacts?userSuppliedId={userSuppliedId}
 ```
 
-Although the response to this call is a search result object with an array of `contact` objects, if you provide a `userSuppliedId` you are guaranteed to get at most one `contact` object. Here is a sample response:
+Although the response to this call is a search result object with an array of Contacts, if you provide a `userSuppliedId` you are guaranteed to get one `contact` object if it exists. Here is a sample response:
 
 ```json
 {
@@ -129,7 +125,7 @@ Although the response to this call is a search result object with an array of `c
 
 #### Creating a New Account Card
 
-For creating a new account Card, you need to provide the `contactId` of the Contact with whom the card will be associated and specify the card `currency`. Note that since gift cards use the same endpoint, you have to also specify the `cardType` as  `ACCOUNT_CARD`.
+For creating a new Account Card, you need to provide the `contactId` of the Contact with whom the card will be associated and specify the card `currency`. Note that since gift cards use the same endpoint, you have to also specify the `cardType` as  `ACCOUNT_CARD`.
 
 ```json
 POST https://api.lightrail.com/v1/cards
@@ -141,7 +137,7 @@ POST https://api.lightrail.com/v1/cards
 }
 ```
 
-The response objects will include both the `userSuppliedId` and a server-generated `cardId` which you can persist and use to retrieve the account Card later.
+The response objects will include both the `userSuppliedId` and a server-generated `cardId` which you can persist and use to retrieve the Account Card later.
 
 ```json
 {
@@ -220,7 +216,7 @@ GET https://api.lightrail.com/v1/cards?cardType=ACCOUNT_CARD&currency=USD&contac
 
 ### Cards Balance Endpoint
 
-You can use the card balance endpoint to check the available value of an account Card by providing the account `cardId`. If you do not have the `cardId` you can retrieve it based on the customer's `contactId` using the [Cards API Endpoint](#cards-endpoint), as discussed above.
+You can use the card balance endpoint to check the available value of an Account Card by providing the `cardId`. If you do not have the `cardId`, you can retrieve it based on the customer's `contactId` by calling the [Cards API Endpoint](#cards-endpoint), as discussed above.
 
 ```json
 GET https://api.lightrail.com/v1/cards/{cardId}/balance
@@ -275,7 +271,7 @@ Here is a sample response from this endpoint:
 
 ### Cards Transaction Endpoint 
 
-You can transact against an account by providing the corresponding account `cardId`, the transaction `value`, and its `currency`, as well as a `userSuppliedId`. The `userSuppliedId` is a per-endpoint unique identifier, used to ensure idempotence. Ensuring idempotence means that if the same request is issued more than once, it will not result in repeated actions. 
+You can transact against an Account Card by providing the corresponding `cardId`, the transaction `value`, and its `currency`, as well as a `userSuppliedId`. The `userSuppliedId` is a per-endpoint unique identifier, used to ensure idempotence. Ensuring idempotence means that if the same request is issued more than once, it will not result in repeated actions. 
 
 If you do not have the `cardId` you can retrieve it based on the customer's `contactId` using the [Cards API Endpoint](#cards-endpoint), as discussed above.
 
@@ -308,7 +304,7 @@ The returned object includes both the `userSuppliedId` and a server-generated `t
 
 #### Authorize-Capture 
 
-If the transaction is a charge, i.e. its value is negative, you can follow an authorize-capture flow by specifying that the transaction is `pending`. A pending transaction can be captured or voided later:
+For drawdown transactions, you can follow an authorize-capture flow by specifying that the transaction is `pending`. The funds for a pending transaction are withheld until it is either _captured_ or _voided_ later:
 
 ```json
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions
