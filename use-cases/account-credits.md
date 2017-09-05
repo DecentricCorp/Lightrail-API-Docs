@@ -304,7 +304,7 @@ The returned object includes both the `userSuppliedId` and a server-generated `t
 
 #### Authorize-Capture 
 
-For drawdown transactions, you can follow an authorize-capture flow by specifying that the transaction is `pending`. The funds for a pending transaction are withheld until it is either _captured_ or _voided_ later:
+For drawdown transactions, Lightrail supports the preauthorize-capture flow. By setting the value of the `pending` attribute, you can tell Lightrail to create a pending Transaction. The funds for a pending Transaction are withheld until it is _captured_ or _voided_ later:
 
 ```json
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions
@@ -316,7 +316,7 @@ POST https://api.lightrail.com/v1/cards/{cardId}/transactions
 }
 ```
 
-You need to retain the `transactionId` for the pending transaction from the response object in order to `void` or `capture` it later by calling one of the following methods:
+From the response to this call, you need to save the `transactionId` of the pending Transaction while you will need later, in order to `void` or `capture` it by calling one of the following methods:
 
 ```json
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{transactionId}/void
@@ -332,12 +332,12 @@ POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{transactionId}/ca
 }
 ```
 
-The response object from these calls will be a new `transaction` object with its own `transactionId`. The original pending `transactionId` is included as `metadata` in the response object, for the record:
+The response object from these calls will be a new Transaction object with a new `transactionId`. For reference, the ID of the original pending transaction is also included as `parentTransactionId` in the response object to these calls:
 
 ```json
 {
     "transaction": {
-        "transactionId": "transaction-a7",
+        "transactionId": "transaction-axx7",
         "value": 101,
         "userSuppliedId": "tx0771",
         "dateCreated": "2017-07-12T00:22:48.379Z",
@@ -346,7 +346,7 @@ The response object from these calls will be a new `transaction` object with its
         "giftbitUserId": "user-08",
         "cardId": "card-1dea",
         "currency": "USD",
-        "parentTransactionId": "transaction-46",
+        "parentTransactionId": "transaction-4xx6",
         "metadata": {
             "giftbit_initial_transaction_id": "transaction-46"
         }
