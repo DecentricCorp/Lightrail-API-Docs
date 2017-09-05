@@ -32,7 +32,7 @@ The first step to start an account credit is to create a new account. Based on y
 - Create a new Contact using the [Contacts API Endpoint](#contacts-endpoint) if one does not already exist. Generally, you should specify some basic information about the Contact such as name and email.
 - Create an Account Card for that Contact using the [Cards API Endpoint](#cards-endpoint). You need to provide the contact ID and specify the currency. Optionally, you can also specify an initial value for the card.
 
-We recommend that you persist the Contact ID in your system so that you can find the Lightrail Contact corresponding to your customer easily. Alternatively, you can search for a Contact based on the `userSuppliedId` as will be discussed later. You do not need to persist the Account Cards IDs of a Contact since you can retrieve them by calling the API. Persisting these IDs, however, can help you avoid making that additional API call at the time of posting Transactions. 
+We recommend that you persist the Contact ID in your system so that you can find the Lightrail Contact corresponding to your customer easily. Alternatively, you can search for a Contact based on the `userSuppliedId` as will be discussed later. You do not need to persist the Account Cards IDs of a Contact since you can retrieve them by calling the API. Persisting these IDs, however, can help you avoid making that additional API call.
 
 ### Retrieving a Contact's Account Cards
 
@@ -46,7 +46,7 @@ For checking the balance of an account you can simply call the [Card Balance API
 
 Transactions to fund or charge an account are posted to the corresponding Account Card by providing its Card ID and using the [Cards Transaction API Endpoint](#cards-transaction-endpoint). If you do not have the Account Card ID directly in your workflow, you need to retrieve it using the API and based on the Contact ID as discussed above.
 
-Funding an account is basically posting a Transaction with a positive value to the corresponding Account Card. Depending on your business model, this usually takes place when the customer earns some reward based on some activity. Charging an account is similarly done by posting a Transaction against the corresponding Account Card with a negative value. The most common use-case for charging an account is redeeming the value at the store checkout. For the details on the redemption use-case, check out our detailed document on [Redemption at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md).
+To fund an account, post a Transaction with a positive value to the corresponding Account Card. Depending on your business model, this usually takes place when the customer earns some reward based on some activity. To charge an account, post a Transaction against the corresponding Account Card with a negative value. The most common use-case for charging an account is redeeming the value at the store checkout. For the details on the redemption use-case, check out our detailed document on [Redemption at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md).
 
 ## API Endpoints
 
@@ -97,7 +97,7 @@ Alternatively, you can retrieve a contact based on its `userSuppliedId` by makin
 GET https://www.lightrail.com/v1/contacts?userSuppliedId={userSuppliedId}
 ```
 
-Although the response to this call is a search result object with an array of `contact` objects, if you provide a `userSuppliedId` you are guaranteed to get at most one `contact` object. Here is a sample response:
+Although the response to this call is a search result object with an array of Contacts, if you provide a `userSuppliedId` you are guaranteed to get one `contact` object if it exists. Here is a sample response:
 
 ```json
 {
