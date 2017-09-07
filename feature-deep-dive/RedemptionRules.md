@@ -1,4 +1,4 @@
-# Redemption Rules
+# Redemption Rules Reference
 
 [Lightrail](https://www.lightrail.com/) redemption rules are extra conditions placed on promotions. A redemption rule is evaluated with the transaction data to determine if the promotion can be used for that transaction. This unlocks powerful marketing promotions such as: "$10 good for purchases of $50 or more" or "$5 off your purchase when you buy a red hat."
 
