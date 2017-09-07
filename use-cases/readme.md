@@ -3,7 +3,7 @@ This section provides detailed documents on implementing some common e-commerce 
 
 Content:
 
-- [Redeeming a Lightrail Value at Checkout](giftcode-checkout.md).
+- [Redeeming Lightrail Value at Checkout](giftcode-checkout.md).
 - [Account Credits Powered by Lightrail](account-credits.md)
 - [Issuing Lightrail Gift Cards](gift-card.md)
 - [Creating Lightrail Promotions](promotions.md)
