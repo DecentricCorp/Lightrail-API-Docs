@@ -7,6 +7,6 @@ Content:
 - [Account Credits Powered by Lightrail](account-credits.md)
 - [Issuing Lightrail Gift Cards](gift-card.md)
 - [Creating Lightrail Promotions](promotions.md)
-- [Split-Tender with Stripe](stripe-split.md)
+- [Split-Tender with Lightrail and Stripe](stripe-split.md)
 
 We are constantly looking to improve and expand our documentation. Please let us know if the use-case you are looking for is not here.
