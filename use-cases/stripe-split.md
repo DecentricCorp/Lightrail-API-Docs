@@ -77,8 +77,8 @@ Content-Type: application/json; charset=utf-8
   "pending": true,
   "userSuppliedId": "07xx71",
   "metadata":{
-    "split-tender-partner": "stripe",
-    "split-tender-total": {total}
+    "_split-tender-partner": "stripe",
+    "_split-tender-total": {total}
   }
 }
 ```
@@ -96,8 +96,8 @@ Content-Type: application/json; charset=utf-8
   "pending": true,
   "userSuppliedId": "07xx71",
   "metadata":{
-    "split-tender-partner": "stripe",
-    "split-tender-total": {total}
+    "_split-tender-partner": "stripe",
+    "_split-tender-total": {total}
   }
 }
 ```
@@ -153,9 +153,9 @@ A successful response to this call will look like the following:
   "captured": true,
   "currency": "usd",
   "metadata":{
-    "split-tender-partner": "lightrail",
-    "split-tender-total": {total},
-    "split-tender-partner-txn-id": {lightrailPendingTransactionId}
+    "_split-tender-partner": "lightrail",
+    "_split-tender-total": {total},
+    "_split-tender-partner-txn-id": {lightrailPendingTransactionId}
   }
   ...
 }
@@ -180,9 +180,9 @@ POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{lightrailPendingT
 {
   "userSuppliedId":"order-07xx71-capture",
   "metadata":{
-    "split-tender-partner": "stripe",
-    "split-tender-total": {total},
-    "split-tender-partner-txn-id": {stripeTransactionId}
+    "_split-tender-partner": "stripe",
+    "_split-tender-total": {total},
+    "_split-tender-partner-txn-id": {stripeTransactionId}
   }
 }
 ```
