@@ -132,7 +132,7 @@ Note that these are just for your reference and you can pick and choose from the
   - `region` (string): the region in which the Transaction takes place.
   - `city` (string): the city in which the Transaction takes place.
   - `store_id` (string): the store ID in which the Transaction takes place. 
-  - `branch_id` (string): the branch ID in which the Transaction takes place.
+  - `origin_attributes` (array of string): other attributes of the origin.
 - `payment` (object):
   - `payment_method_id` (string): the ID of the payment method.
   - `payment_attributes` (array of string): other attributes of the payment.
@@ -167,7 +167,9 @@ Here is an example of the metadata based on this structure:
   	"region": "BC",
   	"city": "Vancouver",
   	"store_id": "A210",
-  	"branch_id": null
+    "origin_attributes": [
+      "major"
+    ]
   },
   "payment":{
     "payment_method_id": "stripe",
@@ -231,9 +233,38 @@ metadata.cart.items.exists(item => (item.categories.exists(category=>category=='
 
 These rules require that the quantity of a particular item or category of items in the cart exceeds a minimum number in order for the promotional value to be available. For example:
 
-- $5 off if you buy 3 ore more pairs of Jeans (with the product ID `G093745THP`):
+- $5 off if you buy 3 ore more pairs of Jeans:
 
 ```javascript
-metadata.cart.items.filter(item => item.id == 'G093745THP').map(item => item.quantity).sum() >= 3
+metadata.cart.items.filter(item => item.id == 'jeans').map(item => item.quantity).sum() >= 3
 ```
+
+#### Restrictions on Payment
+
+In some use-cases a promotional value depends on the conditions around the payment such as the payment method and other payment attributes. Note that the payment in this context refers to the case of split-tender where the remainder of an order is paid by a payment method other than Lightrail. In order to provide this metadata, your workflow should allow the user to commit to the third-party payment method before posting the Lightrail pending Transaction; otherwise, you will not be able to implement this use-case. For example:
+
+- $5 off if you pay with debit:
+
+```javascript
+metadata.payment.payment_attributes.exists(attribute => attribute == 'debit')
+```
+
+#### Restrictions on Origin
+
+If you have multiple stores or operate in different regions, you can make some promotions available only in specific locations or regions. For example:
+
+- $5 off if you make a purchase in the North Vancouver branch (with store ID `A210`): 
+
+```javascript
+metadata.origin.store_id == 'A210'
+```
+
+- $5 off if you purchase from the warehouse:
+- ​
+
+```javascript
+metadata.origin.origin_attributes.exists(attribute => attribute == 'warehouse')
+```
+
+
 
