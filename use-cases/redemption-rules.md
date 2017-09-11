@@ -35,9 +35,13 @@ Note that adding promotions with new Redemption Rules is a fairly easy task that
 
 ### Balance-Check
 
-Since availability of attached promotions depend on their Redemption Rules, the total available balance of a Lightrail Card varies depending  on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a  $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction which determine the evaluation of the Redemption Rules. 
+Since availability of attached promotions depend on their Redemption Rules, the total available balance of a Lightrail Card varies depending  on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a  $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction which determine the result of evaluating the Redemption Rules. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. 
 
-Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. 
+```json
+
+```
+
+
 
 ### Creating Transactions
 
@@ -81,15 +85,16 @@ POST //....
       ]
     },
     "origin": {
-      "country": "CA",
-      "region": "BC",
-  	  "city": "Vancouver",
   	  "store_id": "A210",
-  	  "branch_id": null
+  	  "tags": [
+      	"warehouse", "Canada"
+  	  ]
     },
     "payment":{
       "payment_method_id": "stripe",
-      "tags": null
+      "tags": [
+        "visa"
+      ]
     }  
   } 
 }
@@ -101,7 +106,7 @@ POST //....
 
 ```
 
-As you can see, since the order total is greater than $100 so the redemption rule for the attached Value Store (`metadata.cart.total >= 10000 `) evaluates to `true` and this promotion is unlocked for this Transaction. 
+As you can see, since the order total is greater than $10, the Redemption Rule for the attached Value Store (`metadata.cart.total >= 10000 `) evaluates to `true` and this promotion is unlocked for this Transaction. 
 
 #### Transaction
 
@@ -195,7 +200,7 @@ We will provide examples for a $5 off subject to some Redemption Rule. Note that
 metadata.cart.total >= 10000
 ```
 
-#### Specific Product 
+#### Specific Product(s) 
 
 You restrict a promotional value to a specific product. For example:
 
