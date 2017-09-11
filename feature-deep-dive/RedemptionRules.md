@@ -299,7 +299,7 @@ metadata.cart.some(item => item.category == 'doughnut' && item.itemId == 'mapleg
 #### Buy a medium coffee and any doughnut
 
 ```javascript
-metadata.cart.exists(item => item.category == 'coffee' && item.size == 'medium') && metadata.cart.exists(item => item.category == 'doughnut')
+metadata.cart.some(item => item.category == 'coffee' && item.size == 'medium') && metadata.cart.some(item => item.category == 'doughnut')
 ```
 
 #### Buy 4 coffees
@@ -503,8 +503,10 @@ floor(-12.34) → -13
 Test whether the number is NaN. NaN is a special case of number resulting from the operation `0 / 0`.
 
 ```javascript
-isNaN(1 / 0) → false
 isNaN(0 / 0) → true
+isNaN(1 / 0) → false
+isNaN("NaN") → false
+isNaN(null) → false
 ```
 
 #### isNull
@@ -514,9 +516,10 @@ isNaN(0 / 0) → true
 Test whether the value is null.
 
 ```javascript
+isNull(null) → true
 isNull(123) → false
 isNull('') → false
-isNull(null) → true
+isNull('null') → false
 ```
 
 #### keys
