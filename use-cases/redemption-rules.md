@@ -12,16 +12,16 @@ This document is a step-by-step guide to setting up Lightrail Redemption Rules.
 
 Redemption Rules are a powerful feature of Lightrail which enable setting sophisticated conditions on how value can be spent. They can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$15 off if you buy two or more pairs of jeans."
 
-Lightrail implements promotions as additional Value Stores that can be created and attached to an existing Card. Redemption rules are boolean expressions defined by a Program and are applied to any Value Store created from that Program. These rules set the conditions under which the Value Store can be spent.
+Lightrail implements promotions as additional Value Stores that can be created and attached to an existing Card. Redemption rules are Boolean expressions which are defined at the time of creating a Promotion Program and apply to any Value Store derived from that Program. These rules set the conditions under which the Value Store can be unlocked for spending.
 
-When transacting against a Card and looking to collect the funds from its Value Stores, Lightrail Transaction Manager evaluates the each Value Store's Redemption Rule against the Transaction JSON object; only if the rule evaluates to `true` the promotional value from that Value Store can be spent for that Transaction. 
+When transacting against a Card and looking into collecting funds from its Value Stores, Lightrail Transaction Manager evaluates each Value Store's Redemption Rule against the Transaction JSON object; the promotional value from that Value Store can be spent in that Transaction only if the rule evaluates to `true`. 
 
 ## Setting Up Your Redemption Rules
 
-For activating a Promotion with Redemption Rules, you need to take two steps: 
+For activating Redemption Rules in your system, you need to take the following two steps: 
 
-- Add any information that can be the basis of making decisions in Redemption Rules in the `metadata` of Transaction requests. As discussed further below, we suggest that you proactively include a set of standard metadata most likely to be in your Redemption Rules. 
-- Create a Promotion Programs with Redemption Rules and attach promotions based on that Program to Gift Cards or Account Cards. This can be done in the Lightrail Web App.
+- Add any information that may be important in Redemption Rules in the `metadata` of Transaction requests. As discussed further below, we suggest that you proactively include a set of standard metadata most likely to be in your Redemption Rules. 
+- Create Promotion Programs with Redemption Rules and attach promotions based on these Programs to Gift Cards or Account Cards. This can be done in the Lightrail Web App.
 
 Collecting and including metadata in the Transaction request must be done programmatically in your integration module with Lightrail. It is important that you identify:
 
@@ -29,27 +29,25 @@ Collecting and including metadata in the Transaction request must be done progra
 - what structure you will use to organize this information into a single `metadata` object, and
 - how and from what source you can obtain this information. 
 
-For example, some parts of the metadata, such as the order items and totals are usually available in your e-commerce platform in the form of a _cart_ or an _order_ object. For product categories, you may have to fetch the _product_ object from your backend. Other information, such as the store and branch ID are part of the configuration of your online store.
+For example, some parts of the metadata, such as the ordered items and totals are usually available in your e-commerce platform in the form of a _cart_ or an _order_ object. For product labels and categories, you may have to fetch the _product_ object from your backend database. Other information, such as the store and branch ID are part of the configuration of your online store.
 
-Note that new Redemption Rules can be written by your marketing team using the Lightrail Web App which is a simple task, while changing the Transaction metadata requires that your software developer team update your Lightrail integration code which can be very costly and time-consuming. So, to minimize future developer involvement, try to be as general and proactive as possible in your initial design of Transaction metadata and provide all the information that could potentially be used in future Redemption Rules. We suggest that at minimum, you include the [Sample Metadata Structure](#sample-metadata-structure) in this document.
+Note that adding promotions with new Redemption Rules is a fairly easy task that can be done routinely by your marketing team using the Lightrail Web App. Adding new metadata and changing the Transaction request, on the other hand, requires that your software developer team update your Lightrail integration code which can be very costly and time-consuming. So, to minimize future developer involvement, try to be as general and proactive as possible in your initial design of Transaction metadata and provide all of the information that could potentially be used in future Redemption Rules. We suggest that at minimum, you include the [Sample Metadata Structure](#sample-metadata-structure) in this document.
 
 ### Balance-Check
 
-Since the availability of attached promotions depend on the Redemption Rules, the total available balance of a Lightrail Card depends on contextual information on which the evaluation of the Redemption Rules depends. For example, if a customer have a Card with $10 principal value and a  $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction. 
+Since availability of attached promotions depend on their Redemption Rules, the total available balance of a Lightrail Card varies depending  on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a  $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction which determine the evaluation of the Redemption Rules. 
 
-Therefore, in order to check the total available balance of a Card when you need to provide the full context of the transaction by providing a complete `metadata` object in the Transaction object when requesting for the balance. 
+Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. 
 
 ### Creating Transactions
 
-You can use the `metadata` attribute in the Transaction request object to include the metadata for a Transaction on any of the Transaction endpoints in Lightrail. 
-
-In the case of split-tender where you need to post a pending Transaction first, and capture it later, the metadata must be included on _both_ the initial pending Transaction and the capture Transaction request. Note that Lightrail evaluates the metadata again at the time of capture and if the Redemption Rules is not met (because of missing or incomplete metadata) the call to capture will fail. Check out our implementation guide for [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md) for further details about handling split-tender.
+All of the Transaction creation endpoints in Lightrail accept a `metadata` attribute to provide the metadata for the requested Transaction. In the case of split-tender where you need to post a pending Transaction first and capture it later, the metadata must be included on _both_ the initial pending Transaction and the capture Transaction request. Note that Lightrail evaluates the metadata again at the time of capture and if the Redemption Rules are not met (because of missing or incomplete metadata) the call to capture will fail. Check out our implementation guide for [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md) for further details about handling split-tender.
 
 ### Walk-Through Example
 
 As an example, suppose you want to boost your sales by giving an additional $5 promotional value to customers who make a purchase of at least $100. Here are the steps necessary to activate this promotion:
 
-- Add the total purchase value to your Transaction metadata. If you follow our [Suggested Metadata Structure](#suggested-metadata-structure) you already have this in `metadata.cart.total`.
+- Make sure you have the total purchase value in your Transaction metadata. If you follow our [Suggested Metadata Structure](#suggested-metadata-structure) you already have this as `metadata.cart.total`.
 - Create a Promotion Program using the Lightrail Web App with the following Redemption Rule: `metadata.cart.total >= 10000`.
 - Attach a $5 promotion based on this Program to the Account Card of eligible customers.
 
@@ -73,7 +71,7 @@ POST //....
           ]
         },
         {
-          "id": "B009L1MF7A", //sleeping bag
+          "id": "B009L1MF7A", //jacket
           "quantity": 2,
           "unit_price": 2320,
           "categories": [
@@ -111,13 +109,21 @@ Since the available value is not sufficient to cover the entire Transaction, we 
 
 Posting Pending Transaction:
 
+```
+
+```
+
 Posting Capture:
+
+```
+
+```
 
 ## Sample Metadata Structure
 
-We suggest that you include the following metadata and in the following structure in your Transaction requests. This will cover the basic information needed for most common Redemption Rules. 
+We suggest that you include the following metadata structure in your Transaction requests. This will cover the basic information needed for most common Redemption Rules. 
 
-Note that these are just for your reference and you can pick and choose from these samples as you see fit for your use-cases. 
+Note that these are just for your reference and you can pick and choose from these samples or add any additional attributes as you see fit for your use-cases. 
 
 - `cart` (object): the main object to record the shopping cart and its contents.
   - `total` (integer): the total value of the purchase. Whether this is pre- or post-tax depends on your decision.
@@ -126,16 +132,19 @@ Note that these are just for your reference and you can pick and choose from the
       - `id` (string): the product ID.
       - `quantity` (integer): the quantity.
       - `unit_price` (integer): the unit price of the item.
-      - `categories` (array of string): a list of product categories.
+      - `tags` (array of string): a list of product categories.
+
+Additionally, if you foresee that you will have Redemption Rules based on the payment method or the origin of the Transaction, here are some additional suggested metadata:
+
 - `origin` (object): metadata about the origin of the transaction
   - `country` (string): the country in which the Transaction takes place.
   - `region` (string): the region in which the Transaction takes place.
   - `city` (string): the city in which the Transaction takes place.
   - `store_id` (string): the store ID in which the Transaction takes place. 
-  - `origin_attributes` (array of string): other attributes of the origin.
+  - `tags` (array of string): other attributes of the origin.
 - `payment` (object):
   - `payment_method_id` (string): the ID of the payment method.
-  - `payment_attributes` (array of string): other attributes of the payment.
+  - `tags` (array of string): other attributes of the payment.
 
 Here is an example of the metadata based on this structure:
 
@@ -145,18 +154,18 @@ Here is an example of the metadata based on this structure:
     "total": 25335,
     "items": [
       {
-        "id": "B000F34ZKS",
+        "id": "B000F34ZKS", //tent
         "quantity": 1,
         "unit_price": 20695,
-        "categories": [
+        "tags": [
           "gear", "outdoor", "clearance", "Coleman"
         ]
       },
       {
-        "id": "B009L1MF7A",
+        "id": "B009L1MF7A", //jacket
         "quantity": 2,
         "unit_price": 2320,
-        "categories": [
+        "tags": [
           "apparel", "outdoor", "Klymit"
         ]
       }
@@ -167,13 +176,13 @@ Here is an example of the metadata based on this structure:
   	"region": "BC",
   	"city": "Vancouver",
   	"store_id": "A210",
-    "origin_attributes": [
+    "tags": [
       "major"
     ]
   },
   "payment":{
     "payment_method_id": "stripe",
-    "payment_attributes": null
+    "tags": []
   }  
 }
 ```
@@ -200,7 +209,7 @@ You restrict a promotional value to a specific product. For example:
 
 ```javascript
 //specific product
-metadata.cart.items.exists(item => item.id=='B000F34ZKS')
+metadata.cart.items.some(item => item.id=='B000F34ZKS')
 ```
 #### Specific Product Category
 
@@ -210,14 +219,15 @@ You can restrict a promotional value to a specific Product category.
 
 ```javascript
 //specific product category
-metadata.cart.items.exists(item => item.categories.exists(category=>category=='outdoor'))
+metadata.cart.items.some(item => item.tags.some(tag => tag=='outdoor'))
 ```
 
-By dynamically labeling some products for a promotion, this mechanism can be used to dynamically enable a promotion for a group of products:
+By dynamically tagging some products for a promotion, this mechanism can be used to dynamically enable a promotion for a group of products:
 
 ```javascript
 //specific product category
-metadata.cart.items.exists(item => item.categories.exists(category=>category=='back-to-school-sale'))
+metadata.cart.items
+  .some(item => item.tags.some(tag => tag=='back-to-school-sale'))
 ```
 
 You can also set more complicated rules based on product categories and create more powerful promotion rules. For example:  
@@ -226,17 +236,23 @@ You can also set more complicated rules based on product categories and create m
 
 ```javascript
 //specific product category
-metadata.cart.items.exists(item => (item.categories.exists(category=>category=='outdoor') && !item.categories.exists(category => category=='clearance')))
+metadata.cart.items
+  .some(item => (item.tags.some(tag => tag=='outdoor') 
+                 && !item.tags.some(tag => tag=='clearance')))
 ```
 
 #### Minimum Quantity
 
 These rules require that the quantity of a particular item or category of items in the cart exceeds a minimum number in order for the promotional value to be available. For example:
 
-- $5 off if you buy 3 ore more pairs of Jeans:
+- $5 off if you buy 3 or more pairs of any types of Jeans:
 
 ```javascript
-metadata.cart.items.filter(item => item.id == 'jeans').map(item => item.quantity).sum() >= 3
+//minimum product cateogry quantity
+metadata.cart.items
+  .filter(item => (item.tags.some(tag => tag=='jeans'))
+  .map(item => item.quantity)
+  .sum() >= 3
 ```
 
 #### Restrictions on Payment
@@ -246,7 +262,7 @@ In some use-cases a promotional value depends on the conditions around the payme
 - $5 off if you pay with debit:
 
 ```javascript
-metadata.payment.payment_attributes.exists(attribute => attribute == 'debit')
+metadata.payment.tags.some(tag => tag == 'debit')
 ```
 
 #### Restrictions on Origin
@@ -259,11 +275,10 @@ If you have multiple stores or operate in different regions, you can make some p
 metadata.origin.store_id == 'A210'
 ```
 
-- $5 off if you purchase from the warehouse:
-- ​
+- $5 off if you order from a warehouse branch:
 
 ```javascript
-metadata.origin.origin_attributes.exists(attribute => attribute == 'warehouse')
+metadata.origin.tags.some(tag => tag == 'warehouse')
 ```
 
 
