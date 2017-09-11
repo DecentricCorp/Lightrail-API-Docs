@@ -92,9 +92,7 @@ POST //....
     },
     "payment":{
       "payment_method_id": "stripe",
-      "tags": [
-        "visa"
-      ]
+      "tags": []
     }  
   } 
 }
@@ -256,7 +254,9 @@ metadata.cart.items
 
 #### Restrictions on Payment
 
-In some use-cases a promotional value depends on the conditions around the payment such as the payment method and other payment attributes. Note that the payment in this context refers to the case of split-tender where the remainder of an order is paid by a payment method other than Lightrail. In order to provide this metadata, your workflow should allow the user to commit to the third-party payment method before posting the Lightrail pending Transaction; otherwise, you will not be able to implement this use-case. For example:
+In some use-cases a promotional value depends on the conditions around the payment such as the payment method or other payment attributes. 
+
+Note that in this context, payment refers to the third-party payment in split-tender where the remainder of an order is paid by a payment method other than Lightrail. In order to provide this metadata, your workflow should allow the user to commit to the third-party payment method before posting the Lightrail pending Transaction; otherwise, you will not be able to provide the right metadata to unlock such promotions. For example:
 
 - $5 off if you pay with debit:
 
@@ -266,7 +266,7 @@ metadata.payment.tags.some(tag => tag == 'debit')
 
 #### Restrictions on Origin
 
-If you have multiple stores or operate in different regions, you can have Redemption Rules based on different . For example:
+If you have multiple stores or operate in different regions, you can set Redemption Rules based on different attributes on the origin of the Transaction such as type of store, region, or store ID. For example:
 
 - $5 off if you make a purchase in the North Vancouver branch (with store ID `A210`): 
 
