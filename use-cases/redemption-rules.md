@@ -66,7 +66,7 @@ POST //....
           "id": "B000F34ZKS", //tent
           "quantity": 1,
           "unit_price": 20695,
-          "categories": [
+          "tags": [
             "gear", "outdoor", "clearance", "Coleman"
           ]
         },
@@ -74,7 +74,7 @@ POST //....
           "id": "B009L1MF7A", //jacket
           "quantity": 2,
           "unit_price": 2320,
-          "categories": [
+          "tags": [
             "apparel", "outdoor", "Klymit"
           ]
         }
@@ -89,7 +89,7 @@ POST //....
     },
     "payment":{
       "payment_method_id": "stripe",
-      "payment_attributes": null
+      "tags": null
     }  
   } 
 }
@@ -137,9 +137,6 @@ Note that these are just for your reference and you can pick and choose from the
 Additionally, if you foresee that you will have Redemption Rules based on the payment method or the origin of the Transaction, here are some additional suggested metadata:
 
 - `origin` (object): metadata about the origin of the transaction
-  - `country` (string): the country in which the Transaction takes place.
-  - `region` (string): the region in which the Transaction takes place.
-  - `city` (string): the city in which the Transaction takes place.
   - `store_id` (string): the store ID in which the Transaction takes place. 
   - `tags` (array of string): other attributes of the origin.
 - `payment` (object):
@@ -172,12 +169,9 @@ Here is an example of the metadata based on this structure:
     ]
   },
   "origin": {
-    "country": "CA",
-  	"region": "BC",
-  	"city": "Vancouver",
   	"store_id": "A210",
     "tags": [
-      "major"
+      "warehouse", "Canada"
     ]
   },
   "payment":{
@@ -267,7 +261,7 @@ metadata.payment.tags.some(tag => tag == 'debit')
 
 #### Restrictions on Origin
 
-If you have multiple stores or operate in different regions, you can make some promotions available only in specific locations or regions. For example:
+If you have multiple stores or operate in different regions, you can have Redemption Rules based on different . For example:
 
 - $5 off if you make a purchase in the North Vancouver branch (with store ID `A210`): 
 
@@ -275,10 +269,10 @@ If you have multiple stores or operate in different regions, you can make some p
 metadata.origin.store_id == 'A210'
 ```
 
-- $5 off if you order from a warehouse branch:
+- $5 off if you order from any warehouse branch in Canada:
 
 ```javascript
-metadata.origin.tags.some(tag => tag == 'warehouse')
+metadata.origin.tags.some(tag => tag == 'warehouse' && tag == 'Canada')
 ```
 
 
