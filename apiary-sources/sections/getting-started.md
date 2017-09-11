@@ -3,7 +3,7 @@ This section will go over the basic steps to make your first Lightrail API call.
 
 ### Authorization
 
-In order to use the API endpoints, you need an API key to identify yourself. You can create a test or production API key in the _API Keys_ tab under _Account Settings_ (top right corner) after logging in to your Lightrail account. If you do not have a Lightrail account yet, you can <a href="https://www.lightrail.com/app/#/register" target="_blank">create one</a>. 
+In order to make API calls, you need an API key to identify yourself. You can create a test or production API key in the _API Keys_ tab under _Account Settings_ (top right corner) after logging in to your Lightrail account. If you do not have a Lightrail account yet, you can <a href="https://www.lightrail.com/app/#/register" target="_blank">create one</a>. 
 
 After creating the key, you can view it only once and you will have to safely save it somewhere for future use. If you lose this API key you can create a new one, but you will not be able to retrieve it again.
 
