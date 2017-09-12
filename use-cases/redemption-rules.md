@@ -37,7 +37,7 @@ Note that adding promotions with new Redemption Rules is a fairly easy task that
 
 Since availability of attached promotions depend on their Redemption Rules, the total available balance of a Lightrail Card varies depending  on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a  $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction which determine the result of evaluating the Redemption Rules. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. 
 
-```json
+```javascript
 
 ```
 
@@ -59,7 +59,7 @@ As an example, suppose you want to boost your sales by giving an additional $5 p
 
 When a user is at the checkout, you can send a balance-check request including the metadata as the following:
 
-```json
+```javascript
 POST //....
 {
   "metadata": {
@@ -100,7 +100,7 @@ POST //....
 
  The response will be similar to the following:
 
-```json
+```javascript
 
 ```
 
@@ -148,7 +148,7 @@ Additionally, if you foresee that you will have Redemption Rules based on the pa
 
 Here is an example of the metadata based on this structure:
 
-```json
+```javascript
 {
   "cart": {
     "total": 25335,
