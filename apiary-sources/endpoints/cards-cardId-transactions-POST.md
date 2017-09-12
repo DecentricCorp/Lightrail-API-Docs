@@ -18,6 +18,7 @@ Transactions can be created as pending which locks the value required for the Tr
         + currency (required) - {{currency}}
         + metadata (Metadata, optional) - {{transaction.metadata}}
         + pending (boolean, optional) - {{transaction.pending}}
+        + userSuppliedId (string, required) - {{userSuppliedId}}        
         
     + Body 
     

@@ -26,6 +26,7 @@ so, when creating a pending Transaction you need to save the `cardId` from the r
         + currency (required) - {{currency}}
         + metadata (Metadata, optional) - {{transaction.metadata}}
         + pending (boolean, optional) - {{transaction.pending}}
+        + userSuppliedId (string, required) - {{userSuppliedId}}        
         
     + Body 
     
