@@ -207,7 +207,7 @@ POST https://api.lightrail.com/v1/cards/{cardId}/transactions
   "currency": "USD",
   "value": -101,
   "pending": true,
-  "userSuppliedId": "07xx71",
+  "userSuppliedId": "07xx71"
 }
 ```
 
