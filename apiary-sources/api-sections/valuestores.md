@@ -1,5 +1,5 @@
 ## ValueStores: Managing Promotions [/cards/{cardId}/valueStores/]
-These endpoints are used for managing Promotion Programs.
+Use these endpoints for creating and managing Promotions.
 
 ---
 {% include 'endpoints/cards-cardId-valueStores-GET.md' %}

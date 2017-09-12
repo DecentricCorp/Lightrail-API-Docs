@@ -1,5 +1,5 @@
 ## Cards [/cards/]
-The `/cards` endpoint is for use by your system to create and manage your Gift Cards and Account Cards.
+Use these endpoints to create and manage your Gift Cards and Account Cards.
 
 ---
 {% include 'endpoints/cards-GET.md' %}
