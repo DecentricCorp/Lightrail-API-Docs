@@ -29,7 +29,7 @@ Collecting and including metadata in the Transaction request must be done progra
 - what structure you will use to organize this information into a single `metadata` object, and
 - how and from what source you can obtain this information. 
 
-For example, some parts of the metadata, such as the ordered items and totals are usually available in your e-commerce platform in the form of a _cart_ or an _order_ object. For product labels and categories, you may have to fetch the _product_ object from your backend database. Other information, such as the store and branch ID are part of the configuration of your online store.
+For example, some parts of the metadata, such as the ordered items and totals are usually available in your e-commerce platform in the form of a _cart_ or an _order_ object. For product labels and categories, you may have to fetch the _product_ object from your back-end database. Other information, such as the store and branch ID are part of the configuration of your online store.
 
 Note that adding promotions with new Redemption Rules is a fairly easy task that can be done routinely by your marketing team using the Lightrail Web App. Adding new metadata and changing the Transaction request, on the other hand, requires that your software developer team update your Lightrail integration code which can be very costly and time-consuming. So, to minimize future developer involvement, try to be as general and proactive as possible in your initial design of Transaction metadata and provide all of the information that could potentially be used in future Redemption Rules. We suggest that at minimum, you include the [Sample Metadata Structure](#sample-metadata-structure) in this document.
 
@@ -59,7 +59,7 @@ As an example, suppose you want to boost your sales by giving an additional $5 p
 
 When a user is at the checkout, you can send a balance-check request including the metadata as the following:
 
-```Json
+```json
 POST //....
 {
   "metadata": {
@@ -174,7 +174,7 @@ Here is an example of the metadata based on this structure:
   "origin": {
   	"store_id": "A210",
     "tags": [
-      "warehouse", "Canada"
+      "warehouse", "CA"
     ]
   },
   "payment":{
@@ -274,10 +274,10 @@ If you have multiple stores or operate in different regions, you can set Redempt
 metadata.origin.store_id == 'A210'
 ```
 
-- $5 off if you order from any warehouse branch in Canada:
+- $5 off if you order from any warehouse branch in California:
 
 ```javascript
-metadata.origin.tags.some(tag => tag == 'warehouse' && tag == 'Canada')
+metadata.origin.tags.some(tag => tag == 'warehouse' && tag == 'CA')
 ```
 
 
