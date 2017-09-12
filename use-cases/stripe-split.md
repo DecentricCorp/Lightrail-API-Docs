@@ -66,14 +66,14 @@ If you have a Lightrail `cardId`, the request will look like the following:
 
 As you see in this example, we recommend that you use the `metadata` attribute to push additional information with this transaction to indicate that it is part of a split-tender with Stripe.
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions
 Authorization: Bearer {apiKey}
 Content-Type: application/json; charset=utf-8
 
 {
   "currency": "USD",
-  "value": -{lightrailShare}, # remember that this value is negative
+  "value": -{lightrailShare}, // remember that this value is negative
   "pending": true,
   "userSuppliedId": "07xx71",
   "metadata":{
@@ -85,14 +85,14 @@ Content-Type: application/json; charset=utf-8
 
 If you have a Lightrail Gift Card `fullcode` the request is identical, but you will have to call a different endpoint:
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/codes/{fullcode}/transactions
 Authorization: Bearer {apiKey}
 Content-Type: application/json; charset=utf-8
 
 {
   "currency": "USD",
-  "value" : -{lightrailShare}, # remember that this value is negative
+  "value" : -{lightrailShare}, //remember that this value is negative
   "pending": true,
   "userSuppliedId": "07xx71",
   "metadata":{
@@ -104,7 +104,7 @@ Content-Type: application/json; charset=utf-8
 
 A successful response to these calls will look like the following. Depending on the endpoint there may be other attributes in the response object which are not significant in this use-case.
 
-```Json
+```javascript
 {
    "transaction": {
      "transactionId": "transaction-bxx4",
@@ -114,7 +114,7 @@ A successful response to these calls will look like the following. Depending on 
        "transactionType": "PENDING_CREATE",
        "cardId": "card-6xxd",
        "currency": "USD"
-       ...
+       //...
 }
 ```
 
@@ -133,7 +133,7 @@ As mentioned earlier, unlike Lightrail, the value of the `amount` parameter in t
 
 As you see in this example, we recommend that you use Stripe's `metadata` parameter to push additional information with this transaction indicating that it is part of a split-tender with Lightrail and to record the `lightrailPendingTransactionId`.
 
-```json
+```javascript
 POST https://api.stripe.com/v1/charges
 Authorization: Bearer {secretKey}
 Content-Type: application/x-www-form-urlencoded
@@ -145,7 +145,7 @@ If instead of a token you have a Stripe `customerId`, you can make a similar cal
 
 A successful response to this call will look like the following:
 
-```Json
+```javascript
 {
   "id": "ch_1AxxTy",
   "object": "charge",
@@ -157,7 +157,7 @@ A successful response to this call will look like the following:
     "_split-tender-total": {total},
     "_split-tender-partner-txn-id": {lightrailPendingTransactionId}
   }
-  ...
+  //...
 }
 ```
 
@@ -175,7 +175,7 @@ You also need a new `userSuppliedId`; if you already have a unique identifier fr
 
 As you see in this example, we recommend that you leverage Lightrail's `metadata` attribute to push additional information with this transaction indicating that it is part of a split-tender with Stripe and to record the `stripeTransactionId`.
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{lightrailPendingTransactionId}/capture
 {
   "userSuppliedId":"order-07xx71-capture",
@@ -187,9 +187,9 @@ POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{lightrailPendingT
 }
 ```
 If for any reason the Stripe payment call fails, you need to void the Lightrail pending transaction.
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{lightrailPendingTransactionId}/void
 {
-  "userSuppliedId":"order-07xx71-void",
+  "userSuppliedId":"order-07xx71-void"
 }
 ```
