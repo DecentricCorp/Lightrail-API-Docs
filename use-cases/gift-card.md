@@ -4,7 +4,7 @@
 
 This document is a quick step-by-step guide to creating and distributing new Lightrail Gift Cards. The focus will be on implementing this use-case by programmatically calling the Lightrail API. 
 
-- If you would like to learn more about Lightrail concepts, check out the section on Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/).
+- To learn more about Lightrail concepts, check out the section on the Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/). 
 - If you are looking for an implementation of this use-case in a specific language or technology, check out the section on Client Libraries and Integrations in the [Lightrail API Docs](https://www.lightrail.com/docs/).
 - If you are looking for adding promotional values to existing Gift Cards, check out our implementation guide for [Creating Lightrail Promotions](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md).
 
