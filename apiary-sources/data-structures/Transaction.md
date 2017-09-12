@@ -11,3 +11,4 @@
 + cardId (string) - The Lightrail Card ID.
 + currency (string) - {{currency}}
 + metadata (object) - {{transaction.metadata}}
++ transactionBreakdown (array[TransactionValue])
