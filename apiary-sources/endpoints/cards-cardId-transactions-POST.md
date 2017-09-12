@@ -26,16 +26,9 @@ Transactions can be created as pending which locks the value required for the Tr
               "userSuppliedId":"example2",
               "value":-500,
               "currency":"USD",
-              "metadata":{
-                "checkout-cart":{
-                  "items":[
-                    {
-                      "id":"1"
-                    },
-                    {
-                      "id":"2"
-                    }
-                  ]
+              "metadata": {
+                "cart": {
+                  "total": 25335
                 }
               }
             }
@@ -58,16 +51,9 @@ Transactions can be created as pending which locks the value required for the Tr
                 "giftbitUserId":"user-1dxx32",
                 "cardId":"card-76xxab",
                 "currency":"USD",
-                "metadata":{
-                  "checkout-cart":{
-                    "items":[
-                      {
-                        "id":"1"
-                      },
-                      {
-                        "id":"2"
-                      }
-                    ]
+                "metadata": {
+                  "cart": {
+                    "total": 25335
                   }
                 }
               }

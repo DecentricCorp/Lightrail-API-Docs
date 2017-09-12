@@ -36,7 +36,7 @@ Retrieve a paginated list of a Card's Transactions based on the Card ID.
                     "currency": "USD",
                     "parentTransactionId": "transaction-9axx70",
                     "metadata": {
-                    "giftbit_initial_transaction_id": "transaction-9axx70"
+                      "giftbit_initial_transaction_id": "transaction-9axx70"
                     }
                 },
                 {
@@ -52,8 +52,8 @@ Retrieve a paginated list of a Card's Transactions based on the Card ID.
                     "currency": "USD",
                     "parentTransactionId": "transaction-9axx70",
                     "metadata": {
-                    "giftbit_initial_transaction_id": "transaction-9axx70"
-                }
+                      "giftbit_initial_transaction_id": "transaction-9axx70"
+                    }
                 },
                 {
                     "transactionId": "transaction-9axx70",
@@ -92,7 +92,7 @@ Retrieve a paginated list of a Card's Transactions based on the Card ID.
                     "currency": "USD",
                     "parentTransactionId": "transaction-a6xx9d",
                     "metadata": {
-                    "giftbit_initial_transaction_id": "transaction-a6xx9d"
+                      "giftbit_initial_transaction_id": "transaction-a6xx9d"
                     }
                 }
               ],

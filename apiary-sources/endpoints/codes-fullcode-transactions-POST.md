@@ -34,18 +34,11 @@ so, when creating a pending Transaction you need to save the `cardId` from the r
               "userSuppliedId":"example2",
               "value":-500,
               "currency":"USD",
-              "metadata":{
-                "checkout-cart":{
-                  "items":[
-                    {
-                      "id":"1"
-                    },
-                    {
-                      "id":"2"
-                    }
-                  ]
+                "metadata": {
+                  "cart": {
+                    "total": 25335
+                  }
                 }
-              }
             }
     
 + Response 200
@@ -66,16 +59,9 @@ so, when creating a pending Transaction you need to save the `cardId` from the r
                 "giftbitUserId":"user-1dxx32",
                 "cardId":"card-76xxab",
                 "currency":"USD",
-                "metadata":{
-                  "checkout-cart":{
-                    "items":[
-                      {
-                        "id":"1"
-                      },
-                      {
-                        "id":"2"
-                      }
-                    ]
+                "metadata": {
+                  "cart": {
+                    "total": 25335
                   }
                 }
               }

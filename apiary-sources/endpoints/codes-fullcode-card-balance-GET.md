@@ -34,4 +34,3 @@ Retrieve a Card's balance using the Gift Card's `fullcode`, also referred to as 
                     "balanceDate": "2017-06-05T17:11:36.999Z"
                 }
             }
-
