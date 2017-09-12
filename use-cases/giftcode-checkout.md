@@ -135,7 +135,7 @@ foreach ($response['balance']['attached'] as $attachedValue) {
 
 Request:
 
-```json
+```javascript
 GET https://api.lightrail.com/v1/cards/{cardId}/balance
 ```
 
@@ -146,7 +146,7 @@ Response sample:
     "balance": {
        "currency": "USD",
        "cardType": "GIFT_CARD",
-       "balanceDate": "2017-07-11T00:40:52.104Z"
+       "balanceDate": "2017-07-11T00:40:52.104Z",
        "principal": {
          "currentValue": 541,
          "state": "ACTIVE",
@@ -181,7 +181,7 @@ Response sample:
 
 You can use the code balance endpoint to check the available value of a Gift Card by providing its `fullcode`. 
 
-```json
+```javascript
 GET https://api.lightrail.com/v1/codes/{fullcode}/card/balance
 ```
 
@@ -201,11 +201,11 @@ If `pending` is set to `true` in the request body, the transaction will be consi
 
 Request Sample:
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions
 {
   "currency": "USD",
-  "value": -101
+  "value": -101,
   "pending": true,
   "userSuppliedId": "07xx71",
 }
@@ -234,7 +234,7 @@ Response Sample:
 This endpoint enables posting a transaction to withdraw some value from a Gift Card based on its `fullcode`. The request and response objects are identical to that of the [Card Transaction Endpoint](#posting-a-new-transaction).
 
 Request Sample:
-```json
+```javascript
 POST https://api.lightrail.com/v1/codes/{fullcode}/transactions
 {
   "currency": "USD",
@@ -250,17 +250,17 @@ After posting a `pending` transaction, you can use this endpoint to either captu
 
 Request Samples:
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{transactionId}/void
 {
-  "userSuppliedId":"tx0771",
+  "userSuppliedId":"tx0771"
 }
 ```
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{transactionId}/capture
 {
-  "userSuppliedId":"tx0771",
+  "userSuppliedId":"tx0771"
 }
 ```
 
@@ -291,7 +291,7 @@ Response Sample:
 
 You can call the this endpoint with search parameters to retrieve the account Card belonging to a Contact for a particular currency:
 
-```json
+```javascript
 GET https://api.lightrail.com/v1/cards?cardType=ACCOUNT_CARD&currency={currency}&contactId={contactId}
 ```
 
@@ -306,7 +306,7 @@ The response is in the form of search results which includes an array of `card` 
     "contactId": "contact-271a",
     "dateCreated": "2017-07-26T23:50:04.572Z",
     "cardType": "ACCOUNT_CARD",
-    "currency": "USD"
+    "currency": "USD",
     "categories":[
      {
       "categoryId": "category-bdxx88",
