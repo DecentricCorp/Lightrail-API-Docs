@@ -36,7 +36,6 @@ Once you have a Promotion Program, you can create promotional values based on it
 - Call the [Value Store Creation Endpoint](#create-a-new-value-store) by providing the `cardId` and the `programId`. This will create a new promotion and attach it to the Card.
 
 
-
 ## API Endpoints
 
 ### Create a New Value Store
@@ -53,7 +52,7 @@ Other optional attributes in the request are `startDate` and `expires` which spe
 
 Here is a sample request and response call: 
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/valueStores
 {
   "userSuppliedId": "72xx81",
@@ -86,7 +85,7 @@ For these calls you need to provide the `cardId` of the Card to which the promot
 
 Here are sample requests for these actions:
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/valueStores/{valueStoreId}/freeze
 {
   "userSuppliedId": "case-234"

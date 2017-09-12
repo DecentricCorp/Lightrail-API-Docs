@@ -56,13 +56,13 @@ To fund an account, post a Transaction with a positive value to the correspondin
 
 To create a new Contact, you need to provide a client-side unique identifier known as the `userSuppliedId`. The `userSuppliedId` is a per-endpoint unique identifier used to ensure idempotence. Ensuring idempotence means that if the same request is issued more than once, it will not result in repeated actions. Optionally, you can also provide an `email`, `firstName`, and `lastName`. Here is a sample request:
 
-```json
+```javascript
 POST https://www.lightrail.com/v1/contacts
 {
   "userSuppliedId": "customer-9f50629d",
   "email": "test@test.ca",
   "firstName": "Test",
-  "lastName": "McTest",
+  "lastName": "McTest"
 }
 ```
 
@@ -87,13 +87,13 @@ The response objects will include both the `userSuppliedId` and a server-generat
 
 You can retrieve a Contact based on its `contactId` by directly making a `GET` call to the Contacts API Endpoint. The response to this call will be a `contact` object similar to the one shown above. 
 
-```json
+```javascript
 GET https://www.lightrail.com/v1/contacts/{contactId}
 ```
 
 Alternatively, you can retrieve a contact based on its `userSuppliedId` by making a `GET` call to the same endpoint as a search:
 
-```json
+```javascript
 GET https://www.lightrail.com/v1/contacts?userSuppliedId={userSuppliedId}
 ```
 
@@ -127,7 +127,7 @@ Although the response to this call is a search result object with an array of Co
 
 For creating a new Account Card, you need to provide the `contactId` of the Contact with whom the card will be associated and specify the card `currency`. Note that since gift cards use the same endpoint, you have to also specify the `cardType` as  `ACCOUNT_CARD`.
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards
 {
   "userSuppliedId": "account-d37e",
@@ -147,7 +147,7 @@ The response objects will include both the `userSuppliedId` and a server-generat
     "contactId": "contact-271a",
     "dateCreated": "2017-07-26T23:50:04.572Z",
     "cardType": "ACCOUNT_CARD",
-    "currency": "USD"
+    "currency": "USD",
     "categories":[
      {
       "categoryId": "category-bd12dd18dfc14089b0e59ec90eb10388",
@@ -168,7 +168,7 @@ The response objects will include both the `userSuppliedId` and a server-generat
 
 You can call the Cards Endpoint as a search to retrieve all the account Cards beloging to a Contact:
 
-```json
+```javascript
 GET https://api.lightrail.com/v1/cards?cardType=ACCOUNT_CARD&contactId={contactId}
 ```
 
@@ -183,7 +183,7 @@ The response is in the form of search results which includes an array of `card` 
     "contactId": "contact-271a",
     "dateCreated": "2017-07-26T23:50:04.572Z",
     "cardType": "ACCOUNT_CARD",
-    "currency": "USD"
+    "currency": "USD",
     "categories":[
      {
       "categoryId": "category-bd12dd18dfc14089b0e59ec90eb10388",
@@ -210,7 +210,7 @@ The response is in the form of search results which includes an array of `card` 
 
 Note that you can also specify the `currency` as a search parameter in which case you will be guaranteed to get at most one `card` object back in the results since there can only be one card per currency per contact:
 
-```json
+```javascript
 GET https://api.lightrail.com/v1/cards?cardType=ACCOUNT_CARD&currency=USD&contactId={contactId}
 ```
 
@@ -218,7 +218,7 @@ GET https://api.lightrail.com/v1/cards?cardType=ACCOUNT_CARD&currency=USD&contac
 
 You can use the card balance endpoint to check the available value of an Account Card by providing the `cardId`. If you do not have the `cardId`, you can retrieve it based on the customer's `contactId` by calling the [Cards API Endpoint](#cards-endpoint), as discussed above.
 
-```json
+```javascript
 GET https://api.lightrail.com/v1/cards/{cardId}/balance
 ```
 Usually, the balance is returned in the `currentValue` field of the `principal` object. If you are using attached promotions (e.g. temporary promotional values), these additional values are returned in the attached objects in the response. In such cases, the effective balance is the available value in its principal value store, plus the sum of all attached values that are currently active. So, in order to get the effective available balance of the account you need to use the following logic:
@@ -275,7 +275,7 @@ You can transact against an Account Card by providing the corresponding `cardId`
 
 If you do not have the `cardId` you can retrieve it based on the customer's `contactId` using the [Cards API Endpoint](#cards-endpoint), as discussed above.
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions
 {
   "userSuppliedId": "tx-fe2d",
@@ -286,7 +286,7 @@ POST https://api.lightrail.com/v1/cards/{cardId}/transactions
 
 The returned object includes both the `userSuppliedId` and a server-generated `transactionId` which you can use later to retrieve this transaction.
 
-```Json
+```json
 {
   "transaction":{
     "transactionId": "transaction-fec7",
@@ -306,7 +306,7 @@ The returned object includes both the `userSuppliedId` and a server-generated `t
 
 For drawdown transactions, Lightrail supports the preauthorize-capture flow. By setting the value of the `pending` attribute, you can tell Lightrail to create a pending Transaction. The funds for a pending Transaction are withheld until it is _captured_ or _voided_ later:
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions
 {
   "userSuppliedId": "tx-fe2d",
@@ -318,17 +318,17 @@ POST https://api.lightrail.com/v1/cards/{cardId}/transactions
 
 From the response to this call, you need to save the `transactionId` of the pending Transaction while you will need later, in order to `void` or `capture` it by calling one of the following methods:
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{transactionId}/void
 {
-  "userSuppliedId":"tx0771",
+  "userSuppliedId":"tx0771"
 }
 ```
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{transactionId}/capture
 {
-  "userSuppliedId":"tx0771",
+  "userSuppliedId":"tx0771"
 }
 ```
 

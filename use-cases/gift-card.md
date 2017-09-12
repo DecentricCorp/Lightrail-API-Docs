@@ -69,7 +69,7 @@ Note that since Lightrail supports creating other types of Cards using the same 
 
 You also need to provide a `userSuppliedId` which is a client-side unique value to guarantee idempotency, i.e. to ensure that repeating the call with the same parameters will not lead to repeated server-side actions. Read more about `userSuppliedId`s in the Implementation Details section of the [Lightrail API Docs](https://www.lightrail.com/docs/). For this use-case we suggest that you use a unique ID from an object in your workflow such as the order ID if the Card is being purchased.
 
-```json
+```javascript
 POST https://api.lightrail.com/v1/cards
 {
   "programId": "program-06d0",
@@ -110,7 +110,7 @@ From the response of this call, you need to retain the `cardId` which is necessa
 
 To retrieve the full code corresponding to a card, you can send a GET request to the full code endpoint and provide the `cardId`. Note that for security reasons this is the only endpoint in the Lightrail API that returns the `fullcode`, so you will not receive the `fullcode` in the `card` object in the response from the Card creation endpoint.  
 
-```json
+```javascript
 GET https://api.lightrail.com/v1/cards/{cardId}/fullcode
 ```
 
@@ -118,8 +118,9 @@ The response is a `fullcode` object similar to the following:
 
 ```json
 {
-  "fullcode":{
-  "code": "A1B2C-E3F4G-A3B4C-E1F2G-VWXYZ"
+  "fullcode": {
+    "code": "A1B2C-E3F4G-A3B4C-E1F2G-VWXYZ"
+  }
 }
 ```
 
