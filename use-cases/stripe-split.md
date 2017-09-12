@@ -5,7 +5,7 @@
 This document is a quick step-by-step guide to splitting a transaction between a Lightrail Card and Stripe. The focus will be on implementing this use-case by programmatically calling the Stripe and Lightrail APIs. 
 
 - For a more in-depth discussion of Lightrail value redemption, check out our guide to [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md). 
-- If you would like to learn more about Lightrail concepts, check out the section on the Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/).
+- To learn more about Lightrail concepts, check out the section on the Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/). 
 - If you are looking for an implementation of this use-case in a specific language or technology, check out the section on Client Libraries and Integrations in the [Lightrail API Docs](https://www.lightrail.com/docs/).
 
 ## Concepts
