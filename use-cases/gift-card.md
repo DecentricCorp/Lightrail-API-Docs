@@ -119,7 +119,8 @@ The response is a `fullcode` object similar to the following:
 ```json
 {
   "fullcode": {
-  "code": "A1B2C-E3F4G-A3B4C-E1F2G-VWXYZ"
+    "code": "A1B2C-E3F4G-A3B4C-E1F2G-VWXYZ"
+  }
 }
 ```
 
