@@ -62,7 +62,7 @@ POST https://www.lightrail.com/v1/contacts
   "userSuppliedId": "customer-9f50629d",
   "email": "test@test.ca",
   "firstName": "Test",
-  "lastName": "McTest",
+  "lastName": "McTest"
 }
 ```
 
