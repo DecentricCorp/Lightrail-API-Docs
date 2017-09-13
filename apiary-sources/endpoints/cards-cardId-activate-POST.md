@@ -16,7 +16,7 @@ If a card has been created as inactive, you can use this endpoint to activate.
     + Body 
     
             {
-                "userSuppliedId":"activate-1"
+              "userSuppliedId":"activate-1"
             }
     
 + Response 200

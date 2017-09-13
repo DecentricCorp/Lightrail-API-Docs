@@ -35,13 +35,7 @@ Note that adding promotions with new Redemption Rules is a fairly easy task that
 
 ### Balance-Check
 
-Since availability of attached promotions depend on their Redemption Rules, the total available balance of a Lightrail Card varies depending  on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a  $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction which determine the result of evaluating the Redemption Rules. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. 
-
-```javascript
-
-```
-
-
+Since availability of attached promotions depend on their Redemption Rules, the total available balance of a Lightrail Card varies depending on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a  $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. Lightrail `dryRun` endpoints are designed to make this possible as you will see in the Walk-Through Example below.
 
 ### Creating Transactions
 
@@ -57,14 +51,20 @@ As an example, suppose you want to boost your sales by giving an additional $5 p
 
 #### Balance-Check
 
-When a user is at the checkout, you can send a balance-check request including the metadata as the following:
+At the checkout, you check the available balance of the Card by sending a `dryRun` request with the value of `nfs` set to `false`. This tells the Lightrail to return a best-effort would-be Transaction instead of an error if there is not sufficient funds in the Card. 
+
+For example, assuming the customer wants to check out a cart with $253.35 balance, the `dryRun` request will look like the following. This will ask the Lightrail API to simulate a Transaction with the value of $253.35 on the provided Gift Card and in case of insufficient funds, return the maximum the Card can spend in this Transaction: 
 
 ```javascript
-POST //....
+POST https://www.lightrail.com/v1/codes/{fullcode}/transactions/dryRun
 {
+  "userSuppliedId":"order-s3xx30",
+  "value":-27655,
+  "currency":"USD",
+  "nsf": false,
   "metadata": {
     "cart": {
-      "total": 25335,
+      "total": 27655,
       "items": [
         {
           "id": "B000F34ZKS", //tent
@@ -76,33 +76,135 @@ POST //....
         },
         {
           "id": "B009L1MF7A", //jacket
-          "quantity": 2,
+          "quantity": 3,
           "unit_price": 2320,
           "tags": [
             "apparel", "outdoor", "Klymit"
           ]
         }
       ]
-    },
-    "origin": {
-  	  "store_id": "A210",
-  	  "tags": [
-      	"warehouse", "Canada"
-  	  ]
-    },
-    "payment":{
-      "payment_method_id": "stripe",
-      "tags": []
     }  
   } 
 }
 ```
 
- The response will be similar to the following:
+The response will be similar to the following. Note that this is just a simulation and is NOT an actual Transaction and it does not have a `transactionId`. As you can see, in this case, the maximum value this Card can provide is $55. You can also see in the `transactionBreakdown`,  this is coming two different Value Stores, one with $50 value (which is the principal Value Store of the Card) and the other with $5 value (which is the attached promotion).
 
 ```javascript
-
+{  
+  "transaction":{  
+    "value":-5500,
+    "userSuppliedId":"order-s3xx30",
+    "dateCreated":null,
+    "transactionType":"DRAWDOWN",
+    "transactionAccessMethod":"RAWCODE",
+    "valueAvailableAfterTransaction":0,
+    "cardId":"card-dcxx37",
+    "currency":"USD",
+    "transactionBreakdown":[  
+      {  
+        "value":-500,
+        "valueAvailableAfterTransaction":0,
+        "valueStoreId":"value-024e3a9902f341eb8983f4e7db64e76c"
+      },
+      {  
+        "value":-5000,
+        "valueAvailableAfterTransaction":0,
+        "valueStoreId":"value-663b1647d8d547199b7879010439d6f2"
+      }
+    ],
+    "transactionId":null,
+    "metadata":{  
+      "cart":{  
+        "total":27655,
+        "items":[  
+          {  
+            "quantity":1,
+            "id":"B000F34ZKS",
+            "unit_price":20695,
+            "tags":["gear","outdoor","clearance","Coleman"]
+          },
+          {  
+            "quantity":3,
+            "id":"B009L1MF7A",
+            "unit_price":2320,
+            "tags":["apparel","outdoor","Klymit"]
+          }
+        ]
+      }
+    },
+    "codeLastFour":"YNJC"
+  }
+}
 ```
+
+If you send this request with different metadata, you may get a different result. For example, suppose that the customer removes one of the items from the cart, therefore changing the cart and cart total to $23.20:
+
+```javascript
+POST https://www.lightrail.com/v1/codes/{fullcode}/transactions/dryRun
+{
+  "userSuppliedId":"order-s3xx30",
+  "value":-6960,
+  "currency":"USD",
+  "nsf": false,
+  "metadata": {
+    "cart": {
+      "total": 2320,
+      "items": [
+        {
+          "id": "B009L1MF7A", //jacket
+          "quantity": 3,
+          "unit_price": 2320,
+          "tags": [
+            "apparel", "outdoor", "Klymit"
+          ]
+        }
+      ]
+    }  
+  } 
+}
+```
+
+ In this case, you see that the maximum the Card can pay for this Transaction is only $50. If you examine the `transactionBreakdown`, you can see only one $50 Value Store is spendable in this Transaction. This is because the metadata of this Transaction did not meet the Redemption Rules of the other Value Store (the $5 promotion) which is only spendable if the cart total is $100 or more.
+
+```javascript
+{  
+  "transaction":{  
+    "value":-5000,
+    "userSuppliedId":"order-s3xx30",
+    "dateCreated":null,
+    "transactionType":"DRAWDOWN",
+    "transactionAccessMethod":"RAWCODE",
+    "valueAvailableAfterTransaction":0,
+    "cardId":"card-dcxx37",
+    "currency":"USD",
+    "transactionBreakdown":[  
+      {  
+        "value":-5000,
+        "valueAvailableAfterTransaction":0,
+        "valueStoreId":"value-66xxf2"
+      }
+    ],
+    "transactionId":null,
+    "metadata":{  
+      "cart":{  
+        "total":6960,
+        "items":[  
+          {  
+            "quantity":3,
+            "id":"B009L1MF7A",
+            "unit_price":2320,
+            "tags":["apparel","outdoor","Klymit"]
+          }
+        ]
+      }
+    },
+    "codeLastFour":"YNJC"
+  }
+}
+```
+
+
 
 As you can see, since the order total is greater than $10, the Redemption Rule for the attached Value Store (`metadata.cart.total >= 10000 `) evaluates to `true` and this promotion is unlocked for this Transaction. 
 
