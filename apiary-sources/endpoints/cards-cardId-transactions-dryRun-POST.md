@@ -1,6 +1,7 @@
-<a name="post-transaction-by-cardid-dryRun-anchor"></a>
 
 ### Simulate a Transaction and Balance-Check Based on Card ID [POST /cards/{cardId}/transactions/dryRun]
+<a name="post-transaction-by-cardid-dryRun-anchor"></a>
+
 Simulates creating a transaction against a Card based on its `fullcode` and returns the would-be Transaction.  Note that the returned Transaction object does not have a `transactionId` because it is merely a simulation and not an actual Transaction.
 
 The `nsf` attribute determines the behaviour of this endpoint in the case of insufficient funds:
@@ -11,6 +12,7 @@ the maximum the Card can pay, i.e. its available balance.
 Providing the full context of the Transaction, including its metadata, is particularly important if your system uses Redemption Rules since the 
 effective balance of a Card varies depending on the metadata of the Transaction.
 ---
+
 + Parameters
     + cardId (string, required) - {{card.cardId}}
 
