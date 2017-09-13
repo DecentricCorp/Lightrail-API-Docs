@@ -4,7 +4,7 @@
 
 This document is a step-by-step guide to setting up Lightrail Redemption Rules. 
 
-- For a further details on how to write Redemption Rules check out [Redemption Rules Reference Documentation](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md).
+- For further details on how to write Redemption Rules check out [Redemption Rules Reference Documentation](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md).
 - For a guide on adding promotions to Lightrail Cards, checkout the use-case guide for [Creating Lightrail Promotions](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md).
 - To learn more about Lightrail concepts, check out the section on the Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/). 
 
@@ -74,17 +74,13 @@ POST https://www.lightrail.com/v1/cards/{cardId}/transactions/dryRun
           "id": "B000F34ZKS", 
           "quantity": 1,
           "unit_price": 20695,
-          "tags": [
-            "gear", "outdoor", "clearance", "Coleman"
-          ]
+          "tags": ["gear", "outdoor", "clearance", "Coleman"]
         },
         {
           "id": "B009L1MF7A", 
           "quantity": 3,
           "unit_price": 2320,
-          "tags": [
-            "apparel", "outdoor", "Klymit"
-          ]
+          "tags": ["apparel", "outdoor", "Klymit"]
         }
       ]
     }  
