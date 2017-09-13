@@ -1634,15 +1634,12 @@ Retrieves a particular Transaction by its ID based on the `fullcode`.
             }
 
 
-
-
 ## Simulate and Balance-Check [/cards/{cardId}/balance/]
 Use these endpoints to simulate a Transaction and get the available balance of a Card in the context of a would-be Transaction. 
 Depending on the context of your use-case you can do this either based on the `cardId` or the `fullcode`. 
 Note that only Gift Cards have a `fullcode`.
 
 ---
-
 
 
 ### Simulate a Transaction and Balance-Check Based on Card ID [POST /cards/{cardId}/transactions/dryRun]
@@ -1655,8 +1652,9 @@ If `nsf` is set to `false`, the response will return a hypothetical Transaction 
 
 Providing the full context of the Transaction, including its metadata, is particularly important if your system uses Redemption Rules since the 
 effective balance of a Card varies depending on the metadata of the Transaction.
----
 
+---
+apiary
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
 
