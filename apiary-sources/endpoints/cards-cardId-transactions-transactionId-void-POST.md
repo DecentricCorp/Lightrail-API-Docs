@@ -17,7 +17,7 @@ Voids a pending Transaction by unlocking the value withheld by the pending Trans
     + Body 
             
             {
-              "userSuppliedId":"tx-122",
+              "userSuppliedId":"tx-122"
             }
     
 + Response 200
