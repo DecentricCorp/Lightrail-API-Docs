@@ -17,7 +17,7 @@ Refund a Transaction by reversing its effect.
     + Body 
             
             {
-              "userSuppliedId":"tx-122",
+              "userSuppliedId":"tx-122"
             }
     
 + Response 200

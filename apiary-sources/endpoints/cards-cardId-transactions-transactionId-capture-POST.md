@@ -18,6 +18,11 @@ Capture a pending Transaction, thereby collecting the value withheld by the pend
         
             {
               "userSuppliedId":"tx-122",
+              "metadata": {
+                  "cart": {
+                    "total": 25335
+                  }
+              }
             }
 
 + Response 200
@@ -40,7 +45,10 @@ Capture a pending Transaction, thereby collecting the value withheld by the pend
                 "currency":"USD",
                 "parentTransactionId":"transaction-90xxf6",
                 "metadata":{
-                  "giftbit_initial_transaction_id":"transaction-90xxf6"
+                    "cart": {
+                        "total": 25335
+                    },
+                    "giftbit_initial_transaction_id":"transaction-90xxf6"
                 }
               }
             }
