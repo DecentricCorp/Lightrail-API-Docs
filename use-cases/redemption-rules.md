@@ -88,7 +88,9 @@ POST https://www.lightrail.com/v1/cards/{cardId}/transactions/dryRun
 }
 ```
 
-The response will be similar to the following. Note that this is just a simulation and NOT an actual Transaction; for instance, it does not have a `transactionId`. The response indicates that for this Transaction, the maximum value this Card can provide is $55. By checking the `transactionBreakdown`,  you can see that this value is coming from two different Value Stores: one with a $50 value (which is the principal Value Store of the Card), and the other with a $5 value (which is the attached promotion).
+The response will be similar to the following. Note that this is just a simulation and NOT an actual Transaction; for instance, it does not have a `transactionId`. The response indicates that for this Transaction, the maximum value this Card can provide is $55. In other words, if you attempt to create a drawdown Transaction for up to $55, it will be successful. 
+
+By checking the `transactionBreakdown`, you can see that this value is coming from two different Value Stores: one with a $50 value (which is the principal Value Store of the Card), and the other with a $5 value (which is the attached promotion). Generally, it is a good user-experience if you show the user the promotions unlocked for the Transaction. 
 
 ```javascript
 {  
@@ -149,7 +151,7 @@ POST https://www.lightrail.com/v1/cards/{cardId}/transactions/dryRun
   "nsf": false,
   "metadata": {
     "cart": {
-      "total": 2320,
+      "total": 6960,
       "items": [
         {
           "id": "B009L1MF7A",
