@@ -91,10 +91,10 @@ After you create a new Promotion Program with this redemption rule, you can crea
 At the checkout page, your e-commerce system examines the customer's cart and accordingly provides a `cart` object in the `metadata` attribute in the Transaction request object. For example:
 
 ```json
-{"cart": 
- {
-   "total":10350
- }
+"metadata": {
+    "cart": {
+      "total": 25335
+    }
 }
 ```
 
