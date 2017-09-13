@@ -1,5 +1,5 @@
+### Simulate a Transaction and Balance-Check Based on Gift Code [POST /cards/{fullcode}/transactions/dryRun{?pin}]
 <a name="post-transaction-by-code-dryRun-anchor"></a>
-### Simulate a Transaction and Balance-Check Based on Gift Code [POST /cards/{fullcode}/transactions/dryRun]
 Simulates creating a transaction against a Card based on its `cardId` and returns the would-be Transaction.  Note that the returned Transaction object does not have a `transactionId` because it is merely a simulation and not an actual Transaction.
 
 The `nsf` attribute determines the behaviour of this endpoint in the case of insufficient funds:
