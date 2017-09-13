@@ -155,9 +155,7 @@ POST https://www.lightrail.com/v1/codes/{fullcode}/transactions/dryRun
           "id": "B009L1MF7A", //jacket
           "quantity": 3,
           "unit_price": 2320,
-          "tags": [
-            "apparel", "outdoor", "Klymit"
-          ]
+          "tags": ["apparel", "outdoor", "Klymit"]
         }
       ]
     }  
@@ -210,18 +208,68 @@ As you can see, since the order total is greater than $10, the Redemption Rule f
 
 #### Transaction
 
-Since the available value is not sufficient to cover the entire Transaction, we need to use the entire Lightrail value and charge the remaining balance to another payment method. For this purpose, we first post a pending Transaction on the Card for the entire value it can pay, then charge the remainder of a third-party payment method. If the third-party payment is successful, we will call to capture the Lightrail pending Transaction; otherwise we will void the pending Transaction. Check out our implementation guide for [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md) for further details about handling split-tender.
+As you can see, there is $50 available on the Card but checkout balance is $69.60. To proceed, you need to: 
 
-Posting Pending Transaction:
+- Post a pending Transaction on the Card for its maximum available value for this Transaction, i.e. $50.
+- Charge the rest of the checkout balance on another payment method, e.g. a credit card.
+- If the third-party payment succeeds, _capture_ the pending Transaction on the Lightrail Card; otherwise, _void_ it and tell the customer the payment failed.
 
+For further details about handling split-tender at the checkout, see our implementation guide for [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md).
+
+The request to create the pending Transaction will be similar to the following:
+
+```javascript
+POST https://www.lightrail.com/v1/codes/{fullcode}/transactions
+{
+  "userSuppliedId":"order-s3xx30",
+  "value":-5000,
+  "currency":"USD",
+  "pending": true,
+  "metadata": {
+    "cart": {
+      "total": 2320,
+      "items": [
+        {
+          "id": "B009L1MF7A",
+          "quantity": 3,
+          "unit_price": 2320,
+          "tags": ["apparel", "outdoor", "Klymit"]
+        }
+      ]
+    }  
+  } 
+}
 ```
 
+This will lead to a very similar response to that of the `dryRun` endpoint, except that it will include the `transactionId` and `dateCreated`. 
+
+After attempting to charge the third-party, you will have to _capture_ or _void_ the pending Transaction. These requests will be similar to the following. Note that you have to repeat the metadata in the _capture_ request since Lightrail will verify that once more time before capturing the Transaction.
+
+```javascript
+POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{pendingTransactionId}/capture
+{  
+  "userSuppliedId":"order-s3xx30-capture",
+  "metadata":{  
+    "cart":{  
+      "total":2320,
+      "items":[  
+        {  
+          "id":"B009L1MF7A",
+          "quantity":3,
+          "unit_price":2320,
+          "tags":["apparel","outdoor","Klymit"]
+        }
+      ]
+    }
+  }
+}
 ```
 
-Posting Capture:
-
-```
-
+```javascript
+POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{pendingTransactionId}/void
+{
+  "userSuppliedId":"order-s3xx30-void"
+}
 ```
 
 ## Sample Metadata Structure
