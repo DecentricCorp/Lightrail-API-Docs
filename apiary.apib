@@ -138,10 +138,10 @@ After you create a new Promotion Program with this redemption rule, you can crea
 At the checkout page, your e-commerce system examines the customer's cart and accordingly provides a `cart` object in the `metadata` attribute in the Transaction request object. For example:
 
 ```json
-{"cart": 
- {
-   "total":10350
- }
+"metadata": {
+    "cart": {
+      "total": 25335
+    }
 }
 ```
 
@@ -1541,7 +1541,7 @@ Capture a pending Transaction, thereby collecting the value withheld by the pend
     + Body 
         
             {
-              "userSuppliedId":"tx-122",
+              "userSuppliedId":"transaction-90xxf6-capture",
               "metadata": {
                   "cart": {
                     "total": 25335
@@ -1597,7 +1597,7 @@ Voids a pending Transaction by unlocking the value withheld by the pending Trans
     + Body 
             
             {
-              "userSuppliedId":"tx-122"
+              "userSuppliedId":"transaction-fbxx5a-void"
             }
     
 + Response 200
@@ -1610,7 +1610,7 @@ Voids a pending Transaction by unlocking the value withheld by the pending Trans
                 "transaction":{
                     "transactionId":"transaction-7dxx3b",
                     "value":50,
-                    "userSuppliedId":"transaction-fbxx5a-reverse",
+                    "userSuppliedId":"transaction-fbxx5a-void",
                     "dateCreated":"2017-07-31T18:54:58.141Z",
                     "transactionType":"PENDING_VOID",
                     "transactionAccessMethod":"CARDID",

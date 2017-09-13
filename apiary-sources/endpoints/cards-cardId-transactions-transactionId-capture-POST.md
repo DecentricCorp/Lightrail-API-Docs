@@ -17,7 +17,7 @@ Capture a pending Transaction, thereby collecting the value withheld by the pend
     + Body 
         
             {
-              "userSuppliedId":"tx-122",
+              "userSuppliedId":"transaction-90xxf6-capture",
               "metadata": {
                   "cart": {
                     "total": 25335
