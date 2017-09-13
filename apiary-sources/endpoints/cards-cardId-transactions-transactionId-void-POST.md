@@ -17,7 +17,7 @@ Voids a pending Transaction by unlocking the value withheld by the pending Trans
     + Body 
             
             {
-              "userSuppliedId":"tx-122"
+              "userSuppliedId":"transaction-fbxx5a-void"
             }
     
 + Response 200
@@ -30,7 +30,7 @@ Voids a pending Transaction by unlocking the value withheld by the pending Trans
                 "transaction":{
                     "transactionId":"transaction-7dxx3b",
                     "value":50,
-                    "userSuppliedId":"transaction-fbxx5a-reverse",
+                    "userSuppliedId":"transaction-fbxx5a-void",
                     "dateCreated":"2017-07-31T18:54:58.141Z",
                     "transactionType":"PENDING_VOID",
                     "transactionAccessMethod":"CARDID",
