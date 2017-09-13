@@ -71,7 +71,7 @@ POST https://www.lightrail.com/v1/cards/{cardId}/transactions/dryRun
       "total": 27655,
       "items": [
         {
-          "id": "B000F34ZKS", //tent
+          "id": "B000F34ZKS", 
           "quantity": 1,
           "unit_price": 20695,
           "tags": [
@@ -79,7 +79,7 @@ POST https://www.lightrail.com/v1/cards/{cardId}/transactions/dryRun
           ]
         },
         {
-          "id": "B009L1MF7A", //jacket
+          "id": "B009L1MF7A", 
           "quantity": 3,
           "unit_price": 2320,
           "tags": [
