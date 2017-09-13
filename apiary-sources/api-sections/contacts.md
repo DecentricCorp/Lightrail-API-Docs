@@ -1,5 +1,5 @@
 ## Contacts [/contacts]
-Contacts can be attached to Cards to help you keep track of who is interacting with your Cards.
+Use these endpoints to create, retrieve, and update your Lightrail Contacts. 
 
 ---
 {% include 'endpoints/contacts-GET.md' %}

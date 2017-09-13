@@ -1,5 +1,5 @@
 ## Programs [/programs/]
-This endpoint can be used to retrieve information about your existing Gift Card and Promotion Programs.
+Use this endpoint cto retrieve your existing Programs.
 
 ---
 {% include 'endpoints/programs-GET.md' %}

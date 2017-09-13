@@ -1,6 +1,6 @@
 ## Transactions [/cards/{cardId}/transactions]
-These endpoints are the various ways you can create and retrieve transactions on Cards based on either their `cardId` or their `fullcode`. 
-Note that only Gift Cards have an associated `fullcode`.
+Use these endpoints to create and retrieve Transactions on Cards, based on their `cardId` or `fullcode`. 
+Note that only Gift Cards have a `fullcode`.
 
 
 ---

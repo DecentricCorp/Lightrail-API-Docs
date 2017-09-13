@@ -1,4 +1,4 @@
-### Get Balance by Card ID [GET /cards/{cardId}/balance{?asAtDate}]
+### Get Balance by Card ID (Deprecated) [GET /cards/{cardId}/balance{?asAtDate}]
 Retrieve a Card's balance based on its `cardId`.
 
 ---
@@ -32,4 +32,3 @@ Retrieve a Card's balance based on its `cardId`.
                     "balanceDate": "2017-06-05T17:11:36.999Z"
                 }
             }
-

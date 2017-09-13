@@ -35,21 +35,19 @@ Note that adding promotions with new Redemption Rules is a fairly easy task that
 
 ### Balance-Check
 
-Since availability of attached promotions depend on their Redemption Rules, the total available balance of a Lightrail Card varies depending  on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a  $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction which determine the result of evaluating the Redemption Rules. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. 
-
-```javascript
-
-```
-
-
+Since availability of attached promotions depend on their Redemption Rules, the total available value of a Lightrail Card varies depending on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a  $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. Lightrail `dryRun` endpoints are designed to make this possible as you will see in the Walk-Through Example below.
 
 ### Creating Transactions
 
-All of the Transaction creation endpoints in Lightrail accept a `metadata` attribute to provide the metadata for the requested Transaction. In the case of split-tender where you need to post a pending Transaction first and capture it later, the metadata must be included on _both_ the initial pending Transaction and the capture Transaction request. Note that Lightrail evaluates the metadata again at the time of capture and if the Redemption Rules are not met (because of missing or incomplete metadata) the call to capture will fail. Check out our implementation guide for [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md) for further details about handling split-tender.
+All of the Transaction creation endpoints in Lightrail accept a `metadata` attribute to provide the metadata about the context of the requested Transaction. In the case of split-tender where you need to post a pending Transaction first and capture it later, the metadata must be included on _both_ the initial pending Transaction and the capture Transaction request. 
+
+Note that Lightrail evaluates the metadata again at the time of _capture_ and if the Redemption Rules are not met (because of missing or incomplete metadata) the call to capture will fail. So, you need to repeat the Transaction metadata when you make the call to _capture_ a pending Transaction.
+
+See our implementation guide for [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md) for further details about handling split-tender.
 
 ### Walk-Through Example
 
-As an example, suppose you want to boost your sales by giving an additional $5 promotional value to customers who make a purchase of at least $100. Here are the steps necessary to activate this promotion:
+Suppose you want to boost your sales by giving an additional $5 promotional value to customers who make a purchase of at least $100. Here are the steps necessary to activate this promotion:
 
 - Make sure you have the total purchase value in your Transaction metadata. If you follow our [Suggested Metadata Structure](#suggested-metadata-structure) you already have this as `metadata.cart.total`.
 - Create a Promotion Program using the Lightrail Web App with the following Redemption Rule: `metadata.cart.total >= 10000`.
@@ -57,14 +55,20 @@ As an example, suppose you want to boost your sales by giving an additional $5 p
 
 #### Balance-Check
 
-When a user is at the checkout, you can send a balance-check request including the metadata as the following:
+When processing an order at the checkout, you need to determine how much is available in the customer's Account Card. The `dryRun` endpoint can provide this information if you send a request with the value of `nfs` attribute set to `false`. This tells Lightrail to return a best-effort would-be Transaction instead of a not-sufficient-funds (NSF) error if the Card's available value is not enough for the Transaction. 
+
+For example, assuming the customer wants to check out a cart with $253.35 balance, the `dryRun` request will look like the following. This asks the Lightrail API to simulate a Transaction with the value of $253.35 on the provided Card and in case of insufficient funds, return the maximum the Card can spend in this Transaction: 
 
 ```javascript
-POST //....
+POST https://www.lightrail.com/v1/cards/{cardId}/transactions/dryRun
 {
+  "userSuppliedId":"order-s3xx30",
+  "value":-27655,
+  "currency":"USD",
+  "nsf": false,
   "metadata": {
     "cart": {
-      "total": 25335,
+      "total": 27655,
       "items": [
         {
           "id": "B000F34ZKS", //tent
@@ -76,50 +80,196 @@ POST //....
         },
         {
           "id": "B009L1MF7A", //jacket
-          "quantity": 2,
+          "quantity": 3,
           "unit_price": 2320,
           "tags": [
             "apparel", "outdoor", "Klymit"
           ]
         }
       ]
-    },
-    "origin": {
-  	  "store_id": "A210",
-  	  "tags": [
-      	"warehouse", "Canada"
-  	  ]
-    },
-    "payment":{
-      "payment_method_id": "stripe",
-      "tags": []
     }  
   } 
 }
 ```
 
- The response will be similar to the following:
+The response will be similar to the following. Note that this is just a simulation and NOT an actual Transaction; for instance, it does not have a `transactionId`. The response indicates that for this Transaction, the maximum value this Card can provide is $55. By checking the `transactionBreakdown`,  you can see that this value is coming from two different Value Stores: one with a $50 value (which is the principal Value Store of the Card), and the other with a $5 value (which is the attached promotion).
 
 ```javascript
-
+{  
+  "transaction":{  
+    "value":-5500,
+    "userSuppliedId":"order-s3xx30",
+    "dateCreated":null,
+    "transactionType":"DRAWDOWN",
+    "transactionAccessMethod":"CARDID",
+    "valueAvailableAfterTransaction":0,
+    "cardId":"card-dcxx37",
+    "currency":"USD",
+    "transactionBreakdown":[  
+      {  
+        "value":-500,
+        "valueAvailableAfterTransaction":0,
+        "valueStoreId":"value-024e3a9902f341eb8983f4e7db64e76c"
+      },
+      {  
+        "value":-5000,
+        "valueAvailableAfterTransaction":0,
+        "valueStoreId":"value-663b1647d8d547199b7879010439d6f2"
+      }
+    ],
+    "transactionId":null,
+    "metadata":{  
+      "cart":{  
+        "total":27655,
+        "items":[  
+          {  
+            "quantity":1,
+            "id":"B000F34ZKS",
+            "unit_price":20695,
+            "tags":["gear","outdoor","clearance","Coleman"]
+          },
+          {  
+            "quantity":3,
+            "id":"B009L1MF7A",
+            "unit_price":2320,
+            "tags":["apparel","outdoor","Klymit"]
+          }
+        ]
+      }
+    },
+    "codeLastFour":"YNJC"
+  }
+}
 ```
 
-As you can see, since the order total is greater than $10, the Redemption Rule for the attached Value Store (`metadata.cart.total >= 10000 `) evaluates to `true` and this promotion is unlocked for this Transaction. 
+Now, suppose that the customer removes one of the items from the cart, therefore changing the metadata. Particularly, the cart total is now $69.60. The new request to the `dryRun` endpoint looks like the following:
+
+```javascript
+POST https://www.lightrail.com/v1/cards/{cardId}/transactions/dryRun
+{
+  "userSuppliedId":"order-s3xx30",
+  "value":-6960,
+  "currency":"USD",
+  "nsf": false,
+  "metadata": {
+    "cart": {
+      "total": 2320,
+      "items": [
+        {
+          "id": "B009L1MF7A",
+          "quantity": 3,
+          "unit_price": 2320,
+          "tags": ["apparel", "outdoor", "Klymit"]
+        }
+      ]
+    }  
+  } 
+}
+```
+
+You can see from the response that the Card can now pay only up to $50 for this Transaction. The `transactionBreakdown` shows that for this Transaction, there is only one Value Store available with $50. This is because the metadata of this Transaction did not meet the Redemption Rules of the other Value Store (the $5 promotion) which is only spendable if the cart total is $100 or more.
+
+```javascript
+{  
+  "transaction":{  
+    "value":-5000,
+    "userSuppliedId":"order-s3xx30",
+    "dateCreated":null,
+    "transactionType":"DRAWDOWN",
+    "transactionAccessMethod":"CARDID",
+    "valueAvailableAfterTransaction":0,
+    "cardId":"card-dcxx37",
+    "currency":"USD",
+    "transactionBreakdown":[  
+      {  
+        "value":-5000,
+        "valueAvailableAfterTransaction":0,
+        "valueStoreId":"value-66xxf2"
+      }
+    ],
+    "transactionId":null,
+    "metadata":{  
+      "cart":{  
+        "total":6960,
+        "items":[  
+          {  
+            "quantity":3,
+            "id":"B009L1MF7A",
+            "unit_price":2320,
+            "tags":["apparel","outdoor","Klymit"]
+          }
+        ]
+      }
+    },
+    "codeLastFour":"YNJC"
+  }
+}
+```
 
 #### Transaction
 
-Since the available value is not sufficient to cover the entire Transaction, we need to use the entire Lightrail value and charge the remaining balance to another payment method. For this purpose, we first post a pending Transaction on the Card for the entire value it can pay, then charge the remainder of a third-party payment method. If the third-party payment is successful, we will call to capture the Lightrail pending Transaction; otherwise we will void the pending Transaction. Check out our implementation guide for [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md) for further details about handling split-tender.
+To proceed with the payment, note that there is $50 available on the Card but the checkout balance is $69.60. So you need to process a split-tender in which the remainder of the order balance is paid by a third-party payment method: 
 
-Posting Pending Transaction:
+- Post a pending Transaction on the Card for its maximum available value for this Transaction, i.e. $50.
+- Charge the rest of the checkout balance on another payment method, e.g. a credit card.
+- If the third-party payment succeeds, _capture_ the pending Transaction on the Lightrail Card; otherwise, _void_ it and tell the customer the payment failed.
 
+For further details about handling split-tender at the checkout, see our implementation guide for [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md).
+
+The request to create the pending Transaction will be similar to the following:
+
+```javascript
+POST https://www.lightrail.com/v1/cards/{cardId}/transactions
+{
+  "userSuppliedId":"order-s3xx30",
+  "value":-5000,
+  "currency":"USD",
+  "pending": true,
+  "metadata": {
+    "cart": {
+      "total": 2320,
+      "items": [
+        {
+          "id": "B009L1MF7A",
+          "quantity": 3,
+          "unit_price": 2320,
+          "tags": ["apparel", "outdoor", "Klymit"]
+        }
+      ]
+    }  
+  } 
+}
 ```
 
+This will lead to a very similar response to that of the `dryRun` endpoint, except that it will include a real Transaction object with `transactionId` and `dateCreated`. 
+
+After attempting to charge the third-party, you will have to _capture_ or _void_ the pending Transaction. These requests will be similar to the following. Note that in the _capture_ request, you have to repeat the metadata  since Lightrail will verify that again before capturing the Transaction.
+
+```javascript
+POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{pendingTransactionId}/capture
+{  
+  "userSuppliedId":"order-s3xx30-capture",
+  "metadata":{  
+    "cart":{  
+      "total":2320,
+      "items":[  
+        {  
+          "id":"B009L1MF7A",
+          "quantity":3,
+          "unit_price":2320,
+          "tags":["apparel","outdoor","Klymit"]
+        }
+      ]
+    }
+  }
+}
 ```
 
-Posting Capture:
-
-```
-
+```javascript
+POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{pendingTransactionId}/void
+{
+  "userSuppliedId":"order-s3xx30-void"
+}
 ```
 
 ## Sample Metadata Structure

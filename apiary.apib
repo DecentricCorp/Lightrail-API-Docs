@@ -290,7 +290,7 @@ This interactive documentation provides full code samples in many popular langua
 
 ## Ping and Health Check [/ping]
 
-Use the `/ping` endpoint to to health-check the API and test whether your API key is working correctly. 
+Use this endpoint for health-checking the API and for testing whether your API key is working correctly. 
 
 <a name="ping-endpoint-anchor"></a>
 ### Ping [GET]
@@ -347,7 +347,7 @@ Use the `/ping` endpoint to to health-check the API and test whether your API ke
         }
 
 ## Cards [/cards/]
-The `/cards` endpoint is for use by your system to create and manage your Gift Cards and Account Cards.
+Use these endpoints to create and manage your Gift Cards and Account Cards.
 
 ---
 ### List Cards [GET /cards/{?contactId}{?cardType}{?currency}{?userSuppliedId}{?limit}{?offset}]
@@ -865,7 +865,7 @@ Cancel a Card permanently.
             }
 
 ## Contacts [/contacts]
-Contacts can be attached to Cards to help you keep track of who is interacting with your Cards.
+Use these endpoints to create, retrieve, and update your Lightrail Contacts. 
 
 ---
 <a name="contact-list-anchor"></a>
@@ -1095,8 +1095,8 @@ Retrieve a paginated list of a Contact's Cards.
 
 
 ## Transactions [/cards/{cardId}/transactions]
-These endpoints are the various ways you can create and retrieve transactions on Cards based on either their `cardId` or their `fullcode`. 
-Note that only Gift Cards have an associated `fullcode`.
+Use these endpoints to create and retrieve Transactions on Cards, based on their `cardId` or `fullcode`. 
+Note that only Gift Cards have a `fullcode`.
 
 
 ---
@@ -1120,6 +1120,7 @@ Transactions can be created as pending which locks the value required for the Tr
         + currency (required) - The three-character ISO-4217 currency.
         + metadata (Metadata, optional) - A key-value JSON object to store any additional information. The `giftbit_*` namespace for keys is reserved. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`.
         + pending (boolean, optional) - If `true`, the transaction will be created as pending, i.e. the value will be locked until it is either captured or voided. The default is `false`.
+        + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.        
         
     + Body 
     
@@ -1203,6 +1204,7 @@ so, when creating a pending Transaction you need to save the `cardId` from the r
         + currency (required) - The three-character ISO-4217 currency.
         + metadata (Metadata, optional) - A key-value JSON object to store any additional information. The `giftbit_*` namespace for keys is reserved. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`.
         + pending (boolean, optional) - If `true`, the transaction will be created as pending, i.e. the value will be locked until it is either captured or voided. The default is `false`.
+        + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.        
         
     + Body 
     
@@ -1669,19 +1671,231 @@ Retrieves a particular Transaction by its ID based on the `fullcode`.
 
 
 
-## Balances [/cards/{cardId}/balance/]
-These endpoints are used to get the available balance associated with a Card. 
-Depending on the context of your use-case you can check the balance either based on the `cardId` or the `fullcode`. 
-Note that only Gift Cards have an associated `fullcode`.
+## Simulate and Balance-Check [/cards/{cardId}/balance/]
+Use these endpoints to simulate a Transaction and get the available balance of a Card in the context of a would-be Transaction. 
+Depending on the context of your use-case you can do this either based on the `cardId` or the `fullcode`. 
+Note that only Gift Cards have a `fullcode`.
 
 ---
-### Get Balance by Card ID [GET /cards/{cardId}/balance{?asAtDate}]
+
+
+<a name="post-transaction-by-cardid-dryRun-anchor"></a>
+
+### Simulate a Transaction and Balance-Check Based on Card ID [POST /cards/{cardId}/transactions/dryRun]
+Simulates creating a transaction against a Card based on its `fullcode` and returns the would-be Transaction.  Note that the returned Transaction object does not have a `transactionId` because it is merely a simulation and not an actual Transaction.
+
+The `nsf` attribute determines the behaviour of this endpoint in the case of insufficient funds:
+- If `nsf` is set to `true` (which is the default), it will return an error indicating insufficient funds. 
+- If `nsf` is set to `false`, the response will return a hypothetical Transaction object which would withdraw 
+the maximum the Card can pay, i.e. its available balance. 
+
+Providing the full context of the Transaction, including its metadata, is particularly important if your system uses Redemption Rules since the 
+effective balance of a Card varies depending on the metadata of the Transaction.
+---
++ Parameters
+    + cardId (string, required) - The Lightrail Card ID.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <API_KEY>
+
+    + Attributes
+        + value (number) - A negative or positive integer indicating the value of the transaction in the smallest unit for the currency, e.g. cents for USD.
+        + currency (required) - The three-character ISO-4217 currency.
+        + nsf (boolean, optional) - whether to return an error in case of insufficient funds or return a best-effort Transaction.
+        + metadata (Metadata, optional) - A key-value JSON object to store any additional information. The `giftbit_*` namespace for keys is reserved. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`.
+        + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
+
+    + Body 
+    
+            {
+              "userSuppliedId":"order-s3xx30",
+              "value":-5500,
+              "currency":"USD",
+              "nsf": false,
+              "metadata": {
+                 "cart": {
+                    "total": 25335,
+                    "items": [
+                      {
+                        "id": "B000F34ZKS", 
+                        "quantity": 1,
+                        "unit_price": 20695,
+                        "tags": ["gear", "outdoor", "clearance"]
+                      },
+                      {
+                        "id": "B009L1MF7A", 
+                        "quantity": 2,
+                        "unit_price": 2320,
+                        "tags": ["apparel", "outdoor"]
+                      }
+                    ]
+                 }
+              }
+            }
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+    + Body
+
+            {
+              "transaction":{
+                  "value": -5000,
+                  "userSuppliedId": "order-s3xx30",
+                  "dateCreated": null,
+                  "transactionType": "DRAWDOWN",
+                  "transactionAccessMethod": "CARDID",
+                  "valueAvailableAfterTransaction": 0,
+                  "giftbitUserId": "user-7cxx2c",
+                  "cardId": "card-dcxx37",
+                  "currency": "USD",
+                  "transactionBreakdown":[
+                    {
+                      "value": -5000,
+                      "valueAvailableAfterTransaction": 0,
+                      "valueStoreId": "value-66xxf2"
+                    }
+                  ],
+                  "transactionId": null,
+                  "metadata":{
+                    "cart":{
+                        "total": 25335,
+                        "items": [
+                          {
+                              "quantity": 1,
+                              "id": "B000F34ZKS",
+                              "unit_price": 20695,
+                              "tags":["gear", "outdoor", "clearance"]
+                          },
+                          {
+                              "quantity": 2,
+                              "id": "B009L1MF7A",
+                              "unit_price": 2320,
+                              "tags":["apparel", "outdoor"]
+                          }
+                        ]
+                    }
+                  },
+                  "codeLastFour": "YNJC"
+              }
+            }
+
+
+<a name="post-transaction-by-code-dryRun-anchor"></a>
+### Simulate a Transaction and Balance-Check Based on Gift Code [POST /cards/{fullcode}/transactions/dryRun]
+Simulates creating a transaction against a Card based on its `cardId` and returns the would-be Transaction.  Note that the returned Transaction object does not have a `transactionId` because it is merely a simulation and not an actual Transaction.
+
+The `nsf` attribute determines the behaviour of this endpoint in the case of insufficient funds:
+- If `nsf` is set to `true` (which is the default), it will return an error indicating insufficient funds. 
+- If `nsf` is set to `false`, the response will return a hypothetical Transaction object which would withdraw 
+the maximum the Card can pay, i.e. its available balance. 
+
+Providing the full context of the Transaction, including its metadata, is particularly important if your system uses Redemption Rules since the 
+effective balance of a Card varies depending on the metadata of the Transaction.
+---
++ Parameters
+    + fullcode (string, required) - The unique unguessable Gift Code.
+    + pin (string, optional) - This is required if the fullcode has a pin.
+
++ Request (application/json)
+    + Headers
+    
+            Authorization: Bearer <API_KEY>
+
+    + Attributes
+        + value (number) - A negative or positive integer indicating the value of the transaction in the smallest unit for the currency, e.g. cents for USD.
+        + currency (required) - The three-character ISO-4217 currency.
+        + nsf (boolean, optional) - whether to return an error in case of insufficient funds or return a best-effort Transaction.
+        + metadata (Metadata, optional) - A key-value JSON object to store any additional information. The `giftbit_*` namespace for keys is reserved. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`.
+        + userSuppliedId (string, required) - Endpoint-unique idempotency ID provided by the client.
+
+    + Body 
+    
+            {
+              "userSuppliedId":"order-s3xx30",
+              "value":-5500,
+              "currency":"USD",
+              "nsf": false,
+              "metadata": {
+                 "cart": {
+                    "total": 25335,
+                    "items": [
+                      {
+                        "id": "B000F34ZKS", 
+                        "quantity": 1,
+                        "unit_price": 20695,
+                        "tags": ["gear", "outdoor", "clearance"]
+                      },
+                      {
+                        "id": "B009L1MF7A", 
+                        "quantity": 2,
+                        "unit_price": 2320,
+                        "tags": ["apparel", "outdoor"]
+                      }
+                    ]
+                 }
+              }
+            }
+    
++ Response 200
+    + Attributes
+        + transaction (Transaction)
+
+    + Body
+
+            {
+              "transaction":{
+                  "value": -5000,
+                  "userSuppliedId": "order-s3xx30",
+                  "dateCreated": null,
+                  "transactionType": "DRAWDOWN",
+                  "transactionAccessMethod": "RAWCODE",
+                  "valueAvailableAfterTransaction": 0,
+                  "giftbitUserId": "user-7cxx2c",
+                  "cardId": "card-dcxx37",
+                  "currency": "USD",
+                  "transactionBreakdown":[
+                    {
+                      "value": -5000,
+                      "valueAvailableAfterTransaction": 0,
+                      "valueStoreId": "value-66xxf2"
+                    }
+                  ],
+                  "transactionId": null,
+                  "metadata":{
+                    "cart":{
+                        "total": 25335,
+                        "items": [
+                          {
+                              "quantity": 1,
+                              "id": "B000F34ZKS",
+                              "unit_price": 20695,
+                              "tags":["gear", "outdoor", "clearance"]
+                          },
+                          {
+                              "quantity": 2,
+                              "id": "B009L1MF7A",
+                              "unit_price": 2320,
+                              "tags":["apparel", "outdoor"]
+                          }
+                        ]
+                    }
+                  },
+                  "codeLastFour": "YNJC"
+              }
+            }
+
+
+### Get Balance by Card ID (Deprecated) [GET /cards/{cardId}/balance{?asAtDate}]
 Retrieve a Card's balance based on its `cardId`.
 
 ---
 + Parameters
     + cardId (string, required) - The Lightrail Card ID.
-    + asAtDate (string, optional) - The date and time at which the balance should be retrieved.
+    + asAtDate (string, optional) - The date and time at which the information should be retrieved.
 + Request (application/json)
     + Headers
 
@@ -1711,14 +1925,14 @@ Retrieve a Card's balance based on its `cardId`.
             }
 
 
-### Get Balance by Gift Code [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
+### Get Balance by Gift Code (Deprecated) [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
 Retrieve a Card's balance using the Gift Card's `fullcode`, also referred to as Gift Code.
 
 ---
 + Parameters
     + fullcode (string, required) - The unique unguessable Gift Code.
     + pin (string, optional) - This is required if the fullcode has a pin.
-    + asAtDate (string, optional) - The date and time at which the balance should be retrieved.
+    + asAtDate (string, optional) - The date and time at which the information should be retrieved.
 
 + Request (application/json)
     + Headers
@@ -1750,7 +1964,7 @@ Retrieve a Card's balance using the Gift Card's `fullcode`, also referred to as 
 
 
 ## ValueStores: Managing Promotions [/cards/{cardId}/valueStores/]
-These endpoints are used for managing Promotion Programs.
+Use these endpoints for creating and managing Promotions.
 
 ---
 ### List ValueStores [GET /cards/{cardId}/valueStores{?limit}{?offset}]
@@ -2012,7 +2226,7 @@ Permanently cancels a Card's ValueStore.
 
 
 ## Programs [/programs/]
-This endpoint can be used to retrieve information about your existing Gift Card and Promotion Programs.
+Use this endpoint cto retrieve your existing Programs.
 
 ---
 <a name="get-programs-anchor"></a>
@@ -2126,6 +2340,7 @@ Retrieves a paginated list of all Lightrail Programs belonging to the user.
 + cardId (string) - The Lightrail Card ID.
 + currency (string) - The three-character ISO-4217 currency.
 + metadata (object) - A key-value JSON object to store any additional information. The `giftbit_*` namespace for keys is reserved. Note Lightrail's [Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/RedemptionRules) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`.
++ transactionBreakdown (array[TransactionValue])
 
 ## Pagination (object)
 + count (number) - The number of results.

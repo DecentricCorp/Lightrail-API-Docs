@@ -1,4 +1,4 @@
-### Get Balance by Gift Code [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
+### Get Balance by Gift Code (Deprecated) [GET /codes/{fullcode}/card/balance{?asAtDate}{?pin}]
 Retrieve a Card's balance using the Gift Card's `fullcode`, also referred to as Gift Code.
 
 ---
@@ -34,4 +34,3 @@ Retrieve a Card's balance using the Gift Card's `fullcode`, also referred to as 
                     "balanceDate": "2017-06-05T17:11:36.999Z"
                 }
             }
-
