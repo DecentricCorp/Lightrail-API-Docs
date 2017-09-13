@@ -9,6 +9,7 @@ If `nsf` is set to `false`, the response will return a hypothetical Transaction 
 
 Providing the full context of the Transaction, including its metadata, is particularly important if your system uses Redemption Rules since the 
 effective balance of a Card varies depending on the metadata of the Transaction.
+
 ---
 
 + Parameters
