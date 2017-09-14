@@ -14,11 +14,20 @@ Here is the list of Lightrail integrations for different technologies and langua
 
 - [Lightrail WooCommerce Plugin](https://wordpress.org/plugins/lightrail-for-woocommerce/)
 
+#### Ruby
+- [Lightrail Ruby Client](https://github.com/Giftbit/lightrail-client-ruby)
+- [Lightrail Stripe Integration for Ruby](https://github.com/Giftbit/lightrail-stripe-ruby)
+
+#### Typescript
+- [Lightrail Typescript Client](https://github.com/Giftbit/lightrail-client-javascript)
+
 ### Third-Party Platforms
 
 #### Stripe
 
 - [Lightrail Stripe Integration for Java](https://github.com/Giftbit/lightrail-stripe-java)
+- [Lightrail Stripe Integration for Ruby](https://github.com/Giftbit/lightrail-stripe-ruby)
+
 
 #### WooCommerce
 
