@@ -62,7 +62,7 @@ Lightrail supports a two-step _pending_ drawdown. A pending drawdown Transaction
 
 Transactions are [primarily](#post-transaction-by-cardid-anchor) created by `cardId`.  But to simplify Gift Card redemption at the checkout, Lightrail also provides [an endpoint](#post-transaction-by-fullcode-anchor) for creating Transactions by a Card's `fullcode`. To improve security, this endpoint only allows drawdown Transactions.
 
-One of the features of the Lightrail API is encapsulating the Card Value Stores behind a simple interface at the time of Transaction. While you can add many promotional attached Value Stores to Cards, at Transaction time, you do not need to worry about the logic of splitting the drawdown value against potentially many Value Stores; Lightrail transaction processing automatically handles this for you. The  `transactionBreakdown` object in a Transaction object provides the details of how the funds were extracted from different ValueStores by Lightrail behind the scene.
+One of the features of the Lightrail API is encapsulating the Card Value Stores behind a simple interface at the time of Transaction. While you can add many promotional attached Value Stores to Cards, at Transaction time, you do not need to worry about the logic of splitting the drawdown value against potentially many Value Stores; Lightrail transaction processing automatically handles this for you. The  `transactionBreakdown` object in a Transaction response provides the details of how the funds were extracted from different ValueStores by Lightrail behind the scene.
 
 For example, if there is $30 in the Principal Value Store and a $5 attached Value Store from a promotional _Back to School_ program, when attempting a $8 drawdown, Lightrail automatically decides the break-down of this amount against existing Value Stores and you do not have to specify or even be aware of them. In this case, for example, Lightrail will prioritize the spending of the $5 value which is closer to its expiry date, and then, charges the remaining $3 from the Principal Value Store.  
 
@@ -76,31 +76,49 @@ When transacting against a Card and looking to collect the funds from its differ
 
 Transaction `metadata` is a generic JSON object provided in the Transaction request object which represents any additional information you wish to provide and store, including contextual information on which basis redemption rules operate. This provides a very powerful and flexible mechanism to define any relevant metadata in the Transaction request and use this metadata to make decisions about unlocking promotional values. 
 
-Check out the in-depth <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md" target="_blank">Redemption Rules documentation</a> for further details.
+Check out the <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/redemption-rules.md" target="_blank">Redemption Rules Implementation Guide</a> and <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md" target="_blank">Redemption Rules Reference Documentation</a> for further details.
 
 ### Walk-Through Example
 
-Suppose that you want to attach some promotions to some of your existing Gift Cards in order to encourage customers to spend them. Since you want to boost your sales, you want this promotional value to be available only to customers who would spend at least $100.
+Suppose that to boost your sales you want to give a $5 promotional value to customers who would spend at least $100 at your online store.
 
-This rule can be formulated as the following. Note that `cart ` is a custom metadata object defined by you:
+This rule can be formulated as the following:
 
 `metadata.cart.total >= 10000` 
 
-After you create a new Promotion Program with this redemption rule, you can create a new $5 Value Store derived from this Program and attach it to some Gift Cards, thereby giving them a $5 promotional value subject to this redemption rule. 
+Note that `cart ` is a custom metadata object defined by your system. After you create a new Promotion Program with this redemption rule, you can create a new $5 Value Store derived from this Program and attach it to some Account or Gift Cards, thereby giving them a $5 promotional value subject to this condition. 
 
 At the checkout page, your e-commerce system examines the customer's cart and accordingly provides a `cart` object in the `metadata` attribute in the Transaction request object. For example:
 
 ```
 "metadata": {
     "cart": {
-      "total": 25335
+      "total": 10350
     }
 }
 ```
 
-Once this Transaction request is received, Lightrail will iterate through the Card's Value Stores and evaluate their redemption rules against the Transaction `metadata`. In this case, if the `cart.total` is greater than or equal to $100 (i.e. 10000 cents), it unlocks the $5 Value Store for spending. The following diagram depicts this process.
+Once this Transaction request is received, Lightrail will iterate through the Card's Value Stores and evaluate their redemption rules against the Transaction `metadata`. In this case, if the `cart.total` is greater than or equal to $100 (i.e. 10000 cents), it unlocks the $5 Value Store for spending. The following diagram depicts this process for a sample Transaction. 
 
 <a name="transaction-valustore-anchor"></a>
 
 ![Transaction, Value Stores, and Redemption Rules](https://giftbit.github.io/Lightrail-API-Docs/assets/transaction-valustores.svg)
 
+Lightrail Transaction object includes a `transactionBreakdown` which provides the breakdown of how the value of the Transaction was extracted from the Card's Value Stores. Here is an example for the above example:
+
+```
+"transactionBreakdown":[  
+      {  
+        "value":-300,
+        "valueAvailableAfterTransaction":2700,
+        "valueStoreId":"v9nxx5p"
+      },
+      {  
+        "value":-500,
+        "valueAvailableAfterTransaction":0,
+        "valueStoreId":"v6mxx9a"
+      }
+    ]
+```
+
+You can use this information to show the customer what promotions were activated in their current checkout. Moreover, by comparing this list with the full list of all Value Stores on the Card, you can show the customer what Value Stores were NOT unlocked together with a hint about what they can do (e.g. add more items to the cart) to unlock more promotions. Check out the <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/redemption-rules.md" target="_blank">Redemption Rules Implementation Guide</a> for a more detailed example.
