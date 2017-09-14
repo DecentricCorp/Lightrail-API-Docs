@@ -293,9 +293,9 @@ GET https://api.lightrail.com/v1/cards/{cardId}/details
 
 Now, if you compare this list with the list of unlocked Value Stores in the `transactionBalance`, you can determine what promotions were NOT unlocked and display meaningful hints to the customer (based on the `restrictions` attribute) on how they can unlock them. Here is a simple example of the user experience:
 
-![cart-example-redemption-rules](https://giftbit.github.io/Lightrail-API-Docs/assets/cart-example-redemption-rules-1.png)
+![cart-example-redemption-rules-1](https://giftbit.github.io/Lightrail-API-Docs/assets/cart-example-redemption-rules-1.png)
 
-![cart-example-redemption-rules](https://giftbit.github.io/Lightrail-API-Docs/assets/cart-example-redemption-rules-2.png)
+![cart-example-redemption-rules-2](https://giftbit.github.io/Lightrail-API-Docs/assets/cart-example-redemption-rules-2.png)
 
 #### Transaction
 
