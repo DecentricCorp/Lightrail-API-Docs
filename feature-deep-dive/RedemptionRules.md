@@ -72,64 +72,16 @@ Here's an example `metadata` JSON object for a doughnut store that includes elem
         "quantity": 4,
         "unit_price": 315,
         "tags": ["coffee", "medium"]
-      },       
+      }       
     ]
-  }
-}
-  "cartValue": 1960,
-  "cart": [
-    {
-      "category": "doughnut",
-      "itemId": "chocolate",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "mapleglazed",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "longjohn",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "bearclaw",
-      "value": 250
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    }
-  ],
+  },
   "delivery": {
-    "pickup": true
+    "id":"store-pickup"
   }
 }
 ```
 
-This `metadata` includes a shopping cart with 8 items and their relevant attributes.  There are 4 different doughnuts and 4 identical coffees. 
+This `metadata` includes a shopping cart with 5 items and their relevant attributes. There are 4 different doughnuts and 4 coffees. 
 
 Note what's not included: information about the customer. To target a specific set of people apply the promotion to their gift cards or account cards when they qualify. For example a promotion that gives customers $5 for signing up for a newsletter should be applied automatically after signing up.
 
@@ -263,55 +215,43 @@ In this `metadata` cart items are duplicated if more than one is bought.
 
 ```json
 {
-  "cartValue": 1960,
-  "cart": [
-    {
-      "category": "doughnut",
-      "itemId": "chocolate",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "mapleglazed",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "longjohn",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "bearclaw",
-      "value": 250
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    }
-  ],
+  "cart": {
+    "total": 1960,
+    "items": [
+      {
+        "id": "chocolate",
+        "quantity": 1,
+        "unit_price": 150,
+        "tags": ["doughnut"]
+      },
+      {
+        "id": "mapleglazed",
+        "quantity": 1,
+        "unit_price": 150,
+        "tags": ["doughnut"]
+      },
+      {
+        "id": "longjohn",
+        "quantity": 1,
+        "unit_price": 150,
+        "tags": ["doughnut"]
+      },
+      {
+        "id": "bearclaw",
+        "quantity": 1,
+        "unit_price": 250,
+        "tags": ["doughnut"]
+      }, 
+      {
+        "id": "dripcoffee",
+        "quantity": 4,
+        "unit_price": 315,
+        "tags": ["coffee", "medium"]
+      }     
+    ]
+  },
   "delivery": {
-    "pickup": true
+    "id":"store-pickup"
   }
 }
 ```
@@ -319,43 +259,44 @@ In this `metadata` cart items are duplicated if more than one is bought.
 #### Spend at least $10
 
 ```javascript
-metadata.cartValue >= 1000
+metadata.cart.total >= 1000
 ```
 
-#### Buy any 5 items
+#### Buy at least 5 items
 
 ```javascript
-metadata.cart.size() >= 5
+metadata.cart.items.map(item => item.quantity).sum() >= 5
 ```
 
 #### Canadian Special: discount maple glazed doughnuts
 
 ```javascript
-metadata.cart.some(item => item.category == 'doughnut' && item.itemId == 'mapleglazed')
+metadata.cart.items.some(item => item.id == 'mapleglazed')
 ```
 
 #### Buy a medium coffee and any doughnut
 
 ```javascript
-metadata.cart.some(item => item.category == 'coffee' && item.size == 'medium') && metadata.cart.some(item => item.category == 'doughnut')
+metadata.cart.items.some(item => item.tags.some(tag=> tag=='coffee') && item.tags.some(tag=> tag=='medium'))&& metadata.cart.items.some(item => item.tags.some(tag=> tag=='doughnut'))
 ```
 
-#### Buy 4 coffees
+#### Buy at least 4 coffees
 
 ```javascript
-metadata.cart.filter(item => item.category == 'coffee').size() >= 4
+metadata.cart.items.filter(item => item.tags.some(tag => tag == 'coffee')).map(item => item.quantity).sum() >= 4
 ```
 
-#### Buy 4 coffees and pickup in store
+#### Buy at least 4 coffees and pickup in store
 
 ```javascript
-metadata.cart.filter(item => item.category == 'coffee').size() >= 4 && metadata.delivery.pickup
+metadata.delivery.id=='store-pickup' && metadata.cart.items.filter(item => item.tags.some(tag => tag == 'coffee')).map(item => item.quantity).sum() >= 4
+
 ```
 
-#### Buy any 4 items (of value > $1.00)
+#### Buy at least 4 items of value > $1.00
 
 ```javascript
-metadata.cart.filter(item => item.value > 100).size() >= 4
+metadata.cart.items.filter(item => item.unit_price > 100).map(item => item.quantity).sum() >= 4
 ```
 
 ### Concert tees examples
@@ -364,76 +305,72 @@ In this `metadata` cart items have a `quantity`.
 
 ```json
 {
-  "cartValue": 9593,
-  "cart": [
-    {
-      "category": "shirt",
-      "itemId": "fce425c0-53a2-4a46-a37f-40bdfd732ef5",
-      "size": "medium",
-      "band": "ledzeppelin",
-      "value": 3495,
-      "quantity": 1
-    },
-    {
-      "category": "shirt",
-      "itemId": "6cd226e1-20eb-4acc-bee6-5573243a08b3",
-      "size": "medium",
-      "band": "rollingstones",
-      "value": 3299,
-      "quantity": 1
-    },
-    {
-      "category": "cd",
-      "itemId": "ba991060-2f57-4e76-838d-76088703cc7c",
-      "band": "ledzeppelin",
-      "value": 1799,
-      "quantity": 1
-    },
-    {
-      "category": "sticker",
-      "itemId": "bd086f23-124b-44c6-a4f0-61c2d02a15a4",
-      "band": "thewho",
-      "value": 200,
-      "quantity": 5
-    }
-  ]
+  "cart": {
+    "total": 9593,
+    "items": [
+      {
+        "id": "fce425c0",
+        "quantity": 1,
+        "unit_price": 3495,
+        "tags": ["shirt", "medium", "ledzeppelin"]
+      },
+      {
+        "id": "6cd226e1",
+        "quantity": 1,
+        "unit_price": 3299,
+        "tags": ["shirt", "medium", "rollingstones"]
+      },
+      {
+        "id": "ba991060",
+        "quantity": 1,
+        "unit_price": 1799,
+        "tags": ["cd", "ledzeppelin"]
+      },
+      {
+        "id": "bd086f23",
+        "quantity": 5,
+        "unit_price": 200,
+        "tags": ["sticker", "thewho"]
+      }
+    ]
+  }
 }
 ```
 
-### Buy any 5 items
+### Buy at least 5 items
 
 ```javascript
-metadata.cart.map(item => item.quantity).sum() >= 5
+metadata.cart.items.map(item => item.quantity).sum() >= 5
 ```
 
-### Buy any 2 t-shirts
+### Buy at least 2 t-shirts
 
 ```javascript
-metadata.cart.filter(item => item.category == 'shirt').map(item => item.quantity).sum() >= 2
+metadata.cart.items.filter(item => item.tags.some(tag => tag=='shirt')).map(item => item.quantity).sum() >= 2
 ```
 
-### Buy any 2 Led Zeppelin items worth at least $5
+### Buy at least 2 Led Zeppelin items worth at least $5
 
 ```javascript
-metadata.cart.filter(item => item.band == 'ledzeppelin' && item.value >= 500).map(item => item.quantity).sum() >= 2
+metadata.cart.items.filter(item => item.unit_price >= 500 && item.tags.some(tag => tag=='ledzeppelin')).map(item => item.quantity).sum() >= 2
 ```
 
-### Buy 4 stickers and a shirt
+### Buy at least 4 stickers and a shirt
 
 ```javascript
-metadata.cart.filter(item => item.category == 'sticker').map(item => item.quantity).sum() >= 4 && metadata.cart.some(item => item.category == 'shirt')
+metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker')).map(item => item.quantity).sum() >= 4 && metadata.cart.some(item => item.tags.some(tag => tag=='shirt'))
 ```
 
-### Buy $10 worth of stickers
+### Buy at least $10 worth of stickers
 
 ```javascript
-metadata.cart.filter(item => item.category == 'sticker').map(item => item.quantity * item.value).sum() >= 1000
+metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker')).map(item => item.quantity * item.unit_price).sum() >= 1000
 ```
 
-### Buy $20 worth of stickers or CDs
+### Buy at least $20 worth of stickers or CDs
 
 ```javascript
-metadata.cart.filter(item => item.category == 'sticker' || item.category == 'cd').map(item => item.quantity * item.value).sum() >= 2000
+metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker' || tag=='cd')).map(item => item.quantity * item.unit_price).sum() >= 2000
 ```
 
 ## Appendices
