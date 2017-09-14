@@ -121,4 +121,8 @@ Lightrail Transaction object includes a `transactionBreakdown` which provides th
     ]
 ```
 
-You can use this information to show the customer what promotions were activated in their current checkout. Moreover, by comparing this list with the full list of all Value Stores on the Card, you can show the customer what Value Stores were NOT unlocked together with a hint about what they can do (e.g. add more items to the cart) to unlock more promotions. Check out the <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/redemption-rules.md" target="_blank">Redemption Rules Implementation Guide</a> for a more detailed example.
+You can use this information to show the customer what promotions were unlocked in their current checkout. 
+
+Moreover, when using the Transaction simulation endpoints, you can compare the list of unlocked Value Stores with the full list of all Value Stores on the Card, and show the customer what Value Stores were NOT unlocked together with a hint about what they can do to unlock more promotions. This is an important user experience to encourage customers to take advantage of available promotions and boost your sales.  
+
+Check out the <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/redemption-rules.md" target="_blank">Redemption Rules Implementation Guide</a> for a more detailed example.
