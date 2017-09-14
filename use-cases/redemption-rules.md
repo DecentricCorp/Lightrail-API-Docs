@@ -4,7 +4,8 @@
 
 This document is a step-by-step guide to setting up Lightrail Redemption Rules. 
 
-- For further details on how to write Redemption Rules check out [Redemption Rules Reference Documentation](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md).
+- For further details on how to process redemption check out our Implementation Guide for [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md).
+- For further details on how to write Redemption Rules check out the [Redemption Rules Reference Documentation](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md).
 - For a guide on adding promotions to Lightrail Cards, checkout the use-case guide for [Creating Lightrail Promotions](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md).
 - To learn more about Lightrail concepts, check out the section on the Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/). 
 
@@ -40,43 +41,46 @@ Note that adding promotions with new Redemption Rules is a fairly easy task that
 You can create a new Promotion Program in the Lightrail Web App and specify the Redemption Rules at the time of creation. To attach a promotion to a Card based on this Program, you can go the Card page and select _Attach Promotion_ and then select the Promotion Program with the Redemption Rule you just created. To double check, you can call the API to retrieve the list of all Value Stores on the Card, which will return a response similar to the following. As you can see, the Redemption Rule and its description are listed in the metadata of the attached Value Store:  
 
 ```javascript
-GET https://api.lightrail.com/v1/cards/{cardId}/valueStores
+GET https://api.lightrail.com/v1/cards/{cardId}/details
 {  
-  "valueStores":[  
-    {  
-      "cardId":"card-6dxx89",
-      "valueStoreId":"value-2fxxf2",
-      "valueStoreType":"PRINCIPAL",
-      "currency":"USD",
-      "dateCreated":"2017-07-01T14:35:13.159Z",
-      "programId":"program-1dxxea9"
-    },
-    {  
-      "cardId":"card-6dxx89",
-      "valueStoreId":"value-79xxee",
-      "valueStoreType":"ATTACHED",
-      "currency":"USD",
-      "dateCreated":"2017-09-14T16:52:51.728Z",
-      "programId":"program-c7xxe6",
-      "metadata":{  
-        "_redemption_rule":"metadata.cart.total >= 10000",
-        "_redemption_rule_explanation":"If your cart total is at least $100."
+  "details":{  
+    "valueStores":[  
+      {  
+        "valueStoreType":"PRINCIPAL",
+        "value":5000,
+        "state":"ACTIVE",
+        "expires":null,
+        "startDate":null,
+        "programId":"program-1ddxxa9",
+        "valueStoreId":"value-66xxf2",
+        "restrictions":[]
+      },
+      {  
+        "valueStoreType":"ATTACHED",
+        "value":500,
+        "state":"ACTIVE",
+        "expires":null,
+        "startDate":null,
+        "programId":"program-c7xxe6",
+        "valueStoreId":"value-02xx6c",
+        "restrictions":[  
+          "If your cart total is at least $100."
+        ]
       }
-    }
-  ],
-  "pagination":{  
-    "count":2,
-    "limit":100,
-    "maxLimit":1000,
-    "offset":0,
-    "totalCount":8
+    ],
+    "currency":"USD",
+    "cardType":"GIFT_CARD",
+    "asAtDate":"2017-09-14T18:09:09.520Z",
+    "cardId":"card-dcxx37"
   }
 }
 ```
 
 ### Balance-Check
 
-Since availability of attached promotions depend on their Redemption Rules, the total available value of a Lightrail Card varies depending on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a  $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. Lightrail `dryRun` endpoints are designed to make this possible as you will see in the Walk-Through Example below.
+Since availability of attached promotions depend on their Redemption Rules, the total available value of a Lightrail Card varies depending on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. 
+
+Lightrail `dryRun` endpoints provide a mechanism for simulating a Transaction and checking the maximum a Card can pay towards a given Transaction, considering all the metadata. These endpoints also return a `transactionBreakdown` which provides the breakdown of how the value of the Transaction would be extracted from the Card's Value Stores. You can use this information to show the customer what promotions will be unlocked in their current checkout. Moreover, by comparing this list with the full list of all Value Stores on the Card, you can also show the customer the Value Stores which were NOT unlocked together with a hint about what they can do to unlock more promotions. More details on these endpoints are given in the Walk-Through Example below.
 
 ### Creating Transactions
 
@@ -88,7 +92,7 @@ See our implementation guide for [Redeeming Lightrail Value at Checkout](https:/
 
 ### Walk-Through Example
 
-Suppose you want to boost your sales by giving an additional $5 promotional value to customers who make a purchase of at least $100. Here are the steps necessary to activate this promotion:
+Suppose you want to boost your sales by giving an additional $5 promotional value to customers who make a purchase of at least $100. Here are the steps necessary to unlock this promotion:
 
 - Make sure you have the total purchase value in your Transaction metadata. If you follow our [Suggested Metadata Structure](#suggested-metadata-structure) you already have this as `metadata.cart.total`.
 - Create a Promotion Program using the Lightrail Web App with the following Redemption Rule: `metadata.cart.total >= 10000`.
@@ -244,6 +248,52 @@ You can see from the response that the Card can now pay only up to $50 for this 
   }
 }
 ```
+
+#### Showing Balance and Hints to the Customer
+
+The `transactionBalance` object provides valuable information for letting the customer know what promotions are unlocked and what promotions still remain inactive for the current cart. This user experience can improve your sales by hinting at what the customer can do to take advantage of more promotions. 
+
+Consider the last example above in which only one Value Store was available for $50. You can get the list of all Value Stores on the Card by calling the following endpoint:
+
+```javascript
+GET https://api.lightrail.com/v1/cards/{cardId}/details
+{  
+  "details":{  
+    "valueStores":[  
+      {  
+        "valueStoreType":"PRINCIPAL",
+        "value":5000,
+        "state":"ACTIVE",
+        "expires":null,
+        "startDate":null,
+        "programId":"program-1ddxxa9",
+        "valueStoreId":"value-66xxf2",
+        "restrictions":[]
+      },
+      {  
+        "valueStoreType":"ATTACHED",
+        "value":500,
+        "state":"ACTIVE",
+        "expires":null,
+        "startDate":null,
+        "programId":"program-c7xxe6",
+        "valueStoreId":"value-02xx6c",
+        "restrictions":[  
+          "If your cart total is at least $100."
+        ]
+      }
+    ],
+    "currency":"USD",
+    "cardType":"GIFT_CARD",
+    "asAtDate":"2017-09-14T18:09:09.520Z",
+    "cardId":"card-dcxx37"
+  }
+}
+```
+
+Now, if you compare this list with the list of unlocked Value Stores in the `transactionBalance`, you can determine what promotions were NOT unlocked and display meaningful hints to the customer (based on the `restrictions` attribute) on how they can unlock them. Here is a simple example of the user experience:
+
+![cart-example-redemption-rules](https://giftbit.github.io/Lightrail-API-Docs/assets/cart-example-redemption-rules.png)
 
 #### Transaction
 
