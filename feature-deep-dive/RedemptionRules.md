@@ -2,9 +2,11 @@
 
 [Lightrail](https://www.lightrail.com/) redemption rules are extra conditions placed on promotions. A redemption rule is evaluated with the transaction data to determine if the promotion can be used for that transaction. This unlocks powerful marketing promotions such as: "$10 good for purchases of $50 or more" or "$5 off your purchase when you buy a red hat."
 
+This document is a reference for writing Lightrail Redemption Rules. To learn more about how to set up Redemption Rules in your system, check out the [Lightrail Redemption Rules Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/redemption-rules.md).
+
 ## Evaluation
 
-Redemption rules are set for a promotion and evaluated using variables from the submitted drawdown transaction.  They are single statements that evaluate to a single value, not a full script to be executed.  If the rule evaluates to `true` then the promotion can be applied to the transaction.  If the rule evaluates to `false` then the promotion cannot be applied to the transaction.
+Redemption rules are set for a promotion and evaluated using variables from the submitted drawdown transaction. They are single statements that evaluate to a single value, not a full script to be executed. If the rule evaluates to `true` then the promotion can be applied to the transaction. If the rule evaluates to `false` then the promotion cannot be applied to the transaction.
 
 Here's an example of a not particularly useful redemption rule:
 
@@ -12,7 +14,7 @@ Here's an example of a not particularly useful redemption rule:
 1 == 2
 ```
 
-This rule is made up of two numbers, and one operator: equals.  This rule will evaluate to true when 1 equals 2, which is never.  This promotion can never be redeemed.
+This rule is made up of two numbers, and one operator: equals. This rule will evaluate to true when 1 equals 2, which is never.  This promotion can never be redeemed.
 
 Here's a more realistic redemption rule:
 
@@ -32,12 +34,48 @@ These variables are exactly as they are passed into the REST endpoint that creat
 
 ## Metadata
 
-The `metadata` variable of the transaction is the most flexible part of the transaction.  It can hold any JSON data and be as specific to your organization as you want.  We recommend evaluating what data you have available that might potentially be used for a promotion, and including that in `metadata`.  Don't worry about including data you have no plans to use in a promotion yet.  Any data not referenced in a redemption rule is safely ignored.  It's better to have data and not need it than need it and not have it.
+The `metadata` variable of the transaction is the most flexible part of the transaction. It can hold any JSON data and be as specific to your organization as you want. We recommend evaluating what data you have available that might potentially be used for a promotion, and including that in `metadata`. Don't worry about including data you have no plans to use in a promotion yet. Any data not referenced in a redemption rule is safely ignored. It's better to have data and not need it than need it and not have it. To learn about the basic metadata structure recommended by Lightrail, check out the [Lightrail Redemption Rules Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/redemption-rules.md).
 
 Here's an example `metadata` JSON object for a doughnut store that includes elements we recommend:
 
 ```json
 {
+  "cart": {
+    "total": 1960,
+    "items": [
+      {
+        "id": "chocolate",
+        "quantity": 1,
+        "unit_price": 150,
+        "tags": ["doughnut"]
+      },
+      {
+        "id": "mapleglazed",
+        "quantity": 1,
+        "unit_price": 150,
+        "tags": ["doughnut"]
+      },
+      {
+        "id": "longjohn",
+        "quantity": 1,
+        "unit_price": 150,
+        "tags": ["doughnut"]
+      },
+      {
+        "id": "bearclaw",
+        "quantity": 1,
+        "unit_price": 250,
+        "tags": ["doughnut"]
+      }, 
+      {
+        "id": "dripcoffee",
+        "quantity": 4,
+        "unit_price": 315,
+        "tags": ["coffee", "medium"]
+      },       
+    ]
+  }
+}
   "cartValue": 1960,
   "cart": [
     {
@@ -91,11 +129,11 @@ Here's an example `metadata` JSON object for a doughnut store that includes elem
 }
 ```
 
-This `metadata` includes a shopping cart with 8 items and their relevant attributes.  There are 4 different doughnuts and 4 identical coffees.  For some systems it might be more convenient to represent the coffees as a single item with a `"quantity": 4` attribute.  This makes writing some redemption rules slightly more complicated but still manageable.
+This `metadata` includes a shopping cart with 8 items and their relevant attributes.  There are 4 different doughnuts and 4 identical coffees. 
 
-Note what's not included: information about the customer.  To target a specific set of people apply the promotion to their gift cards or account cards when they qualify.  For example a promotion that gives customers $5 for signing up for a newsletter should be applied automatically after signing up.
+Note what's not included: information about the customer. To target a specific set of people apply the promotion to their gift cards or account cards when they qualify. For example a promotion that gives customers $5 for signing up for a newsletter should be applied automatically after signing up.
 
-With this `metadata` we can write redemption rules on cart item attributes, their value, their quantity, and the delivery type.  After introducing the syntax we'll come back to the doughnut shop example with some rules we can write.
+With this `metadata` we can write redemption rules on cart item attributes, their value, their quantity, and the delivery type. After introducing the syntax we'll come back to the doughnut shop example with some rules we can write.
 
 ## Syntax
 
@@ -722,7 +760,7 @@ Operators are evaluated in the following order, with higher operators being eval
 ### Type coercion
 
 | target  | source  | value        | condition          |
-|-------- | ------- | ------------ | -------------------|
+| ------- | ------- | ------------ | ------------------ |
 | boolean | list    | `true`       |                    |
 |         | map     | `true`       |                    |
 |         | null    | `false`      |                    |
