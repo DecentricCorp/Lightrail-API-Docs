@@ -40,7 +40,7 @@ In most business workflows, you usually have access to the customer ID (e.g. fro
 
 ### Balance-Check
 
-For checking the balance of an account you can simply call the [Card Balance API Endpoint](#cards-balance-endpoint) and provide the corresponding Card ID. 
+For checking the balance of an account you can call the [Transaction Simulation and Balance Endpoint](#transaction-simulation-and-balance-endpoint); you need to provide the `cardId` of the Account Card. 
 
 ### Funding and Charging
 
@@ -127,10 +127,12 @@ Although the response to this call is a search result object with an array of Co
 
 For creating a new Account Card, you need to provide the `contactId` of the Contact with whom the card will be associated and specify the card `currency`. Note that since gift cards use the same endpoint, you have to also specify the `cardType` as  `ACCOUNT_CARD`.
 
+You also need to provide a`userSuppliedId`, a unique identifier from your own system. Since each Contact can have only up to one Account Card per currency, you can add the currency as a suffix to the `userSupliedId` you provided for the Contact.
+
 ```javascript
 POST https://api.lightrail.com/v1/cards
 {
-  "userSuppliedId": "account-d37e",
+  "userSuppliedId": "customer-9f50629d-USD",
   "contactId": "contact-271a",
   "cardType": "ACCOUNT_CARD",
   "currency": "USD"
@@ -142,22 +144,22 @@ The response objects will include both the `userSuppliedId` and a server-generat
 ```json
 {
   "card":{
-    "cardId": "card-1dea",
-    "userSuppliedId": "account-d37e",
+    "cardId": "card-1dxxea",
+    "userSuppliedId": "customer-9f50629d-USD",
     "contactId": "contact-271a",
     "dateCreated": "2017-07-26T23:50:04.572Z",
     "cardType": "ACCOUNT_CARD",
     "currency": "USD",
     "categories":[
      {
-      "categoryId": "category-bd12dd18dfc14089b0e59ec90eb10388",
+      "categoryId": "category-bdxx88",
       "key": "giftbit_order",
       "value": "2017-07-26"
      },
      {
-      "categoryId": "category-956471f4bf82468bb3767f93fe814fc2",
+      "categoryId": "category-95xxc2",
       "key": "giftbit_program",
-      "value": "program-account-USD-user-088e-TEST"
+      "value": "program-account-USD-user-088e"
      }
     ]
   }
@@ -178,22 +180,22 @@ The response is in the form of search results which includes an array of `card` 
 {
  "cards":[
   {
-    "cardId": "card-1dea",
-    "userSuppliedId": "account-d37e",
+    "cardId": "card-1dxxea",
+    "userSuppliedId": "customer-9f50629d-USD",
     "contactId": "contact-271a",
     "dateCreated": "2017-07-26T23:50:04.572Z",
     "cardType": "ACCOUNT_CARD",
     "currency": "USD",
     "categories":[
      {
-      "categoryId": "category-bd12dd18dfc14089b0e59ec90eb10388",
+      "categoryId": "category-bdxx88",
       "key": "giftbit_order",
       "value": "2017-07-26"
      },
      {
-      "categoryId": "category-956471f4bf82468bb3767f93fe814fc2",
+      "categoryId": "category-95xxc2",
       "key": "giftbit_program",
-      "value": "program-account-USD-user-088e-TEST"
+      "value": "program-account-USD-user-088e"
      }
     ]
   }
@@ -214,58 +216,87 @@ Note that you can also specify the `currency` as a search parameter in which cas
 GET https://api.lightrail.com/v1/cards?cardType=ACCOUNT_CARD&currency=USD&contactId={contactId}
 ```
 
-### Cards Balance Endpoint
+### Transaction Simulation and Balance Endpoint
 
-You can use the card balance endpoint to check the available value of an Account Card by providing the `cardId`. If you do not have the `cardId`, you can retrieve it based on the customer's `contactId` by calling the [Cards API Endpoint](#cards-endpoint), as discussed above.
+This endpoint allows you to do a test-run for a Transaction by providing a request (including full `metadata` if you are using Redemption Rules). In the case of insufficient funds, it can also tell you the maximum value for which the Transaction _would be_ successful. For example, if you simulate a $35 drawdown Transaction, the endpoint can tell you that it _would be_ successful if it were only for $20. This provides a mechanism to check the available value of a Card for a particular Transaction context.
+
+For this endpoint, you will need to provide the Card's `cardId`. For Account Cards, if you do not have the `cardId` you can retrieve it based on the customer's `contactId` using the [Card Search Endpoint](#card-search-endpoint), as discussed later below. For Gift Cards, you can use [a similar endpoint](#simulation-and-balance-check-based-on-gift-code) which takes the `fullcode` as discussed below.
+
+In the request, you need to provide, the following: 
+
+- The Transaction `value` you would like to drawdown.
+- The Transaction `currency`.
+- A `userSuppliedId` as an idempotency key. Note that since this is a simulation, if a Transaction with this `userSuppliedId` already exists, Lightrail will retrieve that.  
+- The attribute `nsf` set to `false`. This tells Lightrail to return a best-effort would-be Transaction instead of a not-sufficient-funds (NSF) error, if the Card's available value is not enough for the suggested Transaction value. 
+
+Request Sample:
 
 ```javascript
-GET https://api.lightrail.com/v1/cards/{cardId}/balance
-```
-Usually, the balance is returned in the `currentValue` field of the `principal` object. If you are using attached promotions (e.g. temporary promotional values), these additional values are returned in the attached objects in the response. In such cases, the effective balance is the available value in its principal value store, plus the sum of all attached values that are currently active. So, in order to get the effective available balance of the account you need to use the following logic:
-
-```php
-    $accountBalance = $response['balance']['principal']['currentValue'];
-    foreach ($response['balance']['attached'] as $attachedValue) {
-      if ($attachedValue['state'] === 'ACTIVE')
-      	$accountBalance += $attachedValue['currentValue'];
-    }
-```
-
-Here is a sample response from this endpoint:
-
-```json
+POST https://www.lightrail.com/v1/cards/{cardId}/transactions/dryRun
 {
-  "balance":{
-    "principal":{
-      "currentValue": 100,
-      "state": "ACTIVE",
-      "expires": null,
-      "startDate": null,
-      "programId": "program-account-USD-user-088e-TEST",
-      "valueStoreId": "value-68ec"
-    },
-    "currency": "USD",
-    "cardType": "ACCOUNT_CARD",
-    "balanceDate": "2017-07-27T23:26:06.079Z",
-    "attached": [
-            {
-                "currentValue": 500,
-                "state": "ACTIVE",
-                "expires": "2017-07-14T20:05:34.331Z",
-                "startDate": null,
-                "programId": "program-dd",
-                "valueStoreId": "value-26"
-            },
-            {
-                "currentValue": 0,
-                "state": "ACTIVE",
-                "expires": "2017-07-11T21:12:50.344Z",
-                "startDate": null,
-                "programId": "program-cc",
-                "valueStoreId": "value-bb"
-            }
+  "userSuppliedId":"order-s3xx30",
+  "value":-6960,
+  "currency":"USD",
+  "nsf": false,
+  "metadata": {
+    "cart": {
+      "total": 6960,
+      "items": [
+        {
+          "id": "B009L1MF7A",
+          "quantity": 3,
+          "unit_price": 2320,
+          "tags": ["apparel", "outdoor"]
+        }
+      ]
+    }  
+  } 
+}
+```
+
+The response will be similar to the following. Note that this is just a simulation and NOT an actual Transaction; for instance, it does not have a `transactionId`. The response indicates that for this Transaction, the maximum value this Card can provide is $55. In other words, if you attempt to create a drawdown Transaction for up to $55, it will be successful.
+
+More details about the promotions that are unlocked for this Transaction is provided in the `transactionBreakdown`. You can use this information display all the unlocked promotions for this order.  Check out the [Lightrail Redemption Rules Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/redemption-rules.md) for further discussion of this object. 
+
+```javascript
+{  
+  "transaction":{  
+    "value":-5500,
+    "userSuppliedId":"order-s3xx30",
+    "dateCreated":null,
+    "transactionType":"DRAWDOWN",
+    "transactionAccessMethod":"CARDID",
+    "valueAvailableAfterTransaction":0,
+    "cardId":"card-dcxx37",
+    "currency":"USD",
+    "transactionBreakdown":[  
+      {  
+        "value":-500,
+        "valueAvailableAfterTransaction":0,
+        "valueStoreId":"value-02xx6c"
+      },
+      {  
+        "value":-5000,
+        "valueAvailableAfterTransaction":0,
+        "valueStoreId":"value-66xxf2"
+      }
+    ],
+    "transactionId":null,
+    "metadata":{  
+      "cart":{  
+        "total":6960,
+        "items":[  
+          {  
+            "quantity":3,
+            "id":"B009L1MF7A",
+            "unit_price":2320,
+            "tags":["apparel","outdoor"]
+          }
         ]
-   }
+      }
+    },
+    "codeLastFour":"YNJC"
+  }
 }
 ```
 
@@ -304,7 +335,7 @@ The returned object includes both the `userSuppliedId` and a server-generated `t
 
 #### Authorize-Capture 
 
-For drawdown transactions, Lightrail supports the preauthorize-capture flow. By setting the value of the `pending` attribute, you can tell Lightrail to create a pending Transaction. The funds for a pending Transaction are withheld until it is _captured_ or _voided_ later:
+For drawdown transactions, Lightrail supports the authorize-capture flow. By setting the value of the `pending` attribute, you can tell Lightrail to create a pending Transaction. The funds for a pending Transaction are withheld until it is _captured_ or _voided_ later:
 
 ```javascript
 POST https://api.lightrail.com/v1/cards/{cardId}/transactions
