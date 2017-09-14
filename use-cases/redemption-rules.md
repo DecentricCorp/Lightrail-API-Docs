@@ -305,17 +305,13 @@ Here is an example of the metadata based on this structure:
         "id": "B000F34ZKS", //tent
         "quantity": 1,
         "unit_price": 20695,
-        "tags": [
-          "gear", "outdoor", "clearance", "Coleman"
-        ]
+        "tags": ["gear", "outdoor", "clearance", "Coleman"]
       },
       {
         "id": "B009L1MF7A", //jacket
         "quantity": 2,
         "unit_price": 2320,
-        "tags": [
-          "apparel", "outdoor", "Klymit"
-        ]
+        "tags": ["apparel", "outdoor", "Klymit"]
       }
     ]
   },
