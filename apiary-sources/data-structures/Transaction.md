@@ -10,5 +10,5 @@
 + giftbitUserId (string) - Deprecated.  
 + cardId (string) - The Lightrail Card ID.
 + currency (string) - {{currency}}
-+ transactionBreakdown (array[TransactionValue]) - The detailed breakdown of ValueStores used to provide the funds for this Transaction and their share.
++ transactionBreakdown (array[TransactionValue]) - The detailed breakdown of ValueStores used to extract the funds for this Transaction and their share.
 + metadata (object) - {{transaction.metadata}}
