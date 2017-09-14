@@ -369,21 +369,23 @@ Note that these are just for your reference and you can pick and choose from the
 
 - `cart` (object): the main object to record the shopping cart and its contents.
   - `total` (integer): the total value of the purchase. Whether this is pre- or post-tax depends on your decision.
-  - `items ` (array of objects of type `item`): 
-    - `item`: 
-      - `id` (string): the product ID.
-      - `quantity` (integer): the quantity.
-      - `unit_price` (integer): the unit price of the item.
-      - `tags` (array of string): a list of product categories.
+  - `items ` (array of objects): ordered items in the cart, each with the following attributes: 
+    - `id` (string): the product ID.
+    - `quantity` (integer): the quantity.
+    - `unit_price` (integer): the unit price of the item.
+    - `tags` (array of string): a list of product categories.
 
 Additionally, if you foresee that you will have Redemption Rules based on the payment method or the origin of the Transaction, here are some additional suggested metadata:
 
 - `origin` (object): metadata about the origin of the transaction
-  - `store_id` (string): the store ID in which the Transaction takes place. 
+  - `id` (string): the store ID in which the Transaction takes place. 
   - `tags` (array of string): other attributes of the origin.
 - `payment` (object):
-  - `payment_method_id` (string): the ID of the payment method.
+  - `id` (string): the ID of the payment method.
   - `tags` (array of string): other attributes of the payment.
+- `delivery`(object):
+  - `id` (string): the delivery method ID.
+  - `tags` (array of string): other attributes of the delivery.
 
 Here is an example of the metadata based on this structure:
 
@@ -407,15 +409,19 @@ Here is an example of the metadata based on this structure:
     ]
   },
   "origin": {
-  	"store_id": "A210",
+  	"id": "A210",
     "tags": [
       "warehouse", "CA"
     ]
   },
   "payment":{
-    "payment_method_id": "stripe",
+    "id": "stripe",
     "tags": []
-  }  
+  },
+  "delivery":{
+    "id": "USPS",
+    "tags": []
+  }
 }
 ```
 
@@ -503,10 +509,10 @@ metadata.payment.tags.some(tag => tag == 'debit')
 
 If you have multiple stores or operate in different regions, you can set Redemption Rules based on different attributes on the origin of the Transaction such as type of store, region, or store ID. For example:
 
-- $5 off if you make a purchase in the North Vancouver branch (with store ID `A210`): 
+- $5 off if you make a purchase in the Seattle branch (with store ID `A210`): 
 
 ```javascript
-metadata.origin.store_id == 'A210'
+metadata.origin.id == 'A210'
 ```
 
 - $5 off if you order from any warehouse branch in California:
@@ -515,5 +521,15 @@ metadata.origin.store_id == 'A210'
 metadata.origin.tags.some(tag => tag == 'warehouse' && tag == 'CA')
 ```
 
+#### Restrictions on Delivery
 
+If your online store supports multiple types of delivery, you can set Redemption Rules based on the delivery method or other attributes related to the delivery.
+
+- $5 off if the customer picks up the ordered items from the store:
+
+```javascript
+metadata.delivery.id == 'store-pickup'
+```
+
+#### 
 
