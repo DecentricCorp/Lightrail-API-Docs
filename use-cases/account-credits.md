@@ -326,7 +326,6 @@ The returned object includes both the `userSuppliedId` and a server-generated `t
     "dateCreated": "2017-07-27T23:51:12.228Z",
     "transactionType": "FUND",
     "transactionAccessMethod": "CARDID",
-    "giftbitUserId": "user-088e-TEST",
     "cardId": "card-1dea",
     "currency": "USD"
   }
@@ -374,7 +373,6 @@ The response object from these calls will be a new Transaction object with a new
         "dateCreated": "2017-07-12T00:22:48.379Z",
         "transactionType": "PENDING_VOID",
         "transactionAccessMethod": "CARDID",
-        "giftbitUserId": "user-08",
         "cardId": "card-1dea",
         "currency": "USD",
         "parentTransactionId": "transaction-4xx6",
