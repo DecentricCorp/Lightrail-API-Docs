@@ -249,7 +249,7 @@ You can see from the response that the Card can now pay only up to $50 for this 
 }
 ```
 
-#### Showing Balance and Hints to the Customer
+#### Showing the Balance and Hints to the Customer
 
 The `transactionBalance` object provides valuable information for letting the customer know what promotions are unlocked and what promotions still remain inactive for the current cart. This user experience can improve your sales by hinting at what the customer can do to take advantage of more promotions. 
 
