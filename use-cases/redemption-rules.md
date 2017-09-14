@@ -119,13 +119,13 @@ POST https://www.lightrail.com/v1/cards/{cardId}/transactions/dryRun
           "id": "B000F34ZKS", 
           "quantity": 1,
           "unit_price": 20695,
-          "tags": ["gear", "outdoor", "clearance", "Coleman"]
+          "tags": ["gear", "outdoor", "clearance", "Rocketship"]
         },
         {
           "id": "B009L1MF7A", 
           "quantity": 3,
           "unit_price": 2320,
-          "tags": ["apparel", "outdoor", "Klymit"]
+          "tags": ["apparel", "outdoor", "Rocketship"]
         }
       ]
     }  
@@ -169,13 +169,13 @@ By checking the `transactionBreakdown`, you can see that this value is coming fr
             "quantity":1,
             "id":"B000F34ZKS",
             "unit_price":20695,
-            "tags":["gear","outdoor","clearance","Coleman"]
+            "tags":["gear","outdoor","clearance","Rocketship"]
           },
           {  
             "quantity":3,
             "id":"B009L1MF7A",
             "unit_price":2320,
-            "tags":["apparel","outdoor","Klymit"]
+            "tags":["apparel","outdoor","Rocketship"]
           }
         ]
       }
@@ -202,7 +202,7 @@ POST https://www.lightrail.com/v1/cards/{cardId}/transactions/dryRun
           "id": "B009L1MF7A",
           "quantity": 3,
           "unit_price": 2320,
-          "tags": ["apparel", "outdoor", "Klymit"]
+          "tags": ["apparel", "outdoor", "Rocketship"]
         }
       ]
     }  
@@ -239,7 +239,7 @@ You can see from the response that the Card can now pay only up to $50 for this 
             "quantity":3,
             "id":"B009L1MF7A",
             "unit_price":2320,
-            "tags":["apparel","outdoor","Klymit"]
+            "tags":["apparel","outdoor","Rocketship"]
           }
         ]
       }
@@ -293,7 +293,9 @@ GET https://api.lightrail.com/v1/cards/{cardId}/details
 
 Now, if you compare this list with the list of unlocked Value Stores in the `transactionBalance`, you can determine what promotions were NOT unlocked and display meaningful hints to the customer (based on the `restrictions` attribute) on how they can unlock them. Here is a simple example of the user experience:
 
-![cart-example-redemption-rules](https://giftbit.github.io/Lightrail-API-Docs/assets/cart-example-redemption-rules.png)
+![cart-example-redemption-rules](https://giftbit.github.io/Lightrail-API-Docs/assets/cart-example-redemption-rules-1.png)
+
+![cart-example-redemption-rules](https://giftbit.github.io/Lightrail-API-Docs/assets/cart-example-redemption-rules-2.png)
 
 #### Transaction
 
@@ -322,7 +324,7 @@ POST https://www.lightrail.com/v1/cards/{cardId}/transactions
           "id": "B009L1MF7A",
           "quantity": 3,
           "unit_price": 2320,
-          "tags": ["apparel", "outdoor", "Klymit"]
+          "tags": ["apparel", "outdoor", "Rocketship"]
         }
       ]
     }  
@@ -346,7 +348,7 @@ POST https://api.lightrail.com/v1/cards/{cardId}/transactions/{pendingTransactio
           "id":"B009L1MF7A",
           "quantity":3,
           "unit_price":2320,
-          "tags":["apparel","outdoor","Klymit"]
+          "tags":["apparel","outdoor","Rocketship"]
         }
       ]
     }
@@ -398,13 +400,13 @@ Here is an example of the metadata based on this structure:
         "id": "B000F34ZKS", //tent
         "quantity": 1,
         "unit_price": 20695,
-        "tags": ["gear", "outdoor", "clearance", "Coleman"]
+        "tags": ["gear", "outdoor", "clearance", "Rocketship"]
       },
       {
         "id": "B009L1MF7A", //jacket
         "quantity": 2,
         "unit_price": 2320,
-        "tags": ["apparel", "outdoor", "Klymit"]
+        "tags": ["apparel", "outdoor", "Rocketship"]
       }
     ]
   },
