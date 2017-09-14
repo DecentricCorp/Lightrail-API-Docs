@@ -38,7 +38,7 @@ Note that adding promotions with new Redemption Rules is a fairly easy task that
 
 ### Creating a Promotion with Redemption Rules
 
-You can create a new Promotion Program in the Lightrail Web App and specify the Redemption Rules at the time of creation. To attach a promotion to a Card based on this Program, you can go the Card page and select _Attach Promotion_ and then select the Promotion Program with the Redemption Rule you just created. To double check, you can call the API to retrieve the list of all Value Stores on the Card, which will return a response similar to the following. As you can see, the Redemption Rule and its description are listed in the metadata of the attached Value Store:  
+You can create a new Promotion Program in the Lightrail Web App and specify the Redemption Rules at the time of creation. To attach a promotion to a Card based on this Program, you can go the Card page and select _Attach Promotion_ and then select the Promotion Program with the Redemption Rule you just created. To double check, you can call the API to retrieve the list of all Value Stores on the Card, which will return a response similar to the following. As you can see, the Redemption Rule description is listed in the `restrictions` object of the attached Value Store:  
 
 ```javascript
 GET https://api.lightrail.com/v1/cards/{cardId}/details
