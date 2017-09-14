@@ -107,12 +107,12 @@ By checking the `transactionBreakdown`, you can see that this value is coming fr
       {  
         "value":-500,
         "valueAvailableAfterTransaction":0,
-        "valueStoreId":"value-024e3a9902f341eb8983f4e7db64e76c"
+        "valueStoreId":"value-02xx6c"
       },
       {  
         "value":-5000,
         "valueAvailableAfterTransaction":0,
-        "valueStoreId":"value-663b1647d8d547199b7879010439d6f2"
+        "valueStoreId":"value-66xxf2"
       }
     ],
     "transactionId":null,
