@@ -2,9 +2,10 @@ sequenceDiagram
 participant OrderManager
 note left of OrderManager: determine orderTotal
 note left of OrderManager: capture Gift Card fullcode 
-OrderManager->>Lightrail:get balance(fullcode)
-Lightrail-->>OrderManager:giftValue
-note left of OrderManager: remainder= orderTotal—giftValue
+OrderManager->>Lightrail:simulate transaction(fullcode)
+Lightrail-->>OrderManager:response
+note left of OrderManager: determine available giftValue 
+note left of OrderManager: remainder= orderTotal-giftValue
 alt remainder <= 0
 OrderManager->>Lightrail: drawdown (fullcode, orderTotal)
 Lightrail-->>OrderManager: result
@@ -24,4 +25,3 @@ Lightrail-->>OrderManager: result
 note left of OrderManager: order payment failed.
 end
 end
-
