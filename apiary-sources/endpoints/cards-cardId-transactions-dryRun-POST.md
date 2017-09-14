@@ -6,7 +6,7 @@ Simulates creating a transaction against a Card based on its `cardId` and return
 The `nsf` attribute determines the behaviour of this endpoint in the case of insufficient funds. If `nsf` is set to `true` (which is the default), it will return an error indicating insufficient funds. 
 If `nsf` is set to `false`, the response will return a hypothetical drawdown Transaction object with the maximum value the Card can pay, i.e. its available balance. 
 
-Providing the full context of the Transaction, including its metadata, is particularly important if your system uses Redemption Rules since the 
+It is particularly important to provide the full context of the Transaction, i.e. its metadata, if your system uses Redemption Rules since the 
 effective balance of a Card varies depending on the metadata of the Transaction.
 
 ---
