@@ -109,7 +109,7 @@ Lightrail supports a two-step _pending_ drawdown. A pending drawdown Transaction
 
 Transactions are [primarily](#post-transaction-by-cardid-anchor) created by `cardId`.  But to simplify Gift Card redemption at the checkout, Lightrail also provides [an endpoint](#post-transaction-by-fullcode-anchor) for creating Transactions by a Card's `fullcode`. To improve security, this endpoint only allows drawdown Transactions.
 
-One of the features of the Lightrail API is encapsulating the Card Value Stores behind a simple interface at the time of Transaction. While you can add many promotional attached Value Stores to Cards, at Transaction time, you do not need to worry about the logic of splitting the drawdown value against potentially many Value Stores; Lightrail transaction processing automatically handles this for you. 
+One of the features of the Lightrail API is encapsulating the Card Value Stores behind a simple interface at the time of Transaction. While you can add many promotional attached Value Stores to Cards, at Transaction time, you do not need to worry about the logic of splitting the drawdown value against potentially many Value Stores; Lightrail transaction processing automatically handles this for you. The  `transactionBreakdown` object in a Transaction object provides the details of how the funds were extracted from different ValueStores by Lightrail behind the scene.
 
 For example, if there is $30 in the Principal Value Store and a $5 attached Value Store from a promotional _Back to School_ program, when attempting a $8 drawdown, Lightrail automatically decides the break-down of this amount against existing Value Stores and you do not have to specify or even be aware of them. In this case, for example, Lightrail will prioritize the spending of the $5 value which is closer to its expiry date, and then, charges the remaining $3 from the Principal Value Store.  
 
@@ -2318,7 +2318,7 @@ Retrieves a paginated list of all Lightrail Programs belonging to the user.
 + giftbitUserId (string) - Deprecated.  
 + cardId (string) - The Lightrail Card ID.
 + currency (string) - The three-character ISO-4217 currency.
-+ transactionBreakdown (array[TransactionValue])
++ transactionBreakdown (array[TransactionValue]) - The detailed breakdown of ValueStores used to extract the funds for this Transaction and their share.
 + metadata (object) - A key-value JSON object to store any additional information. The `giftbit_*` namespace for keys is reserved. Note Lightrail's [Redemption Rules](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/redemption-rules.md) operate on Transaction metadata to determine whether a particular promotion can be spent. Example: `"metadata":{"checkout-cart":{"items":[{"id":"1"},{"id":"2"}]}}`.
 
 ## TransactionValue (object)
