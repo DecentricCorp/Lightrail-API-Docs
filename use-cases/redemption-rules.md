@@ -16,14 +16,16 @@ Lightrail implements promotions as additional Value Stores that can be created a
 
 When transacting against a Card and looking into collecting funds from its Value Stores, Lightrail Transaction Manager evaluates each Value Store's Redemption Rule against the Transaction JSON object; the promotional value from that Value Store can be spent in that Transaction only if the rule evaluates to `true`. 
 
-## Setting Up Your Redemption Rules
+## Setting Up Redemption Rules
 
 For activating Redemption Rules in your system, you need to take the following two steps: 
 
 - Add any information that may be important in Redemption Rules in the `metadata` of Transaction requests. As discussed further below, we suggest that you proactively include a set of standard metadata most likely to be in your Redemption Rules. 
 - Create Promotion Programs with Redemption Rules and attach promotions based on these Programs to Gift Cards or Account Cards. This can be done in the Lightrail Web App.
 
-Collecting and including metadata in the Transaction request must be done programmatically in your integration module with Lightrail. It is important that you identify:
+### Establishing Metadata
+
+Collecting and including metadata in the Transaction request is done programmatically in your Lightrail integration module. It is important that you identify:
 
 - What information needs to be included in the metadata, 
 - what structure you will use to organize this information into a single `metadata` object, and
@@ -32,6 +34,45 @@ Collecting and including metadata in the Transaction request must be done progra
 For example, some parts of the metadata, such as the ordered items and totals are usually available in your e-commerce platform in the form of a _cart_ or an _order_ object. For product labels and categories, you may have to fetch the _product_ object from your back-end database. Other information, such as the store and branch ID are part of the configuration of your online store.
 
 Note that adding promotions with new Redemption Rules is a fairly easy task that can be done routinely by your marketing team using the Lightrail Web App. Adding new metadata and changing the Transaction request, on the other hand, requires that your software developer team update your Lightrail integration code which can be very costly and time-consuming. So, to minimize future developer involvement, try to be as general and proactive as possible in your initial design of Transaction metadata and provide all of the information that could potentially be used in future Redemption Rules. We suggest that at minimum, you include the [Sample Metadata Structure](#sample-metadata-structure) in this document.
+
+### Creating a Promotion with Redemption Rules
+
+You can create a new Promotion Program in the Lightrail Web App and specify the Redemption Rules at the time of creation. To attach a promotion to a Card based on this Program, you can go the Card page and select _Attach Promotion_ and then select the Promotion Program with the Redemption Rule you just created. To double check, you can call the API to retrieve the list of all Value Stores on the Card, which will return a response similar to the following. As you can see, the Redemption Rule and its description are listed in the metadata of the attached Value Store:  
+
+```javascript
+GET https://api.lightrail.com/v1/cards/{cardId}/valueStores
+{  
+  "valueStores":[  
+    {  
+      "cardId":"card-6dxx89",
+      "valueStoreId":"value-2fxxf2",
+      "valueStoreType":"PRINCIPAL",
+      "currency":"USD",
+      "dateCreated":"2017-07-01T14:35:13.159Z",
+      "programId":"program-1dxxea9"
+    },
+    {  
+      "cardId":"card-6dxx89",
+      "valueStoreId":"value-79xxee",
+      "valueStoreType":"ATTACHED",
+      "currency":"USD",
+      "dateCreated":"2017-09-14T16:52:51.728Z",
+      "programId":"program-c7xxe6",
+      "metadata":{  
+        "_redemption_rule":"metadata.cart.total >= 10000",
+        "_redemption_rule_explanation":"If your cart total is at least $100."
+      }
+    }
+  ],
+  "pagination":{  
+    "count":2,
+    "limit":100,
+    "maxLimit":1000,
+    "offset":0,
+    "totalCount":8
+  }
+}
+```
 
 ### Balance-Check
 
