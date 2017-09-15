@@ -6,6 +6,7 @@ Content:
 - [Redeeming Lightrail Value at Checkout](giftcode-checkout.md).
 - [Account Credits Powered by Lightrail](account-credits.md)
 - [Issuing Lightrail Gift Cards](gift-card.md)
+- [Card Details](card-details.md)
 - [Creating Lightrail Promotions](promotions.md)
 - [Split-Tender with Lightrail and Stripe](stripe-split.md)
 - [Setting Up Lightrail Redemption Rules](redemption-rules.md)
