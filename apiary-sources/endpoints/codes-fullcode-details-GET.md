@@ -1,4 +1,4 @@
-### Get Card Details by Card ID [GET /codes/{fullcode}/details{?asAtDate}{?pin}]
+### Get Card Details by Gift Code [GET /codes/{fullcode}/details{?asAtDate}{?pin}]
 Retrieve a Gift Card's details based on its `fullcode`. 
 The response includes the Value Stores (principal or attached promotions) as well as any restrictions on any of the Value Stores.
 
