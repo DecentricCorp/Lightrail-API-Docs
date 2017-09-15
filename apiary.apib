@@ -238,7 +238,7 @@ Note that the `userSuppliedId` must also be unique to the request; if you repeat
 
 Here is an example of a _drawdown_ request which includes a `userSuppliedId`. No matter how many time this request is received by the server, it will charge the Card only once. Moreover, if you try posting a different Transaction (e.g. with a different value) using this `userSuppliedId` you will get an error. 
 
-```json
+```
 POST https://www.lightrail.com/v1/cards/{cardId}/transactions
 {
   "userSuppliedId": "tx-2403423",
