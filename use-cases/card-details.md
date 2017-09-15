@@ -9,7 +9,7 @@ This document is a quick step-by-step guide to retrieving Card details. The focu
 
 ## Concepts
 
-It is common for businesses to provide a page in their online store where the recipient of a Gift Cards can  check its available value; usually a simple number indicating the Card's balance. Lightrail Cards, however, support a lot more than that. Aside from the principal value, a Lightrail Card can also have many attached promotions and some of these promotions may only be available under certain conditions detailed in their Redemption Rules. For example, a Gift Card can have a $30 principal value and an additional $5 attached promotion which is only available in a Transaction in which the customer buys two or more pairs of jeans.
+It is common for businesses to provide a page in their online store where the recipient of a Gift Cards or a customer with an Account Credit can check its available value. This is usually a simple number indicating the Card's balance. Lightrail Cards, however, support a lot more than that. Aside from the principal value, a Lightrail Card can also have many attached promotions and some of these promotions may only be available under certain conditions detailed in their Redemption Rules. For example, a Gift Card can have a $30 principal value and an additional $5 attached promotion which is only available in a Transaction in which the customer buys two or more pairs of jeans.
 
 By calling one of Lightrail's Card Detail Endpoints you can fetch all the information about the Card and show it to the user in way that suits your business model. 
 
@@ -22,7 +22,7 @@ GET https://api.lightrail.com/v1/cards/{cardId}/details
 GET https://api.lightrail.com/v1/codes/{fullcode}/details
 ```
 
-For the Gift Card case, you would usually use the one based on `fullcode` because that is what the customer will provide on a web form on your website.
+For Gift Cards, you would usually use the one based on `fullcode` because that is what the customer will provide on a web form on your website. For Account Cards, you usually have the Account Card's `cardId` or if you do not directly persist that, you can use the API to retrieve the `cardId` of a customer's Account Card for a given currency based on the customer's Contact identifier. For further details on this check out the Lightrail [Account Credits Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md).  
 
 The response to these calls includes a Card `details` object similar to the following:
 
