@@ -15,14 +15,14 @@ By calling one of Lightrail's Card Detail Endpoints you can fetch all this infor
 
 ## Card Details
 
-There are two Card detail Endpoints to fetch Card details based on either a `cardId` or `fullcode`:
+There are two Card detail Endpoints to fetch Card details based on either its `cardId` or `fullcode`:
 
 ```javascript
 GET https://api.lightrail.com/v1/cards/{cardId}/details
 GET https://api.lightrail.com/v1/codes/{fullcode}/details
 ```
 
-For Gift Cards, you would usually use the one based on `fullcode` because that is what the customer will provide on a web form on your website. For Account Cards, you usually have the Account Card's `cardId` or if you do not directly persist that, you can use the API to retrieve the `cardId` of a customer's Account Card for a given currency based on the customer's Contact identifier. For further details on this check out the Lightrail [Account Credits Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md).  
+For Gift Cards, you would usually use the one based on `fullcode` because that is what the customer will provide on a web form on your website. For Account Cards, you usually have the Account Card's `cardId`. If you do not directly have the `cardId`, you can retrieve it by making an API call based on the customer's Contact identifier as detailed in the Lightrail [Account Credits Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/account-credits.md).  
 
 The response to these calls includes a Card `details` object similar to the following:
 
