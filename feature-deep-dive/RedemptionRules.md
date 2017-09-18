@@ -26,7 +26,6 @@ This rule evaluates to true if the value of the shopping cart is greater or equa
 
 The four variables of a transaction that can be used for a rule are:
 - `value`: a positive number for the value of the Lightrail transaction (which may not be the value of the full cart in split-tender transactions)
-- `balance`: a positive number for the balance remaining on the promotion
 - `currency`: a string for the ISO code of the currency of the transaction
 - `metadata`: a map of arbitrary data that can be sent with the transaction
 
