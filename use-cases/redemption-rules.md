@@ -29,7 +29,7 @@ There are two main steps to enable Redemption Rules in your system:
 Collecting and including metadata in the Transaction request is done programmatically in your Lightrail integration module. Here are some of the most important considerations in this step:
 
 - Determine what information needs to be included in the metadata.
-- Determine the structure to use to organize this information into a single `metadata` object.
+- Determine the structure to organize this information into a single `metadata` object.
 - Identify how and from what sources you can obtain this information. 
 
 #### Metadata Elements
