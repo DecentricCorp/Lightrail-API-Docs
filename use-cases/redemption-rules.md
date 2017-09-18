@@ -38,6 +38,8 @@ We recommend evaluating what data you have available that might potentially be u
 
 Note that adding promotions with new Redemption Rules is a fairly easy task that can be done routinely by your marketing team using the Lightrail Web App. Adding new metadata, on the other hand, entails changing the Transaction request which requires changing your Lightrail integration code by a software developer team. This can get costly and time-consuming, so, to minimize future developer involvement, try to be as general and proactive as possible in your initial design of Transaction metadata. We suggest that at minimum, you include the [Sample Metadata Structure](#sample-metadata-structure) in this document.
 
+Note that we advise against including information about the customer in the `metadata`. To target a specific set of customers, filter them out and apply the promotion to their Gift Cards or Account Cards. To do this, you can either use the Lightrail Web App or you can call the API from within your business workflows.
+
 #### Metadata Structure
 
 Designing a suitable structure for the metadata is important since it affects how your Redemption Rules are formulated. For example, consider the Redemption Rule "if you spend at least $100 ," and assume the following metadata structure:
