@@ -4,41 +4,95 @@
 
 This document is a step-by-step guide to setting up Lightrail Redemption Rules. 
 
-- For further details on how to process redemption check out our Implementation Guide for [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md).
-- For further details on how to write Redemption Rules check out the [Redemption Rules Reference Documentation](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md).
-- For a guide on adding promotions to Lightrail Cards, checkout the use-case guide for [Creating Lightrail Promotions](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md).
+- For further details on how to process redemption, read our Implementation Guide for [Redeeming Lightrail Value at Checkout](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/giftcode-checkout.md).
+- For further details on how to write Redemption Rules, check out the [Redemption Rules Reference Documentation](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md).
+- To learn how to add promotions to Lightrail Cards, check out the use-case guide for [Creating Lightrail Promotions](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md).
 - To learn more about Lightrail concepts, check out the section on the Lightrail Object Model in the [Lightrail API Docs](https://www.lightrail.com/docs/). 
 
 ## Concepts
 
-Redemption Rules are a powerful feature of Lightrail which enable setting sophisticated conditions on how value can be spent. They can unlock powerful marketing promotions such as, "$10 off if you spend at least $100," or "$15 off if you buy two or more pairs of jeans."
+Lightrail Redemption Rules enable setting sophisticated conditions on how value can be spent. For example, "$10 off if you spend at least $100," or "$10 off if you buy two or more pairs of jeans." These conditional promotions are values which are only redeemable under certain circumstances and if certain conditions are met: there is $10 additional value on the Card but it is only available in a purchase of at least $100, or if there are at least two pairs of jeans in the cart. 
 
-Lightrail implements promotions as additional Value Stores that can be created and attached to an existing Card. Redemption rules are Boolean expressions which are defined at the time of creating a Promotion Program and apply to any Value Store derived from that Program. These rules set the conditions under which the Value Store can be unlocked for spending.
+Redemption Rules are defined at the time of creating a Promotion Program and apply to any Promotions  derived from that Program. Under the hood, Lightrail implements promotions as additional Value Stores that can be created and attached to existing Cards. Redemption rules are Boolean expressions which determine whether the value of such a Value Store can be spent in the context of a given Transaction. If the conditions are met, the value is unlocked; otherwise, the value is not available for that Transaction. 
 
-When transacting against a Card and looking into collecting funds from its Value Stores, Lightrail Transaction Manager evaluates each Value Store's Redemption Rule against the Transaction JSON object; the promotional value from that Value Store can be spent in that Transaction only if the rule evaluates to `true`. 
+When transacting against a Card and looking into collecting funds from its Value Stores, Lightrail Transaction Manager evaluates each Value Store's Redemption Rule against the Transaction's JSON object; the promotional value from that Value Store can be spent in that Transaction only if the rule evaluates to `true`. For example, at the checkout, if the cart total is over $100, the customer gets an additional $10 promotional value to redeem but this value is not available in purchases less than $100. 
 
 ## Setting Up Redemption Rules
 
-For activating Redemption Rules in your system, you need to take the following two steps: 
+There are two main steps to enable Redemption Rules in your system: 
 
-- Add any information that may be important in Redemption Rules in the `metadata` of Transaction requests. As discussed further below, we suggest that you proactively include a set of standard metadata most likely to be in your Redemption Rules. 
+- Add relevant information about the context of the Transaction in the Transaction `metadata`. As discussed further below, we suggest that you proactively include a set of standard metadata most likely to be used in your Redemption Rules. 
 - Create Promotion Programs with Redemption Rules and attach promotions based on these Programs to Gift Cards or Account Cards. This can be done in the Lightrail Web App.
 
 ### Establishing Metadata
 
-Collecting and including metadata in the Transaction request is done programmatically in your Lightrail integration module. It is important that you identify:
+Collecting and including metadata in the Transaction request is done programmatically in your Lightrail integration module. Here are some of the most important considerations in this step:
 
-- What information needs to be included in the metadata, 
-- what structure you will use to organize this information into a single `metadata` object, and
-- how and from what source you can obtain this information. 
+- Determine what information needs to be included in the metadata.
+- Determine the structure to use to organize this information into a single `metadata` object.
+- Identify how and from what sources you can obtain this information. 
 
-For example, some parts of the metadata, such as the ordered items and totals are usually available in your e-commerce platform in the form of a _cart_ or an _order_ object. For product labels and categories, you may have to fetch the _product_ object from your back-end database. Other information, such as the store and branch ID are part of the configuration of your online store.
+#### Metadata Elements
 
-Note that adding promotions with new Redemption Rules is a fairly easy task that can be done routinely by your marketing team using the Lightrail Web App. Adding new metadata and changing the Transaction request, on the other hand, requires that your software developer team update your Lightrail integration code which can be very costly and time-consuming. So, to minimize future developer involvement, try to be as general and proactive as possible in your initial design of Transaction metadata and provide all of the information that could potentially be used in future Redemption Rules. We suggest that at minimum, you include the [Sample Metadata Structure](#sample-metadata-structure) in this document.
+We recommend evaluating what data you have available that might potentially be used for a promotion, and including that in the Transaction `metadata`. Any metadata not referenced in a redemption rule is safely ignored. So, if you are not sure, err on the side of including more metadata. It is better to have something you do not use yet than need something but not have it.
+
+Note that adding promotions with new Redemption Rules is a fairly easy task that can be done routinely by your marketing team using the Lightrail Web App. Adding new metadata, on the other hand, entails changing the Transaction request which requires changing your Lightrail integration code by a software developer team. This can get costly and time-consuming, so, to minimize future developer involvement, try to be as general and proactive as possible in your initial design of Transaction metadata. We suggest that at minimum, you include the [Sample Metadata Structure](#sample-metadata-structure) in this document.
+
+#### Metadata Structure
+
+Designing a suitable structure for the metadata is important since it affects how your Redemption Rules are formulated. For example, consider the Redemption Rule "if you spend at least $100 ," and assume the following metadata structure:
+
+```javascript
+"metadata": {
+  "cart": {
+     "items": [
+       {
+         "id": "B000F34ZKS", 
+         "quantity": 1,
+         "unit_price": 20695,
+         "tags": ["gear", "outdoor", "clearance", "Rocketship"]
+       },
+       {
+         "id": "B009L1MF7A", 
+         "quantity": 3,
+         "unit_price": 2320,
+         "tags": ["apparel", "outdoor", "Rocketship"]
+       }
+     ]
+  }  
+} 
+```
+
+With this structure, you need to calculate the cart total within the rule which leads to the following:
+
+```javascript
+metadata.cart.items.map(item => item.quantity * item.unit_price).sum() >= 10000
+```
+
+Now consider the alternative structure in which the cart total is stored in a separate attribute on the `cart` object:
+```javascript
+"metadata": {
+  "cart": {
+    "total": 27655,
+    //...
+  }  
+} 
+```
+This leads to the much simpler form for the rule:
+
+```javascript
+metadata.cart.total >= 10000
+```
+
+#### Collecting Metadata
+
+Once you determined the metadata which needs to be included in the Transaction, you need to find the values. Some parts of the metadata, such as the ordered items, totals, and shipping method are usually available in your e-commerce platform data structures in the form of a _cart_ or an _order_ object. For product labels and categories, you may have to fetch the _product_ object from your back-end database. Other information, such as the store and branch ID are normally part of the configuration of your online store.
 
 ### Creating a Promotion with Redemption Rules
 
-You can create a new Promotion Program in the Lightrail Web App and specify the Redemption Rules at the time of creation. To attach a promotion to a Card based on this Program, you can go the Card page and select _Attach Promotion_ and then select the Promotion Program with the Redemption Rule you just created. To double check, you can call the API to retrieve the list of all Value Stores on the Card, which will return a response similar to the following. As you can see, the Redemption Rule description is listed in the `restrictions` object of the attached Value Store:  
+When creating a new Promotion Program in the Lightrail Web App you can specify the Redemption Rule. The rule will be applied to any promotion derived from this Program. To attach a promotion to a Card based on this Program in the Web App, you can go the Card page and select _Attach Promotion_ and then select the Promotion Program with the Redemption Rule you just created. Alternatively, you can do this programmatically via API calls as discussed in the use-case guide for [Creating Lightrail Promotions](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/promotions.md).
+
+To double check, call the Card details API endpoint to retrieve the list of all Value Stores on the Card. As you can see, in the example below, the Redemption Rule description is listed in the `restrictions` object of the attached Value Store:  
 
 ```javascript
 GET https://api.lightrail.com/v1/cards/{cardId}/details
@@ -64,7 +118,7 @@ GET https://api.lightrail.com/v1/cards/{cardId}/details
         "programId":"program-c7xxe6",
         "valueStoreId":"value-02xx6c",
         "restrictions":[  
-          "If your cart total is at least $100."
+          "If your cart total is at least $100." // <== redemption rule
         ]
       }
     ],
@@ -78,7 +132,7 @@ GET https://api.lightrail.com/v1/cards/{cardId}/details
 
 ### Balance-Check
 
-Since availability of attached promotions depend on their Redemption Rules, the total available value of a Lightrail Card varies depending on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the metadata of the Transaction. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. 
+Since the availability of an attached promotion depends on its Redemption Rule, the total available value of a Lightrail Card varies depending on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the Transaction. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. 
 
 Lightrail `dryRun` endpoints provide a mechanism for simulating a Transaction and checking the maximum a Card can pay towards a given Transaction, considering all the metadata. These endpoints also return a `transactionBreakdown` which provides the breakdown of how the value of the Transaction would be extracted from the Card's Value Stores. You can use this information to show the customer what promotions will be unlocked in their current checkout. Moreover, by comparing this list with the full list of all Value Stores on the Card, you can also show the customer the Value Stores which were NOT unlocked together with a hint about what they can do to unlock more promotions. More details on these endpoints are given in the Walk-Through Example below.
 
