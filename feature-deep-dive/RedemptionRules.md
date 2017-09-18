@@ -206,7 +206,7 @@ In this `metadata` cart items are duplicated if more than one is bought.
 metadata.cart.total >= 1000
 ```
 
-#### Buy at least 5 items
+#### Buy any 5 items
 
 ```javascript
 metadata.cart.items.map(item => item.quantity).sum() >= 5
@@ -224,20 +224,20 @@ metadata.cart.items.some(item => item.id == 'mapleglazed')
 metadata.cart.items.some(item => item.tags.some(tag=> tag=='coffee') && item.tags.some(tag=> tag=='medium'))&& metadata.cart.items.some(item => item.tags.some(tag=> tag=='doughnut'))
 ```
 
-#### Buy at least 4 coffees
+#### Buy 4 coffees
 
 ```javascript
 metadata.cart.items.filter(item => item.tags.some(tag => tag == 'coffee')).map(item => item.quantity).sum() >= 4
 ```
 
-#### Buy at least 4 coffees and pickup in store
+#### Buy 4 coffees and pickup in store
 
 ```javascript
 metadata.delivery.id=='store-pickup' && metadata.cart.items.filter(item => item.tags.some(tag => tag == 'coffee')).map(item => item.quantity).sum() >= 4
 
 ```
 
-#### Buy at least 4 items of value > $1.00
+#### Buy any 4 items of value > $1.00
 
 ```javascript
 metadata.cart.items.filter(item => item.unit_price > 100).map(item => item.quantity).sum() >= 4
@@ -281,37 +281,37 @@ In this `metadata` cart items have a `quantity`.
 }
 ```
 
-### Buy at least 5 items
+### Buy any 5 items
 
 ```javascript
 metadata.cart.items.map(item => item.quantity).sum() >= 5
 ```
 
-### Buy at least 2 t-shirts
+### Buy any 2 t-shirts
 
 ```javascript
 metadata.cart.items.filter(item => item.tags.some(tag => tag=='shirt')).map(item => item.quantity).sum() >= 2
 ```
 
-### Buy at least 2 Led Zeppelin items worth at least $5
+### Buy any 2 Led Zeppelin items worth at least $5
 
 ```javascript
 metadata.cart.items.filter(item => item.unit_price >= 500 && item.tags.some(tag => tag=='ledzeppelin')).map(item => item.quantity).sum() >= 2
 ```
 
-### Buy at least 4 stickers and a shirt
+### Buy any 4 stickers and a shirt
 
 ```javascript
 metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker')).map(item => item.quantity).sum() >= 4 && metadata.cart.some(item => item.tags.some(tag => tag=='shirt'))
 ```
 
-### Buy at least $10 worth of stickers
+### Buy $10 worth of stickers
 
 ```javascript
 metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker')).map(item => item.quantity * item.unit_price).sum() >= 1000
 ```
 
-### Buy at least $20 worth of stickers or CDs
+### Buy $20 worth of stickers or CDs
 
 ```javascript
 metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker' || tag=='cd')).map(item => item.quantity * item.unit_price).sum() >= 2000
