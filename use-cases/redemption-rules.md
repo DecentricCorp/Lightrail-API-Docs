@@ -21,7 +21,7 @@ When transacting against a Card and looking into collecting funds from its Value
 
 There are two main steps to enable Redemption Rules in your system: 
 
-- Add relevant information about the context of the Transaction in the Transaction `metadata`. As discussed further below, we suggest that you proactively include a set of standard metadata most likely to be used in your Redemption Rules. 
+- Add all relevant information about the context of the Transaction in the Transaction `metadata`. As discussed further below, we suggest that you proactively include a set of standard metadata most likely to be used in your Redemption Rules. 
 - Create Promotion Programs with Redemption Rules and attach promotions based on these Programs to Gift Cards or Account Cards. This can be done in the Lightrail Web App.
 
 ### Establishing Metadata
