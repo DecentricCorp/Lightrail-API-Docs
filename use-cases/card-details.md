@@ -15,7 +15,7 @@ By calling one of Lightrail's Card Detail Endpoints you can fetch all this infor
 
 ## Card Details
 
-There are two Card detail Endpoints to fetch Card details based on either its `cardId` or `fullcode`:
+There are two Card detail Endpoints to fetch Card details based on either its `cardId` or its `fullcode`:
 
 ```javascript
 GET https://api.lightrail.com/v1/cards/{cardId}/details
@@ -61,6 +61,6 @@ The response to these calls includes a Card `details` object similar to the foll
 }
 ```
 
-This response shows that the principal value of the Card is $30 and there is an attached promotions with no expiry date which is only redeemable in a Transaction in which the cart total is at least $100. This can be shown to the customer using an interface similar to the following:
+This response shows that the principal value of the Card is $30 and there is an attached promotions with no expiry date which is only redeemable in a Transaction where the cart total is at least $100. This can be shown to the customer using an interface similar to the following:
 
 ![redemption-seq-diagram](https://giftbit.github.io/Lightrail-API-Docs/assets/card-details.png)
