@@ -533,8 +533,7 @@ You can also set more complicated rules based on product categories and create m
 ```javascript
 //specific product category
 metadata.cart.items
-  .some(item => (item.tags.some(tag => tag=='outdoor') 
-                 && !item.tags.some(tag => tag=='clearance')))
+  .some(item => (item.tags.some(tag => tag=='outdoor') && !item.tags.some(tag => tag=='clearance'))
 ```
 
 #### Minimum Quantity
@@ -546,7 +545,7 @@ These rules require that the quantity of a particular item or category of items 
 ```javascript
 //minimum product category quantity
 metadata.cart.items
-  .filter(item => (item.tags.some(tag => tag=='jeans'))
+  .filter(item => (item.tags.some(tag => tag=='jeans')))
   .map(item => item.quantity)
   .sum() >= 3
 ```
