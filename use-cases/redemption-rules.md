@@ -156,7 +156,7 @@ Suppose you want to boost your sales by giving an additional $5 promotional valu
 
 #### Balance-Check
 
-When processing an order at the checkout, you need to determine how much is available in the customer's Account Card. The `dryRun` endpoint can provide this information if you send a request with the value of `nfs` attribute set to `false`. This tells Lightrail to return a best-effort would-be Transaction instead of a not-sufficient-funds (NSF) error if the Card's available value is not enough for the Transaction. 
+When processing an order at the checkout, you need to determine how much is available in the customer's Account Card. The `dryRun` endpoint can provide this information if you send a request with the value of `nsf` attribute set to `false`. This tells Lightrail to return a best-effort would-be Transaction instead of a not-sufficient-funds (NSF) error if the Card's available value is not enough for the Transaction. 
 
 For example, assuming the customer wants to check out a cart with $253.35 balance, the `dryRun` request will look like the following. This asks the Lightrail API to simulate a Transaction with the value of $253.35 on the provided Card and in case of insufficient funds, return the maximum the Card can spend in this Transaction: 
 
@@ -307,7 +307,7 @@ You can see from the response that the Card can now pay only up to $50 for this 
 
 #### Showing the Balance and Hints to the Customer
 
-The `transactionBalance` object provides valuable information for letting the customer know what promotions are unlocked and what promotions still remain inactive for the current cart. This user experience can improve your sales by hinting at what the customer can do to take advantage of more promotions. 
+The `transactionBreakdown` object provides valuable information for letting the customer know what promotions are unlocked and what promotions still remain inactive for the current cart. This user experience can improve your sales by hinting at what the customer can do to take advantage of more promotions. 
 
 Consider the last example above in which only one Value Store was available for $50. You can get the list of all Value Stores on the Card by calling the following endpoint:
 
@@ -347,7 +347,7 @@ GET https://api.lightrail.com/v1/cards/{cardId}/details
 }
 ```
 
-Now, if you compare this list with the list of unlocked Value Stores in the `transactionBalance`, you can determine what promotions were NOT unlocked and display meaningful hints to the customer (based on the `restrictions` attribute) on how they can unlock them. Here is a simple example of the user experience:
+Now, if you compare this list with the list of unlocked Value Stores in the `transactionBreakdown`, you can determine what promotions were NOT unlocked and display meaningful hints to the customer (based on the `restrictions` attribute) on how they can unlock them. Here is a simple example of the user experience:
 
 ![cart-example-redemption-rules-1](https://giftbit.github.io/Lightrail-API-Docs/assets/cart-example-redemption-rules-1.png)
 
@@ -544,7 +544,7 @@ These rules require that the quantity of a particular item or category of items 
 - $5 off if you buy 3 or more pairs of any types of Jeans:
 
 ```javascript
-//minimum product cateogry quantity
+//minimum product category quantity
 metadata.cart.items
   .filter(item => (item.tags.some(tag => tag=='jeans'))
   .map(item => item.quantity)
