@@ -13,11 +13,16 @@ Refund a Transaction by reversing its effect.
             
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}}
+        + metadata (Metadata, optional) - {{metadata}}
+
     
     + Body 
             
             {
-              "userSuppliedId":"tx-122"
+              "userSuppliedId":"transaction-90xxf6-refund",
+              "metadata": {
+                  "reason": "canceled order."
+              }              
             }
     
 + Response 200

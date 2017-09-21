@@ -13,6 +13,8 @@ Capture a pending Transaction, thereby collecting the value withheld by the pend
             
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}}
+        + metadata (Metadata, optional) - {{transaction.metadata}}
+
     
     + Body 
         

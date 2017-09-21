@@ -24,7 +24,7 @@ Powering Gift Cards is one of the main of Lightrail. Some of the most common use
 
 <a name="use-cases-account-credits-anchor"></a>
 
-### Powering an Account Credits
+### Powering Account Credits
 
 Lightrail can easily power your account credit or customer rewards programs. Some of the most common use-cases for account credits are the following. 
 

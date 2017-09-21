@@ -1,5 +1,7 @@
 userSuppliedId: "Endpoint-unique idempotency ID provided by the client."
 currency: "The three-character ISO-4217 currency."
+metadata: "A key-value JSON object to store any additional information. The `giftbit_*` namespace for keys is reserved."
+
 card:
   cardType: "`ACCOUNT_CARD`, `GIFT_CARD`."
   cardId: "The Lightrail Card ID."

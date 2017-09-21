@@ -17,7 +17,7 @@ Create a Card of type `ACCOUNT_CARD` which is associated with an existing Contac
         + expires (string, optional) - Defaults to never expires.
         + startDate (string, optional) - The date for which the associated ValueStore will become usable.
         + inactive (boolean, optional) - If `true` the Card's `PRINCIPAL` ValueStore will have an `INACTIVE` balance.
-        + metadata (Metadata, optional) - {{card.metadata}}
+        + metadata (Metadata, optional) - {{metadata}}
         
     + Body
     
@@ -83,7 +83,7 @@ Create a Card of type `GIFT_CARD`.
         + expires (string, optional) - Defaults to never expires.
         + startDate (string, optional) - The date for which the ValueStore will become usable.
         + inactive (boolean, optional) - If `true` the Card's `PRINCIPAL` ValueStore will have an `INACTIVE` balance.
-        + metadata (Metadata, optional) - {{card.metadata}}
+        + metadata (Metadata, optional) - {{metadata}}
 
     + Body
     
