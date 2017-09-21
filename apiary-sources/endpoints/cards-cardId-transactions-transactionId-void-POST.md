@@ -13,11 +13,15 @@ Voids a pending Transaction by unlocking the value withheld by the pending Trans
             
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}} 
+        + metadata (Metadata, optional) - {{transaction.metadata}}
     
     + Body 
             
             {
-              "userSuppliedId":"transaction-fbxx5a-void"
+              "userSuppliedId":"transaction-fbxx5a-void",
+              "metadata": {
+                 "reason": "timeout."
+              }                            
             }
     
 + Response 200
