@@ -6,7 +6,7 @@
 + transactionType (string) - The type of the Transaction: `DRAWDOWN, FUND, INITIAL_VALUE, CANCELLATION, INACTIVATE, ACTIVATE, FREEZE, UNFREEZE, PENDING_CREATE, PENDING_VOID, PENDING_CAPTURE, DRAWDOWN_REFUND`.
 + transactionAccessMethod (string) - Indicates how the transaction was created. Either through the cardId or the fullcode. Possible values: ["CARDID", "RAWCODE"].
 + parentTransactionId (string) - Indicates the ID of the original Transaction for a void, capture, or refund Transaction.
-+ valueAvailableAfterTransaction (string) - Deprecated. Indicates the value available on the Card after the Transaction. 
++ valueAvailableAfterTransaction (number) - Deprecated. Use `transactionBreakdown`.  
 + giftbitUserId (string) - Deprecated.  
 + cardId (string) - The Lightrail Card ID.
 + currency (string) - {{currency}}
