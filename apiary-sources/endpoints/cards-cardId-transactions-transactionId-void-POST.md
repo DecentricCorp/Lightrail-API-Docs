@@ -13,7 +13,7 @@ Voids a pending Transaction by unlocking the value withheld by the pending Trans
             
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}} 
-        + metadata (Metadata, optional) - {{transaction.metadata}}
+        + metadata (Metadata, optional) - {{metadata}}
     
     + Body 
             

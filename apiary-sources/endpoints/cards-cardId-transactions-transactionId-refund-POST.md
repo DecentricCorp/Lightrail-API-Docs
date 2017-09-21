@@ -13,7 +13,7 @@ Refund a Transaction by reversing its effect.
             
     + Attributes
         + userSuppliedId (string, required) - {{userSuppliedId}}
-        + metadata (Metadata, optional) - {{transaction.metadata}}
+        + metadata (Metadata, optional) - {{metadata}}
 
     
     + Body 
