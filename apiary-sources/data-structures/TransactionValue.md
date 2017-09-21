@@ -1,4 +1,4 @@
 ## TransactionValue (object)
 + value (number) - {{transaction.value}}
-+ valueAvailableAfterTransaction (string) - Indicates the value available on the ValueStore after the Transaction. 
++ valueAvailableAfterTransaction (number) - Indicates the value available on the ValueStore after the Transaction. 
 + valueStoreId (string, required) - The Lightrail ValueStore ID.
