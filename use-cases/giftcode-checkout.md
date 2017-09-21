@@ -41,7 +41,7 @@ The API calls for handling this use-case are discussed below. More details for e
 
 `remainder = orderBalance - giftValue`
 
-**Step 4:** If `remainder <= 0` , the entire order can be paid by the Gift Card, so use the [Code Transaction API endpoint](#code-transaction-endpoint) to create a drawdown Transaction on the Gift Card with the value of `orderTotal`. Note that you need to include the full `metadata` object in this request if you are using Redemption Rules. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If this transaction fails, the checkout fails. 
+**Step 4:** If `remainder == 0` , the entire order can be paid by the Gift Card, so use the [Code Transaction API endpoint](#code-transaction-endpoint) to create a drawdown Transaction on the Gift Card with the value of `orderTotal`. Note that you need to include the full `metadata` object in this request if you are using Redemption Rules. If this transaction completes successfully, mark the order as completed, and optionally record the transaction details such the `transactionId` for future reference. If this transaction fails, the checkout fails. 
 
 If `remainder > 0`, the gift value is not enough to pay for the entire order, so the Gift Card pays as much as it can and the `remainder` must be paid by another payment method using the following steps:
 
@@ -124,13 +124,13 @@ This section provides a brief overview of the API calls necessary for this use-c
 
 ### Transaction Simulation and Balance Endpoint
 
-This endpoint allows you to do a test-run for a Transaction by providing a request (including full `metadata` if you are using Redemption Rules). In the case of insufficient funds, it can also tell you the maximum value for which the Transaction _would be_ successful. For example, if you simulate a $35 drawdown Transaction, the endpoint can tell you that it _would be_ successful if it were only for $20. This provides a mechanism to check the available value of a Card for a particular Transaction context.
+This endpoint allows you to do a test-run for a Transaction by providing a request (including full `metadata` if you are using Redemption Rules). In the case of insufficient funds, it can also tell you the maximum value for which the Transaction _would be_ successful. For example, if you simulate a $35 drawdown Transaction, the endpoint can tell you that it _would be_ successful up to only $20. This provides a mechanism to check the available value of a Card for a particular Transaction context.
 
 For this endpoint, you will need to provide the Card's `cardId`. For Account Cards, if you do not have the `cardId` you can retrieve it based on the customer's `contactId` using the [Card Search Endpoint](#card-search-endpoint), as discussed later below. For Gift Cards, you can use [a similar endpoint](#simulation-and-balance-check-based-on-gift-code) which takes the `fullcode` as discussed below.
 
 In the request, you need to provide, the following: 
 
-- The Transaction `value` you would like to drawdown.
+- The Transaction `value` you would like to drawdown; this is usually the order balance which is the maximum you would like to withdraw from the Card.
 - The Transaction `currency`.
 - A `userSuppliedId` as an idempotency key. Note that since this is a simulation, if a Transaction with this `userSuppliedId` already exists, Lightrail will retrieve that.  
 - The attribute `nsf` set to `false`. This tells Lightrail to return a best-effort would-be Transaction instead of a not-sufficient-funds (NSF) error, if the Card's available value is not enough for the suggested Transaction value. 
