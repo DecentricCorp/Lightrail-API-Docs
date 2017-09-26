@@ -134,7 +134,7 @@ GET https://api.lightrail.com/v1/cards/{cardId}/details
 
 ### Balance-Check
 
-Since the availability of an attached promotion depends on its Redemption Rule, the total available value of a Lightrail Card varies depending on the context of the Transaction. For example, if a customer have a Card with $10 principal value and a $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the Transaction. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. 
+Since the availability of an attached promotion depends on its Redemption Rule, the total available value of a Lightrail Card varies depending on the context of the Transaction. For example, if a customer has a Card with $10 principal value and a $5 attached promotion subject to some Redemption Rules, the total available value of the Card can be $10 or $15 depending on the Transaction. Therefore, when checking the available Balance of a Card, you need to provide the full context by providing a complete `metadata` object. 
 
 Lightrail `dryRun` endpoints provide a mechanism for simulating a Transaction and checking the maximum a Card can pay towards a given Transaction, considering all the metadata. These endpoints also return a `transactionBreakdown` which provides the breakdown of how the value of the Transaction would be extracted from the Card's Value Stores. You can use this information to show the customer what promotions will be unlocked in their current checkout. Moreover, by comparing this list with the full list of all Value Stores on the Card, you can also show the customer the Value Stores which were NOT unlocked together with a hint about what they can do to unlock more promotions. More details on these endpoints are given in the Walk-Through Example below.
 
@@ -158,7 +158,7 @@ Suppose you want to boost your sales by giving an additional $5 promotional valu
 
 When processing an order at the checkout, you need to determine how much is available in the customer's Account Card. The `dryRun` endpoint can provide this information if you send a request with the value of `nsf` attribute set to `false`. This tells Lightrail to return a best-effort would-be Transaction instead of a not-sufficient-funds (NSF) error if the Card's available value is not enough for the Transaction. 
 
-For example, assuming the customer wants to check out a cart with $253.35 balance, the `dryRun` request will look like the following. This asks the Lightrail API to simulate a Transaction with the value of $253.35 on the provided Card and in case of insufficient funds, return the maximum the Card can spend in this Transaction: 
+For example, assuming the customer wants to check out a cart with $253.35 balance, using a Card with $50 principal value and a $5 conditional promotion (as discussed above), the `dryRun` request will look like the following. This asks the Lightrail API to simulate a Transaction with the value of $253.35 on the provided Card and in case of insufficient funds, return the maximum the Card can spend in this Transaction: 
 
 ```javascript
 POST https://www.lightrail.com/v1/cards/{cardId}/transactions/dryRun

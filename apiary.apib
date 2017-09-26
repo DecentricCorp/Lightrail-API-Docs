@@ -121,7 +121,7 @@ Redemption Rules can unlock powerful marketing promotions such as, "$10 off if y
 
 When transacting against a Card and looking to collect the funds from its different Value Stores, Redemption Rules determine whether or not each of the Card's Value Stores is spendable for that Transaction. Every rule is a Boolean expression that operates on the Transaction request object's `metadata`; the Value Store will be available for spending on that Transaction only if the rule evaluates to `true`. 
 
-Transaction `metadata` is a generic JSON object provided in the Transaction request object which represents any additional information you wish to provide and store, including contextual information on which basis redemption rules operate. This provides a very powerful and flexible mechanism to define any relevant metadata in the Transaction request and use this metadata to make decisions about unlocking promotional values. 
+Transaction `metadata` is a generic JSON object provided in the Transaction request object which represents any additional information you wish to provide and store, including contextual information based on which redemption rules operate. This provides a very powerful and flexible mechanism to define any relevant metadata in the Transaction request and use this metadata to make decisions about unlocking promotional values. 
 
 Check out the <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/redemption-rules.md" target="_blank">Redemption Rules Implementation Guide</a> and <a href="https://github.com/Giftbit/Lightrail-API-Docs/blob/master/feature-deep-dive/RedemptionRules.md" target="_blank">Redemption Rules Reference Documentation</a> for further details.
 
