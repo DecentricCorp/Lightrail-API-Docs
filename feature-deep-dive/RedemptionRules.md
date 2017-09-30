@@ -2,9 +2,11 @@
 
 [Lightrail](https://www.lightrail.com/) redemption rules are extra conditions placed on promotions. A redemption rule is evaluated with the transaction data to determine if the promotion can be used for that transaction. This unlocks powerful marketing promotions such as: "$10 good for purchases of $50 or more" or "$5 off your purchase when you buy a red hat."
 
+This document is a reference for writing Lightrail Redemption Rules. To learn more about how to set up Redemption Rules in your system, check out the [Lightrail Redemption Rules Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/redemption-rules.md).
+
 ## Evaluation
 
-Redemption rules are set for a promotion and evaluated using variables from the submitted drawdown transaction.  They are single statements that evaluate to a single value, not a full script to be executed.  If the rule evaluates to `true` then the promotion can be applied to the transaction.  If the rule evaluates to `false` then the promotion cannot be applied to the transaction.
+Redemption rules are set for a promotion and evaluated using variables from the submitted drawdown transaction. They are single statements that evaluate to a single value, not a full script to be executed. If the rule evaluates to `true` then the promotion can be applied to the transaction. If the rule evaluates to `false` then the promotion cannot be applied to the transaction.
 
 Here's an example of a not particularly useful redemption rule:
 
@@ -12,7 +14,7 @@ Here's an example of a not particularly useful redemption rule:
 1 == 2
 ```
 
-This rule is made up of two numbers, and one operator: equals.  This rule will evaluate to true when 1 equals 2, which is never.  This promotion can never be redeemed.
+This rule is made up of two numbers, and one operator: equals. This rule will evaluate to true when 1 equals 2, which is never.  This promotion can never be redeemed.
 
 Here's a more realistic redemption rule:
 
@@ -24,78 +26,10 @@ This rule evaluates to true if the value of the shopping cart is greater or equa
 
 The four variables of a transaction that can be used for a rule are:
 - `value`: a positive number for the value of the Lightrail transaction (which may not be the value of the full cart in split-tender transactions)
-- `balance`: a positive number for the balance remaining on the promotion
 - `currency`: a string for the ISO code of the currency of the transaction
 - `metadata`: a map of arbitrary data that can be sent with the transaction
 
-These variables are exactly as they are passed into the REST endpoint that created the transaction.  `metadata` is by far the most useful, and gets its own section.
-
-## Metadata
-
-The `metadata` variable of the transaction is the most flexible part of the transaction.  It can hold any JSON data and be as specific to your organization as you want.  We recommend evaluating what data you have available that might potentially be used for a promotion, and including that in `metadata`.  Don't worry about including data you have no plans to use in a promotion yet.  Any data not referenced in a redemption rule is safely ignored.  It's better to have data and not need it than need it and not have it.
-
-Here's an example `metadata` JSON object for a doughnut store that includes elements we recommend:
-
-```json
-{
-  "cartValue": 1960,
-  "cart": [
-    {
-      "category": "doughnut",
-      "itemId": "chocolate",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "mapleglazed",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "longjohn",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "bearclaw",
-      "value": 250
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    }
-  ],
-  "delivery": {
-    "pickup": true
-  }
-}
-```
-
-This `metadata` includes a shopping cart with 8 items and their relevant attributes.  There are 4 different doughnuts and 4 identical coffees.  For some systems it might be more convenient to represent the coffees as a single item with a `"quantity": 4` attribute.  This makes writing some redemption rules slightly more complicated but still manageable.
-
-Note what's not included: information about the customer.  To target a specific set of people apply the promotion to their gift cards or account cards when they qualify.  For example a promotion that gives customers $5 for signing up for a newsletter should be applied automatically after signing up.
-
-With this `metadata` we can write redemption rules on cart item attributes, their value, their quantity, and the delivery type.  After introducing the syntax we'll come back to the doughnut shop example with some rules we can write.
+These variables are exactly as they are passed into the REST endpoint that created the transaction.  `metadata` is by far the most useful, and gets its own section. To learn about the basic metadata structure recommended by Lightrail, check out the [Lightrail Redemption Rules Implementation Guide](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/use-cases/redemption-rules.md).
 
 ## Syntax
 
@@ -225,55 +159,43 @@ In this `metadata` cart items are duplicated if more than one is bought.
 
 ```json
 {
-  "cartValue": 1960,
-  "cart": [
-    {
-      "category": "doughnut",
-      "itemId": "chocolate",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "mapleglazed",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "longjohn",
-      "value": 150
-    },
-    {
-      "category": "doughnut",
-      "itemId": "bearclaw",
-      "value": 250
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    },
-    {
-      "category": "coffee",
-      "itemId": "dripcoffee",
-      "size": "medium",
-      "value": 315
-    }
-  ],
+  "cart": {
+    "total": 1960,
+    "items": [
+      {
+        "id": "chocolate",
+        "quantity": 1,
+        "unit_price": 150,
+        "tags": ["doughnut"]
+      },
+      {
+        "id": "mapleglazed",
+        "quantity": 1,
+        "unit_price": 150,
+        "tags": ["doughnut"]
+      },
+      {
+        "id": "longjohn",
+        "quantity": 1,
+        "unit_price": 150,
+        "tags": ["doughnut"]
+      },
+      {
+        "id": "bearclaw",
+        "quantity": 1,
+        "unit_price": 250,
+        "tags": ["doughnut"]
+      }, 
+      {
+        "id": "dripcoffee",
+        "quantity": 4,
+        "unit_price": 315,
+        "tags": ["coffee", "medium"]
+      }     
+    ]
+  },
   "delivery": {
-    "pickup": true
+    "id":"store-pickup"
   }
 }
 ```
@@ -281,43 +203,44 @@ In this `metadata` cart items are duplicated if more than one is bought.
 #### Spend at least $10
 
 ```javascript
-metadata.cartValue >= 1000
+metadata.cart.total >= 1000
 ```
 
 #### Buy any 5 items
 
 ```javascript
-metadata.cart.size() >= 5
+metadata.cart.items.map(item => item.quantity).sum() >= 5
 ```
 
 #### Canadian Special: discount maple glazed doughnuts
 
 ```javascript
-metadata.cart.some(item => item.category == 'doughnut' && item.itemId == 'mapleglazed')
+metadata.cart.items.some(item => item.id == 'mapleglazed')
 ```
 
 #### Buy a medium coffee and any doughnut
 
 ```javascript
-metadata.cart.some(item => item.category == 'coffee' && item.size == 'medium') && metadata.cart.some(item => item.category == 'doughnut')
+metadata.cart.items.some(item => item.tags.some(tag=> tag=='coffee') && item.tags.some(tag=> tag=='medium'))&& metadata.cart.items.some(item => item.tags.some(tag=> tag=='doughnut'))
 ```
 
 #### Buy 4 coffees
 
 ```javascript
-metadata.cart.filter(item => item.category == 'coffee').size() >= 4
+metadata.cart.items.filter(item => item.tags.some(tag => tag == 'coffee')).map(item => item.quantity).sum() >= 4
 ```
 
 #### Buy 4 coffees and pickup in store
 
 ```javascript
-metadata.cart.filter(item => item.category == 'coffee').size() >= 4 && metadata.delivery.pickup
+metadata.delivery.id=='store-pickup' && metadata.cart.items.filter(item => item.tags.some(tag => tag == 'coffee')).map(item => item.quantity).sum() >= 4
+
 ```
 
-#### Buy any 4 items (of value > $1.00)
+#### Buy any 4 items of value > $1.00
 
 ```javascript
-metadata.cart.filter(item => item.value > 100).size() >= 4
+metadata.cart.items.filter(item => item.unit_price > 100).map(item => item.quantity).sum() >= 4
 ```
 
 ### Concert tees examples
@@ -326,76 +249,72 @@ In this `metadata` cart items have a `quantity`.
 
 ```json
 {
-  "cartValue": 9593,
-  "cart": [
-    {
-      "category": "shirt",
-      "itemId": "fce425c0-53a2-4a46-a37f-40bdfd732ef5",
-      "size": "medium",
-      "band": "ledzeppelin",
-      "value": 3495,
-      "quantity": 1
-    },
-    {
-      "category": "shirt",
-      "itemId": "6cd226e1-20eb-4acc-bee6-5573243a08b3",
-      "size": "medium",
-      "band": "rollingstones",
-      "value": 3299,
-      "quantity": 1
-    },
-    {
-      "category": "cd",
-      "itemId": "ba991060-2f57-4e76-838d-76088703cc7c",
-      "band": "ledzeppelin",
-      "value": 1799,
-      "quantity": 1
-    },
-    {
-      "category": "sticker",
-      "itemId": "bd086f23-124b-44c6-a4f0-61c2d02a15a4",
-      "band": "thewho",
-      "value": 200,
-      "quantity": 5
-    }
-  ]
+  "cart": {
+    "total": 9593,
+    "items": [
+      {
+        "id": "fce425c0",
+        "quantity": 1,
+        "unit_price": 3495,
+        "tags": ["shirt", "medium", "ledzeppelin"]
+      },
+      {
+        "id": "6cd226e1",
+        "quantity": 1,
+        "unit_price": 3299,
+        "tags": ["shirt", "medium", "rollingstones"]
+      },
+      {
+        "id": "ba991060",
+        "quantity": 1,
+        "unit_price": 1799,
+        "tags": ["cd", "ledzeppelin"]
+      },
+      {
+        "id": "bd086f23",
+        "quantity": 5,
+        "unit_price": 200,
+        "tags": ["sticker", "thewho"]
+      }
+    ]
+  }
 }
 ```
 
 ### Buy any 5 items
 
 ```javascript
-metadata.cart.map(item => item.quantity).sum() >= 5
+metadata.cart.items.map(item => item.quantity).sum() >= 5
 ```
 
 ### Buy any 2 t-shirts
 
 ```javascript
-metadata.cart.filter(item => item.category == 'shirt').map(item => item.quantity).sum() >= 2
+metadata.cart.items.filter(item => item.tags.some(tag => tag=='shirt')).map(item => item.quantity).sum() >= 2
 ```
 
 ### Buy any 2 Led Zeppelin items worth at least $5
 
 ```javascript
-metadata.cart.filter(item => item.band == 'ledzeppelin' && item.value >= 500).map(item => item.quantity).sum() >= 2
+metadata.cart.items.filter(item => item.unit_price >= 500 && item.tags.some(tag => tag=='ledzeppelin')).map(item => item.quantity).sum() >= 2
 ```
 
-### Buy 4 stickers and a shirt
+### Buy any 4 stickers and a shirt
 
 ```javascript
-metadata.cart.filter(item => item.category == 'sticker').map(item => item.quantity).sum() >= 4 && metadata.cart.some(item => item.category == 'shirt')
+metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker')).map(item => item.quantity).sum() >= 4 && metadata.cart.some(item => item.tags.some(tag => tag=='shirt'))
 ```
 
 ### Buy $10 worth of stickers
 
 ```javascript
-metadata.cart.filter(item => item.category == 'sticker').map(item => item.quantity * item.value).sum() >= 1000
+metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker')).map(item => item.quantity * item.unit_price).sum() >= 1000
 ```
 
 ### Buy $20 worth of stickers or CDs
 
 ```javascript
-metadata.cart.filter(item => item.category == 'sticker' || item.category == 'cd').map(item => item.quantity * item.value).sum() >= 2000
+metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker' || tag=='cd')).map(item => item.quantity * item.unit_price).sum() >= 2000
 ```
 
 ## Appendices
@@ -722,7 +641,7 @@ Operators are evaluated in the following order, with higher operators being eval
 ### Type coercion
 
 | target  | source  | value        | condition          |
-|-------- | ------- | ------------ | -------------------|
+| ------- | ------- | ------------ | ------------------ |
 | boolean | list    | `true`       |                    |
 |         | map     | `true`       |                    |
 |         | null    | `false`      |                    |
