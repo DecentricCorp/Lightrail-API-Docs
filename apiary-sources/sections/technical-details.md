@@ -6,7 +6,7 @@ Ensuring idempotency means providing the option of repeating a request in a way 
 
 For example, if the call to post a _drawdown_ Transaction encounters a network failure and you are not sure whether it failed before or after reaching the server, you would want to be able to repeat this request without worrying about charging the Card multiple times. 
 
-Lightrail supports idempotency via `userSuppliedId`, a unique string value provided by the client. This is required parameter by every API endpoint which is not naturally idempotent. When using the same `userSuppliedId`, Lightrail guarantees that the requested operation is only invoked once, regardless of how many times the request is received. This provides a mechanism for you to _retry_ when a request times out or fails for unknown reasons. 
+Lightrail supports idempotency via `userSuppliedId`, a unique string value provided by the client. This is a required parameter in every API endpoint which is not naturally idempotent. When using the same `userSuppliedId`, Lightrail guarantees that the requested operation is only invoked once, regardless of how many times the request is received. This provides a mechanism for you to _retry_ when a request times out or fails for unknown reasons. 
 
 Note that the `userSuppliedId` must also be unique to the request; if you repeat the same `userSuppliedId` with a different request, you will receive an `HTTP 409` error indicating idempotency failure. 
 
