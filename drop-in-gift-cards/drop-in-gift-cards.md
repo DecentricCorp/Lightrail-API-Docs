@@ -1,7 +1,7 @@
 # Drop In Gift Cards
 Lightrail's drop in gift card solution makes it easy to get up an running in days. 
 
-The gift card solution is broken into 4 pieces:
+The drop in solution is broken into 4 pieces:
 - Gift card purchase
 - Gift card redemption
 - Account balance
@@ -30,6 +30,8 @@ $shopperId = 'alice'; //identify the logged-in customer.
 $validityInSeconds = 5000;
 $shopperToken = \Lightrail\LightrailClientTokenFactory::generate($shopperId, $validityInSeconds);
 ```
+
+[Contribution guidelines for this project](assets/purchase-widget.png)
 
 When you load a page that includes one of our widgets, you'll need pass the `shopperToken` to the page to be passed into the widget.
 
