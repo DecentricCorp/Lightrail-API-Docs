@@ -31,7 +31,7 @@ $validityInSeconds = 5000;
 $shopperToken = \Lightrail\LightrailClientTokenFactory::generate($shopperId, $validityInSeconds);
 ```
 
-[Contribution guidelines for this project](assets/purchase-widget.png)
+![Contribution guidelines for this project](assets/purchase-widget.png)
 
 When you load a page that includes one of our widgets, you'll need pass the `shopperToken` to the page to be passed into the widget.
 
