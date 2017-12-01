@@ -1,35 +1,89 @@
 # Drop In Gift Cards
-Lightrail's drop in gift card solution makes it easy to get up an running in days. 
+Lightrail's drop in gift card solution makes it easy to get up an running selling gift cards from your store in days. 
+It is component based, using simple html scripts which you set a couple of your store's pages.
+Gift cards, when redeemed, are applied to the customer's account which can be used as a payment option during checkout. 
 
-The drop in solution is broken into 4 pieces:
+## Getting Started
+[Sign up](https://www.lightrail.com/app/#/register) for a Lightrail account.
+
+Configure your drop in gift card [template](https://www.lightrail.com/app/#/cards/template) within your account. 
+This sets the branding that is used for the drop in widgets and gift email. 
+
+## Step 1: Selling Gift Cards
+This allows your customers to purchase gift cards from your store and deliver the electronic gift card to the recipient.
+![Contribution guidelines for this project](assets/purchase-widget.png)
+All you need to do is create a "buy gift card" button on your store and attach the following snippet.  
+```html
+        <script src="https://embed.lightrail.com/dropIn/cardPurchase.js"
+            data-shoppertoken="{{shopperToken}}" 
+            <!-- The shopper token acts as a public api token that is used for issuing the gift card. -->
+            <!-- See below for details on  -->>
+        </script>
+```
+
+
+## Step 2: Redeeming Gift Cards
+This enables your customers to redeem gift cards on your store. 
+The gift email the recipient receives includes a redeem button that links to your redemption page.
+You simply need to create an authenticated page on your store and include the following redemption snippet.
+```html
+        <script
+            src="https://embed.lightrail.com/dropIn/codeRedemption.js"
+            data-shoppertoken="{{shopperToken}}" <!-- Public api token that is unique to the customer redeeming the gift card. -->
+            data-fullcode="{{giftCode}}" <!-- The gift code must be passed into the widget -->>
+        </script>
+``` 
+
+## Step 3: Checkout
+What does this do?
+How do I do this? --> the snippet
+What does it look like? screenshot of widget
+See stripe integration sample webapp for examples.
+
+## Authentication
+- need to get to the bottom of whether you can use a shopper token to transact against a account serverside.
+### shopper tokens
+- how to generate, use our libraries
+- basic explanation
+
+## Support
+
+
+
+
+
+---
+
+
+What does this do?
+What does it look like? screenshot of widget.
+How do I do this? --> the snippet
+
+
+
+## What does it do? 
+When redeemed, the funds are applied to that customer's account balance which is also managed by Lightrail. 
+When a customer makes a purchase from your store they can now use money from their account in addition to paying any remaining value with a credit card.
+
+
+ The drop in solution is broken into 4 pieces:
 - Gift card purchase
 - Gift card redemption
-- Account balance
-- Checkout 
+- Customer account balance
+- Checkout
 
-Lightrail has developed drop in widgets that can be used for all but the checkout step. 
+There are code snippets that can be used for all but the checkout step. 
 Since the checkout process can involve both a credit card and a gift card, this step must be completed by updating your server side checkout code - don't worry, we have many libraries and examples to show you how this is done.   
 
-## Configure your Drop In Gift Card Solution in Lightrail
+## Getting Started
+You'll need to sign up for a Lightrail account. Signup here. 
+
+### Configure your Drop In Gift Card Solution in Lightrail
 Login to your Lightrail account and fill out the gift card template.
 You'll also need to generate an API key which you'll use for server side calls from your application. 
 
 ## Widgets
 Widgets are included on your pages. Widgets require a `shopperToken` to be able to make requests to Lightrail.
-
-### Shopper Token
-A `shopperToken` is generated server-side and can be thought of as a public API key that is unique to the shopper on your site.
-You can generate the `shopperToken` by using one of our libraries. Below is an example of this is done.
-```
-\Lightrail\Lightrail::setApiKey ('<LightrailAPIKey>'); 
-//your Lightrail API key. Find or create one using the Lightrail Web App after logging into your account.
-\Lightrail\Lightrail::setClientSecret ('<LightrailAPISecret>'); 
-//your Lightrail client secret. Find or create one using the Lightrail Web App after logging into your account.
-
-$shopperId = 'alice'; //identify the logged-in customer.
-$validityInSeconds = 5000;
-$shopperToken = \Lightrail\LightrailClientTokenFactory::generate($shopperId, $validityInSeconds);
-```
 
 ![Contribution guidelines for this project](assets/purchase-widget.png)
 
@@ -39,11 +93,7 @@ When you load a page that includes one of our widgets, you'll need pass the `sho
 Below is the following snippet that powers the entire gift card sending flow. 
 Note, it's up to you if you want to allow gift card sending from an unauthenticated page. 
 While the shopper token is usually unique to an authenticated user, it can be created for an anonymous user to support anonymous gift card purchase. 
-```html
-<script src="path/to/widgets/cardPurchaseEmbed/index.js"
-                    data-shopperToken="{{shopperToken}}">
-</script>
-```
+
 
 ### Gift Card Redemption Widget
 The gift card email the recipient receives contains a link to apply the gift card to their account. 
@@ -126,3 +176,16 @@ $splitTenderCharge = \Lightrail\StripeLightrailSplitTenderCharge::create(
 
 The StripeLightrailSplitTenderCharge class, which has a similar interface to Stripe's Chargeclass enables you to create a split-tender transaction between Lightrail and Stripe by specifying the parameters and the transaction breakdown. It will ensure that either both portions of the transactions will be successful or none of them will be posted. In cases where either Stripe or Lightrail share is set zero, this class will simply create the respective transaction.
 
+### Shopper Token
+A `shopperToken` is generated server-side and can be thought of as a public API key that is unique to the shopper on your site.
+You can generate the `shopperToken` by using one of our libraries. Below is an example of this is done.
+```
+\Lightrail\Lightrail::setApiKey ('<LightrailAPIKey>'); 
+//your Lightrail API key. Find or create one using the Lightrail Web App after logging into your account.
+\Lightrail\Lightrail::setClientSecret ('<LightrailAPISecret>'); 
+//your Lightrail client secret. Find or create one using the Lightrail Web App after logging into your account.
+
+$shopperId = 'alice'; //identify the logged-in customer.
+$validityInSeconds = 5000;
+$shopperToken = \Lightrail\LightrailClientTokenFactory::generate($shopperId, $validityInSeconds);
+```
