@@ -10,42 +10,49 @@ Configure your drop in gift card [template](https://www.lightrail.com/app/#/card
 This sets the branding that is used for the drop in widgets and gift email. 
 
 ## Step 1: Selling Gift Cards
-This allows your customers to purchase gift cards from your store. The gift card is automatically delivered in a branded email to the recipient.
-Lightrail has developed an iframe modal that powers the entire gift card purchase and gift delivery flow.
+This allows your customers to purchase gift cards from your store. 
+Lightrail has developed an iframe widget that powers the entire gift card purchase and gift delivery flow.
 ![Gift card purchase widget](assets/purchase-widget.png)
 
-All you need to do is create a "buy gift card" button on your store and attach the following snippet.  
+All you need to do is create a "buy gift card" button on your store and link it to a page with the following snippet.  
 ```html
+<div>
     <script 
         src="https://embed.lightrail.com/dropIn/cardPurchase.js"
         data-shoppertoken="{{shopperToken}}" 
         <!-- The shopper token acts as a public api token that is used for issuing the gift card. -->
         <!-- See below for details on  -->>
     </script>
+</div>
 ```
+The gift card is automatically delivered in a branded email to the recipient.
 
 ## Step 2: Redeeming Gift Cards
 This enables your customers to redeem gift cards on your store. 
 The gift email the recipient receives includes a redeem button that links to your redemption page.
 You simply need to create an authenticated page on your store and include the following redemption snippet.
 ```html
+<div class="redemption-widget">
     <script
         src="https://embed.lightrail.com/dropIn/codeRedemption.js"
         data-shoppertoken="{{shopperToken}}" <!-- Public api token that is unique to the customer redeeming the gift card. -->
         data-fullcode="{{giftCode}}" <!-- The gift code must be passed into the widget -->>
     </script>
+</div>
 ``` 
-
 The redemption widget will automatically create an account in Lightrail to represent that customer's account. 
+Your existing checkout process needs to be modified allow the customer to pay with their account balance.
 
 ## Step 3: Checkout
-Your existing checkout process needs to be modified to allow a customer to use their account balance as a payment option.
+Modifying your checkout to allow users to pay with their account balance.
 You can use the following snippet to display a customer's account balance. 
 ```html
+<span>
     <script
         src="https://embed.lightrail.com/dropIn/accountBalance.js"
         data-shoppertoken="{{shopperToken}}">    
     </script>
+</span>
 ```
 
 
