@@ -16,7 +16,8 @@ Lightrail has developed an iframe modal that powers the entire gift card purchas
 
 All you need to do is create a "buy gift card" button on your store and attach the following snippet.  
 ```html
-    <script src="https://embed.lightrail.com/dropIn/cardPurchase.js"
+    <script 
+        src="https://embed.lightrail.com/dropIn/cardPurchase.js"
         data-shoppertoken="{{shopperToken}}" 
         <!-- The shopper token acts as a public api token that is used for issuing the gift card. -->
         <!-- See below for details on  -->>
