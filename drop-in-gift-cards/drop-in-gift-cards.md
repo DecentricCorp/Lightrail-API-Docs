@@ -11,6 +11,9 @@ This sets the branding that is used for the drop in widgets and gift email.
 
 ## Step 1: Selling Gift Cards
 This allows your customers to purchase gift cards from your store and deliver the electronic gift card to the recipient.
+Lightrail has developed an iframe modal that powers the entire gift card purchase flow as seen below.
+![Gift card purchase widget](assets/purchase-widget.png)
+
 All you need to do is create a "buy gift card" button on your store and attach the following snippet.  
 ```html
         <script src="https://embed.lightrail.com/dropIn/cardPurchase.js"
@@ -19,8 +22,6 @@ All you need to do is create a "buy gift card" button on your store and attach t
             <!-- See below for details on  -->>
         </script>
 ```
-This snippet creates an iframe modal that powers the entire gift card purchase flow as seen below.
-![Gift card purchase widget](assets/purchase-widget.png)
 
 ## Step 2: Redeeming Gift Cards
 This enables your customers to redeem gift cards on your store. 
