@@ -133,11 +133,7 @@ Note, the redemption and account balance widgets must be on authenticated pages 
 You may decide if you'd like your customers to be signed in to purchase gift cards. 
 If you'd like to allow gift card purchase from an unauthenticated page simply provide set `shopperId: null`.
 
-
-### What Next?
-Incentivize your customers using promotions. etc.   
-
 ## Support
-
+// todo - tim
 
 
