@@ -1,17 +1,18 @@
 # Drop In Gift Cards
-Lightrail's drop in gift card solution makes it easy to get up an running selling gift cards from your store in days. 
-It is component based, using simple html scripts which you set a couple of your store's pages.
+Lightrail's drop in gift card solution makes it easy to get up an running selling gift cards from your site in days. 
+It is component based, using simple html scripts which you set on a couple of your pages.
 Gift cards, when redeemed, are applied to the customer's account which can be used as a payment option during checkout. 
 
 ## Getting Started
 [Sign up](https://www.lightrail.com/app/#/register) for a Lightrail account.
 
 Configure your drop in gift card [template](https://www.lightrail.com/app/#/cards/template) within your account. 
-This sets the branding that is used for the drop in widgets and gift email. 
+This sets the branding that is used in widgets and gift card email. 
+This is also where you connect your Stripe account. 
 
 ## Step 1: Selling Gift Cards
 This allows your customers to purchase gift cards from your store. 
-Lightrail has developed an iframe widget that powers the entire gift card purchase and gift delivery flow.
+Lightrail has developed a widget that powers the entire gift card purchase and gift delivery flow. 
 ![Gift card purchase widget](assets/purchase-widget.png)
 
 All you need to do is create a "buy gift card" button on your store and link it to a page with the following snippet.  
@@ -19,33 +20,41 @@ All you need to do is create a "buy gift card" button on your store and link it 
 <div>
     <script 
         src="https://embed.lightrail.com/dropIn/cardPurchase.js"
-        data-shoppertoken="{{shopperToken}}" 
-        <!-- The shopper token acts as a public api token that is used for issuing the gift card. -->
-        <!-- See below for details on  -->>
+        data-shoppertoken="{shopperToken}"> 
     </script>
+    <!-- The shopper token acts as a public api token that is used for issuing the gift card. -->
+    <!-- See below for details.  -->
 </div>
 ```
 The gift card is automatically delivered in a branded email to the recipient.
 
 ## Step 2: Redeeming Gift Cards
-This enables your customers to redeem gift cards on your store. 
+This enables your customers to redeem gift cards. 
 The gift email the recipient receives includes a redeem button that links to your redemption page.
-You simply need to create an authenticated page on your store and include the following redemption snippet.
+You simply need to create a page on your store and include the following redemption snippet.
 ```html
 <div class="redemption-widget">
     <script
         src="https://embed.lightrail.com/dropIn/codeRedemption.js"
-        data-shoppertoken="{{shopperToken}}" <!-- Public api token that is unique to the customer redeeming the gift card. -->
-        data-fullcode="{{giftCode}}" <!-- The gift code must be passed into the widget -->>
+        data-shoppertoken="{shopperToken}"
+        data-fullcode="{giftCode}">
     </script>
+     <!-- The shopper token is a public api token that is unique to the customer redeeming the gift card. -->
+     <!-- The gift code must be passed into the widget. Ideally passed automatically from the url. -->
 </div>
 ``` 
-The redemption widget will automatically create an account in Lightrail to represent that customer's account. 
-Your existing checkout process needs to be modified allow the customer to pay with their account balance.
+The redemption widget applies the gift card to the customer's account in Lightrail, creating one if need be.  
+
+Note, your redemption page must require users to be signed in to access since you need to create a shopper token using 
+This is how the redemption widget can automatically apply the gift card to their account in Lightrail.
+ 
+Next, your existing checkout process needs to be modified allow the customer to pay with their account balance.
 
 ## Step 3: Checkout
-Modifying your checkout to allow users to pay with their account balance.
-You can use the following snippet to display a customer's account balance. 
+You'll need to modify your checkout to allow users to pay with their account credit.
+
+### Display account balance
+To start, use the following snippet to display a customer's account balance:
 ```html
 <span>
     <script
@@ -54,159 +63,81 @@ You can use the following snippet to display a customer's account balance.
     </script>
 </span>
 ```
+This gives them the information to choose whether or not to apply their account credit to their purchase, or set a specific amount of account credit to use. In our [example app](https://github.com/Giftbit/stripe-integration-sample-webapp/blob/master/shared/views/checkout.html), the customer simply selects a checkbox to apply their account credit.
 
+### Accept payment
+Beyond that, you will need to add a script to your checkout page to handle the logic of setting the split point -- i.e. how much will be charged to the customer's account and how much will be covered by credit card -- and actually posting the charge.
 
-What does this do?
-How do I do this? --> the snippet
-What does it look like? screenshot of widget
-See stripe integration sample webapp for examples.
+You will likely want to customize this section. For an example, we recommend that you take a look at the [checkout page of our sample webapp](https://github.com/Giftbit/stripe-integration-sample-webapp/blob/master/shared/views/checkout.html#L62). This is a stripped-down example that loads a Stripe Elements form to handle the credit card portion of the payment if needed, and also handles the logic of splitting the transaction between the customer's account credit and Stripe. (Templating is done with Mustache.)
+
+### Post the transaction (server side)
+The transaction is handled by backend methods from one of our client libraries (or that you [write yourself](https://github.com/Giftbit/Lightrail-API-Docs/blob/drop-in-gift-cards/use-cases/stripe-split.md)). You'll need to set up an endpoint to handle the submission of the payment form from the previous step and redirect your customer to a success page, for example:
+
+```javascript
+/**
+ * REST endpoint that performs the charge and returns HTML.
+ */
+function charge(req, res) {
+    const splitTenderParams = {
+        amount: req.body.orderTotal,      // From your cart/order object
+        currency: req.body.currency,      // From your cart/order/store config
+        source: req.body.source,          // Stripe payment 'source' or 'customer'
+        shopperId: req.body.shopperId,    // Lightrail contact identifier; see below
+        userSuppliedId: req.body.orderId       // Unique transaction identifier for idempotency
+    };
+
+    // Validate the amount to actually charge to Lightrail
+    const lightrailShare = req.body.lightrailAmount;
+    if (lightrailShare < 0) {
+        res.status(400).send("Invalid value for Lightrail's share of the transaction");
+    }
+
+    // Use the Lightrail-Stripe integration library to create the split tender charge
+    lightrailStripe.createSplitTenderCharge(splitTenderParams, lightrailShare, stripe)
+        .then(splitTenderCharge => {
+            // Redirect to your success page
+            res.render("checkoutComplete.html", {
+                lightrailTransactionValue: splitTenderCharge.lightrailTransaction ? splitTenderCharge.lightrailTransaction.value / -100 : 0,
+                stripeChargeValue: splitTenderCharge.stripeCharge ? splitTenderCharge.stripeCharge.amount / 100 : 0
+            });
+        })
+        .catch(err => {
+            // You'll want to actually handle any errors that come back
+            console.error("Error creating split tender transaction", err);
+            res.status(500).send("Internal error");
+        });
+}
+```
 
 ## Authentication
-- need to get to the bottom of whether you can use a shopper token to transact against a account serverside.
-### shopper tokens
-- how to generate, use our libraries
-- basic explanation
+You create your Lightrail API key from the [Integrations](```https://www.lightrail.com/app/#/account/api) section of your Lightrail account.
+Your Lightrail API key is used to generate shopper tokens which are passed into the widgets and to complete the serverside requests from checkout.  
+
+### Shopper Tokens
+Shopper tokens are used only by the drop in widgets. You must generate them server side using one of our [client libraries](link to client libraries).
+When creating a shopper token you must pass in the customer's ID from your system. 
+This is what links the customer from your system to their account in Lightrail.  
+
+You'll need an api key along your shared secret key from the Integrations section of your account.
+For example, using the Lightrail javascript client the shopper token can be created as follows: 
+```javascript
+lightrail.configure({
+    apiKey: process.env.LIGHTRAIL_API_KEY,
+    restRoot: "https://api.lightrail.com/v1/",
+    logRequests: true,
+    sharedSecret: process.env.LIGHTRAIL_SHARED_SECRET
+});
+lightrail.generateShopperToken({shopperId: "customer-id-from-your-system"})
+```
+Note, the redemption and account balance widgets must be on authenticated pages and therefor require a shopperId. 
+You may decide if you'd like your customers to be signed in to purchase gift cards. 
+If you'd like to allow gift card purchase from an unauthenticated page simply provide set `shopperId: null`.
+
+
+### What Next?
+Incentivize your customers using promotions. etc.   
 
 ## Support
 
 
 
-
-
----
-
-
-What does this do?
-What does it look like? screenshot of widget.
-How do I do this? --> the snippet
-
-
-
-## What does it do? 
-When redeemed, the funds are applied to that customer's account balance which is also managed by Lightrail. 
-
-
-
- The drop in solution is broken into 4 pieces:
-- Gift card purchase
-- Gift card redemption
-- Customer account balance
-- Checkout
-
-There are code snippets that can be used for all but the checkout step. 
-Since the checkout process can involve both a credit card and a gift card, this step must be completed by updating your server side checkout code - don't worry, we have many libraries and examples to show you how this is done.   
-
-## Getting Started
-You'll need to sign up for a Lightrail account. Signup here. 
-
-### Configure your Drop In Gift Card Solution in Lightrail
-Login to your Lightrail account and fill out the gift card template.
-You'll also need to generate an API key which you'll use for server side calls from your application. 
-
-## Widgets
-Widgets are included on your pages. Widgets require a `shopperToken` to be able to make requests to Lightrail.
-
-![Contribution guidelines for this project](assets/purchase-widget.png)
-
-When you load a page that includes one of our widgets, you'll need pass the `shopperToken` to the page to be passed into the widget.
-
-### Gift Card Purchase Widget
-Below is the following snippet that powers the entire gift card sending flow. 
-Note, it's up to you if you want to allow gift card sending from an unauthenticated page. 
-While the shopper token is usually unique to an authenticated user, it can be created for an anonymous user to support anonymous gift card purchase. 
-
-
-### Gift Card Redemption Widget
-The gift card email the recipient receives contains a link to apply the gift card to their account. 
-You'll need to host the redemption page on your site, which includes the following redemption snippet.
-Be sure to set your redemption page in your gift card template in Lightrail. 
-The redemption page must be an authenticated page on your site. 
-The `shopperToken` will belong to that authenticated user and will mean the gift card balance, when redeemed, is automatically applied to that user's Account in Lightrail.
-```html
-<script src="path/to/widgets/codeRedemptionEmbed/index.js"
-                    data-shopperToken="{{shopperToken}}"
-                    data-fullcode="{{fullcode}}">
-</script>
-```
-
-### Account Balance Widget
-This is a simple widget that allows for an authenticated user to view their account balance.
-```html
-<script src="path/to/widgets/accountBalanceEmbed/index.js"
-                    data-shopperToken="{{shopperToken}}">
-</script>
-```
-
-## Checkout
-Checkout is broken into frontend and backend pieces.
-
-### Frontend
-The frontend logic is handled by a javascript which takes care of the following steps:
-
-Making a balance-check call to obtain the available value of the current shopper's account credit.
-Generating a tabular summary of the transaction breakdown, i.e. how much will be paid by the shopper's account credit and how much will be charged to their credit card. You can edit the javscript source to change the form or style of this table.
-Loading the Stripe credit card form in case there is any remainder to be paid by a credit card.
-Here is what the script parameters look like on your checkout webpage:
-
-```html
-<div id="ltrl-payment-summary" class="ltrl-container">
-  <script src="js/lightrail-checkout.js"
-            data-title="..."
-            data-logo="..."
-            data-total="..."
-            data-currency="..."
-            data-stripePK="..."
-            data-shopperToken="..."
-            data-checkout-endpoint="...">
-  </script>
-</div>
-```
-This script will mount the above elements in an html form. 
-Once the customer approves the payment by pressing the Pay button, the form will get submitted to the backend endpoint specified by the 'data-checkout-endpoint' attribute.
-
-### Backend
-In order to finalize the checkout and charge the credit card and the Lightrail account, you need to have a method in your backend. If you already process Stripe payments, you are already familiar with this method as explained in Stripe's documentation.
-
-Here is a sample of how posting the split-tender charge should look like in your backend method, using Lightrail integration libraries. Note that you can customize the names of the url-encoded form parameters in the front-end javascript.
-```
-\Lightrail\Lightrail::setApiKey('<LightrailAPIKey>'); //your Lightrail API key.
-\Stripe\Stripe::setApiKey('<StripeApiKey>');
-
-$orderTotal     = 37500; //order total from your store's order or cart object. 
-$orderCurrency  ='USD';
-$shopperId      = 'alice'; //identify the logged-in customer
-
-$token          = $_POST['source']; //Stripe token
-$lightrailShare = intval( $_POST['lightrail-amount'] ); //the breakdown of the split-tender as approved by the cusomer on the checkout page and passed in the form parameters.
-
-$stripeShare    = $orderTotal - $lightrailShare;
-
-$param = array(
-	'amount'    => $orderTotal,
-	'currency'  => $orderCurrency,
-	'source'    => $token,
-	'shopperId' => $shopperId
-);
-
-$splitTenderCharge = \Lightrail\StripeLightrailSplitTenderCharge::create(
-	$param,
-	$lightrailShare);
-
-//post-checkout logic.
-```
-
-The StripeLightrailSplitTenderCharge class, which has a similar interface to Stripe's Chargeclass enables you to create a split-tender transaction between Lightrail and Stripe by specifying the parameters and the transaction breakdown. It will ensure that either both portions of the transactions will be successful or none of them will be posted. In cases where either Stripe or Lightrail share is set zero, this class will simply create the respective transaction.
-
-### Shopper Token
-A `shopperToken` is generated server-side and can be thought of as a public API key that is unique to the shopper on your site.
-You can generate the `shopperToken` by using one of our libraries. Below is an example of this is done.
-```
-\Lightrail\Lightrail::setApiKey ('<LightrailAPIKey>'); 
-//your Lightrail API key. Find or create one using the Lightrail Web App after logging into your account.
-\Lightrail\Lightrail::setClientSecret ('<LightrailAPISecret>'); 
-//your Lightrail client secret. Find or create one using the Lightrail Web App after logging into your account.
-
-$shopperId = 'alice'; //identify the logged-in customer.
-$validityInSeconds = 5000;
-$shopperToken = \Lightrail\LightrailClientTokenFactory::generate($shopperId, $validityInSeconds);
-```
