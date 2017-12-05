@@ -5,7 +5,9 @@ Gift cards, when redeemed, are applied to the customer's account which can be us
 
 ## Getting Started
 [Sign up](https://www.lightrail.com/app/#/register) for a Lightrail account. Configure your drop in gift card [template](https://www.lightrail.com/app/#/cards/template) within your account. 
-This sets the branding that is used in the widgets and gift card email. This is also where you'll connect your Stripe account and provide the URL to a redemption page where customers can redeem their gift cards (see Step 2). Note this quickstart assumes you are using Stripe to process payments: if you are using another payment processor and want to build a custom solution, please contact us.
+This sets the branding that is used in the widgets and gift card email. This is also where you'll connect your Stripe account and provide the URL to a redemption page where customers can redeem their gift cards (see Step 2).
+ 
+Note this quickstart assumes you are using Stripe to process payments: if you are using another payment processor and want to build a custom solution, please contact us.
 
 ## Step 1: Selling Gift Cards
 This allows your customers to purchase gift cards from your site. 
