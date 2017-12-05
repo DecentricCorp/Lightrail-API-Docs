@@ -110,7 +110,7 @@ You create your Lightrail API key from the [Integrations](```https://www.lightra
 Your Lightrail API key is used to generate shopper tokens which are passed into the widgets and to complete the serverside requests from checkout.  
 
 ### Shopper Tokens
-Shopper tokens are used only by the drop in widgets. You must generate them server side using one of our [client libraries](link to client libraries).
+Shopper tokens are used only by the drop in widgets. You must generate them server side using one of our [client libraries](https://github.com/Giftbit/Lightrail-API-Docs/blob/docs/client-libraries.md).
 When creating a shopper token you must pass in the customer's ID from your system. 
 This is what links the customer from your system to their account in Lightrail.  
 
@@ -130,7 +130,6 @@ You may decide if you'd like your customers to be signed in to purchase gift car
 If you'd like to allow gift card purchase from an unauthenticated page simply provide set `shopperId: null`.
 
 ## Support
-Looking for an example? Check out our sample app which is a working example of all steps of the drop in gift card solution.
-https://github.com/Giftbit/stripe-integration-sample-webapp
+Looking for an example? Check out our [sample app](https://github.com/Giftbit/stripe-integration-sample-webapp) which is a working example of the entire drop in gift card solution.
 
 Contact us anytime at hello@lightrail.com —we are here to help.
