@@ -1,4 +1,4 @@
-##Integrations
+# Integrations
 Here is the list of Lightrail integrations for different technologies and languages. If you are planning to integrate with Lightrail, before embarking on development check out this list to see if we already have a client library or plugin suitable for your project.
 
 ## Languages
