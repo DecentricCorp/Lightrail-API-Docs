@@ -1,11 +1,11 @@
 # Drop In Gift Cards
-Lightrail's drop in gift card solution makes it easy to get up an running selling gift cards from your site in days. 
-It is component based, using simple html snippets that you add directly to your pages.
+Lightrail's drop in gift card solution makes it easy to get up and running to sell gift cards from your site in days.
+It is component based, using simple HTML snippets that you add directly to your pages.
 Gift cards, when redeemed, are applied to the customer's account which can be used as a payment option during checkout. 
 
 ## Getting Started
 [Sign up](https://www.lightrail.com/app/#/register) for a Lightrail account. Configure your drop in gift card [template](https://www.lightrail.com/app/#/cards/template) within your account. 
-This sets the branding that is used in the widgets and gift card email. This is also where you'll connect your Stripe account. 
+This sets the branding that is used in the widgets and gift card email. This is also where you'll connect your Stripe account and provide the URL to a redemption page where customers can redeem their gift cards (see Step 2). Note this quickstart assumes you are using Stripe to process payments: if you are using another payment processor and want to build a custom solution, please contact us.
 
 ## Step 1: Selling Gift Cards
 This allows your customers to purchase gift cards from your site. 
@@ -26,9 +26,9 @@ All you need to do is add a page with the following snippet.
 The gift card is automatically delivered in a branded email to the recipient.
 
 ## Step 2: Redeeming Gift Cards
-This enables your customers to redeem gift cards. 
-The gift email the recipient receives includes button a button to redeem the gift code which links to your redemption page - the redemption link is set within your drop in gift card template.
-You simply need to create a page on your site and include the following redemption snippet.
+This enables your customers to redeem gift cards to their account for later use.
+The gift email the recipient receives includes a button to redeem the gift card which links to your redemption page - the redemption link is set within your drop in gift card template.
+This link should go to a new page on your site that includes the following snippet to load the redemption widget.
 ```html
 <div class="redemption-widget">
     <script
@@ -41,13 +41,12 @@ You simply need to create a page on your site and include the following redempti
 ``` 
 The redemption widget applies the gift card to the customer's account in Lightrail, creating one if need be.  
 
-Note, your redemption page must require users to be signed in, since you need to create a shopper token using a unique identifier for the customer from your system. 
-This is how the redemption widget can automatically apply the gift card to their account in Lightrail.
+Note, your redemption page must require users to be signed in, since you need to create a shopper token using a unique identifier for the customer from your system (see below).
+This is how the redemption widget can automatically apply the gift card to their account.
  
 Next, your existing checkout process needs to be modified allow the customer to pay with their account balance.
 
 ## Step 3: Checkout
-You'll need to modify your checkout to allow users to pay with their account credit.
 
 ### Display account balance
 To start, use the following snippet to display a customer's account balance:
@@ -105,17 +104,18 @@ function charge(req, res) {
 }
 ```
 
+At this point, the charge has been posted to both Lightrail and Stripe. You can handle post-checkout flow as you otherwise would. 
+
 ## Authentication
 You create your Lightrail API key from the [Integrations](```https://www.lightrail.com/app/#/account/api) section of your Lightrail account.
 Your Lightrail API key is used to generate shopper tokens which are passed into the widgets and to complete the serverside requests from checkout.  
 
 ### Shopper Tokens
-Shopper tokens are used only by the drop in widgets. You must generate them server side using one of our [client libraries](https://github.com/Giftbit/Lightrail-API-Docs/blob/docs/client-libraries.md).
-When creating a shopper token you must pass in the customer's ID from your system. 
-This is what links the customer from your system to their account in Lightrail.  
+Shopper tokens are used only by the drop in widgets. You must generate them server side using one of our [client libraries](https://github.com/Giftbit/Lightrail-API-Docs/blob/docs/client-libraries.md). (If you are working in a language that we don't currently offer a client library for, please contact us to discuss creating your own tokens.) 
+When creating a shopper token you must pass in the customer's ID from your system. This is what links the customer from your system to their account in Lightrail.  
 
-You'll need an api key along your shared secret key from the Integrations section of your account.
-For example, using the Lightrail javascript client the shopper token can be created as follows: 
+You'll need an API key along your shared secret key from the Integrations section of your account (see above).
+For example, using the Lightrail Javascript client the shopper token can be created as follows:
 ```javascript
 lightrail.configure({
     apiKey: process.env.LIGHTRAIL_API_KEY,
@@ -125,11 +125,11 @@ lightrail.configure({
 });
 lightrail.generateShopperToken({shopperId: "customer-id-from-your-system"})
 ```
-Note, the redemption and account balance widgets must be on authenticated pages and therefor require a shopperId. 
+Note, the redemption and account balance widgets must be on authenticated pages as they require a customer ID (the `shopperId`).
 You may decide if you'd like your customers to be signed in to purchase gift cards. 
-If you'd like to allow gift card purchase from an unauthenticated page simply provide set `shopperId: null`.
+If you'd like to allow gift card purchase from an unauthenticated page simply generate a shopper token with `shopperId: null`.
 
 ## Support
 Looking for an example? Check out our [sample app](https://github.com/Giftbit/stripe-integration-sample-webapp) which is a working example of the entire drop in gift card solution.
 
-Contact us anytime at hello@lightrail.com —we are here to help.
+Contact us any time at hello@lightrail.com —- we are here to help.
