@@ -1,10 +1,13 @@
 # Drop In Gift Cards
 Lightrail's drop in gift card solution makes it easy to get up and running to sell gift cards from your site in days.
+
 It is component based, using simple HTML snippets that you add directly to your pages.
 Gift cards, when redeemed, are applied to the customer's account which can be used as a payment option during checkout. 
 
 ## Getting Started
-[Sign up](https://www.lightrail.com/app/#/register) for a Lightrail account. Configure your drop in gift card [template](https://www.lightrail.com/app/#/cards/template) within your account. 
+[Sign up](https://www.lightrail.com/app/#/register) for a Lightrail account. 
+
+Configure your drop in gift card [template](https://www.lightrail.com/app/#/cards/template) within your account. 
 This sets the branding that is used in the widgets and gift card email. This is also where you'll connect your Stripe account and provide the URL to a redemption page where customers can redeem their gift cards (see Step 2).
  
 Note this quickstart assumes you are using Stripe to process payments: if you are using another payment processor and want to build a custom solution, please contact us.
@@ -45,7 +48,7 @@ This link should go to a new page on your site that includes the following snipp
 ``` 
 The redemption widget applies the gift card to the customer's account in Lightrail, creating one if need be.  
 
-Note, your redemption page must require users to be signed in, since you need to create a shopper token using a unique identifier for the customer from your system (see below).
+Note, your redemption page must require the user to be signed in, since you need to create a shopper token using a unique identifier for the customer from your system (see below).
 This is how the redemption widget can automatically apply the gift card to their account.
  
 Next, your existing checkout process needs to be modified allow the customer to pay with their account balance.
