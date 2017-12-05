@@ -28,6 +28,8 @@ The gift card is automatically delivered in a branded email to the recipient.
 ## Step 2: Redeeming Gift Cards
 This enables your customers to redeem gift cards to their account for later use.
 The gift email the recipient receives includes a button to redeem the gift card which links to your redemption page - the redemption link is set within your drop in gift card template.
+
+![Gift card purchase widget](assets/redemption-widget.png)
 This link should go to a new page on your site that includes the following snippet to load the redemption widget.
 ```html
 <div class="redemption-widget">
@@ -127,7 +129,7 @@ lightrail.generateShopperToken({shopperId: "customer-id-from-your-system"})
 ```
 Note, the redemption and account balance widgets must be on authenticated pages as they require a customer ID (the `shopperId`).
 You may decide if you'd like your customers to be signed in to purchase gift cards. 
-If you'd like to allow gift card purchase from an unauthenticated page simply generate a shopper token with `shopperId: null`.
+If you'd like to allow gift card purchase from an unauthenticated page simply generate a shopper token with `shopperId: ""`.
 
 ## Support
 Looking for an example? Check out our [sample app](https://github.com/Giftbit/stripe-integration-sample-webapp) which is a working example of the entire drop in gift card solution.
