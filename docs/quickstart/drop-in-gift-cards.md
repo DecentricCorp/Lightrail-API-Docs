@@ -114,11 +114,14 @@ function charge(req, res) {
 At this point, the charge has been posted to both Lightrail and Stripe. You can handle post-checkout flow as you otherwise would. 
 
 ## Authentication
-You create your Lightrail API key from the [Integrations](```https://www.lightrail.com/app/#/account/api) section of your Lightrail account.
-Your Lightrail API key is used to generate shopper tokens which are passed into the widgets and to complete the serverside requests from checkout.  
+You create your Lightrail API key from the [Integrations](https://www.lightrail.com/app/#/account/api) section of your Lightrail account.
+Your Lightrail API key is used to generate shopper tokens which are passed into the widgets and to complete the server side requests from checkout.  
 
 ### Shopper Tokens
-Shopper tokens are used only by the drop in widgets. You must generate them server side using one of our [client libraries](https://github.com/Giftbit/Lightrail-API-Docs/blob/docs/client-libraries.md). (If you are working in a language that we don't currently offer a client library for, please contact us to discuss creating your own tokens.) 
+Shopper tokens act like customer-specific API tokens for use in the drop in widgets. 
+
+You must generate them server side using one of our [client libraries](https://github.com/Giftbit/Lightrail-API-Docs/blob/docs/client-libraries.md). (If you are working in a language that we don't currently offer a client library for, please contact us to discuss creating your own tokens.) 
+
 When creating a shopper token you must pass in the customer's ID from your system. This is what links the customer from your system to their account in Lightrail.  
 
 You'll need an API key along your shared secret key from the Integrations section of your account (see above).
