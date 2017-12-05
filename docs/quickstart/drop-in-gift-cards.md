@@ -1,7 +1,7 @@
 # Drop In Gift Cards
 Lightrail's drop in gift card solution makes it easy to get up and running to sell gift cards from your site in days.
 
-It is component based, using simple HTML snippets that you add directly to your pages.
+It is component based, using widgets which you add using simple HTML snippets.
 Gift cards, when redeemed, are applied to the customer's account which can be used as a payment option during checkout. 
 
 ## Getting Started
@@ -17,7 +17,7 @@ This allows your customers to purchase gift cards from your site.
 Lightrail has developed a widget that powers the entire gift card purchase and delivery flow. 
 ![Gift card purchase widget](assets/purchase-widget.png)
 
-All you need to do is add a page with the following snippet.  
+All you need to do is add a page with the following snippet:  
 ```html
 <div>
     <script 
@@ -34,8 +34,8 @@ The gift card is automatically delivered in a branded email to the recipient.
 This enables your customers to redeem gift cards to their account for later use.
 ![Gift card purchase widget](assets/redemption-widget.png)
 
-The gift email the recipient receives includes a button to redeem the gift card which links to your redemption page - the redemption link is set within your drop in gift card template.
-This link should go to a new page on your site that includes the following snippet to load the redemption widget.
+The email includes a button to redeem the gift card. This link goes to your redemption page which is set in your drop in template.
+This page should include the following snippet:
 ```html
 <div class="redemption-widget">
     <script
@@ -48,7 +48,7 @@ This link should go to a new page on your site that includes the following snipp
 ``` 
 The redemption widget applies the gift card to the customer's account in Lightrail, creating one if need be.  
 
-Note, your redemption page must require the user to be signed in, since you need to create a shopper token using a unique identifier for the customer from your system (see below).
+Note, your redemption page must require the user to be signed in since you need to create a shopper token using a unique identifier for the customer from your system (see below).
 This is how the redemption widget can automatically apply the gift card to their account.
  
 Next, your existing checkout process needs to be modified allow the customer to pay with their account balance.
