@@ -27,9 +27,9 @@ The gift card is automatically delivered in a branded email to the recipient.
 
 ## Step 2: Redeeming Gift Cards
 This enables your customers to redeem gift cards to their account for later use.
-The gift email the recipient receives includes a button to redeem the gift card which links to your redemption page - the redemption link is set within your drop in gift card template.
-
 ![Gift card purchase widget](assets/redemption-widget.png)
+
+The gift email the recipient receives includes a button to redeem the gift card which links to your redemption page - the redemption link is set within your drop in gift card template.
 This link should go to a new page on your site that includes the following snippet to load the redemption widget.
 ```html
 <div class="redemption-widget">
