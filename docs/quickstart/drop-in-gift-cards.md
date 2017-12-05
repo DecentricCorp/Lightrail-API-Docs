@@ -1,18 +1,18 @@
 # Drop In Gift Cards
 Lightrail's drop in gift card solution makes it easy to get up an running selling gift cards from your site in days. 
-It is component based, using simple scripts that you can add to your pages.
+It is component based, using simple html snippets that you add directly to your pages.
 Gift cards, when redeemed, are applied to the customer's account which can be used as a payment option during checkout. 
 
 ## Getting Started
 [Sign up](https://www.lightrail.com/app/#/register) for a Lightrail account. Configure your drop in gift card [template](https://www.lightrail.com/app/#/cards/template) within your account. 
-This sets the branding that is used in widgets and gift card email. This is also where you'll connect your Stripe account. 
+This sets the branding that is used in the widgets and gift card email. This is also where you'll connect your Stripe account. 
 
 ## Step 1: Selling Gift Cards
 This allows your customers to purchase gift cards from your site. 
 Lightrail has developed a widget that powers the entire gift card purchase and delivery flow. 
 ![Gift card purchase widget](assets/purchase-widget.png)
 
-All you need to do is add a "buy gift card" button on your store and link it to a page with the following snippet.  
+All you need to do is add a page with the following snippet.  
 ```html
 <div>
     <script 
@@ -27,8 +27,8 @@ The gift card is automatically delivered in a branded email to the recipient.
 
 ## Step 2: Redeeming Gift Cards
 This enables your customers to redeem gift cards. 
-The gift email the recipient receives includes button a button to redeem the gift code which links to your redemption page.
-You simply need to create a page on your store and include the following redemption snippet.
+The gift email the recipient receives includes button a button to redeem the gift code which links to your redemption page - the redemption link is set within your drop in gift card template.
+You simply need to create a page on your site and include the following redemption snippet.
 ```html
 <div class="redemption-widget">
     <script
