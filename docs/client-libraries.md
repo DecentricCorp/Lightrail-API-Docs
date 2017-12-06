@@ -1,7 +1,7 @@
 # Client Libraries
 Here is the list of Lightrail client libraries for different languages and technologies. If you are planning to integrate with Lightrail, before embarking on development check out this list to see if we already have a client library or plugin suitable for your project.
 
-## Client Libraries
+## Languages
 
 ### Java
 - [Lightrail Java Client](https://github.com/Giftbit/lightrail-client-java)
@@ -24,4 +24,4 @@ Here is the list of Lightrail client libraries for different languages and techn
 - [Lightrail Stripe Integration for Ruby](https://github.com/Giftbit/lightrail-stripe-ruby)
 
 ### WooCommerce
-- [Lightrail WooCommerce Plugin](https://wordpress.org/plugins/lightrail-for-woocommerce/)
+[Lightrail WooCommerce Plugin](https://wordpress.org/plugins/lightrail-for-woocommerce/)
