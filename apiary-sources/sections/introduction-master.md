@@ -7,6 +7,13 @@ conceptual model, common use-cases, and common API calls with examples.
 
 Contact us anytime at hello@lightrail.com —we are here to help you solidify your use-cases and implementation.
 
+## Looking for Lightrail's Drop In Gift Card Solution?
+Lightrail is developing a drop in gift card solution that makes it very easy to add gift cards and account credits to your application.
+The solution is component based, using snippets that can be included for gift card sending and redemption.
+Checkout requires minimal updates to your existing checkout process and is easy to do using our existing libraries.
+
+Detailed solution documentation coming soon! Looking for early access to this feature? [Get in touch](mailto://hello@lightrail.com).
+
 {% include 'sections/getting-started.md' %}
 
 {% include 'sections/object-model.md' %}
