@@ -1,4 +1,4 @@
-# Drop In Gift Cards
+# Drop-in Gift Cards
 Lightrail's Drop-in Gift Card solution makes it easy to offer gift cards to your customers in days.
 
 The solution is component based, using widgets which you add using simple HTML snippets.
@@ -36,7 +36,7 @@ The gift card is automatically delivered delivered to the recipient in a branded
 The Gift Card Redemption Widget enables your customers to redeem gift cards to their account for later use.
 ![Gift card purchase widget](assets/redemption-widget.png)
 
-When the customer clicks the button to redeem the gift card in the email, they are taken to the redemption page indicated in your Drop-In template.
+When the customer clicks the button to redeem the gift card in the email, they are taken to the redemption page indicated in your Drop-in template.
 
 The redemption page should include the following snippet:
 
@@ -166,7 +166,7 @@ You create your Lightrail API key from the [Integrations](https://www.lightrail.
 Your Lightrail API key is used to generate shopper tokens which are passed into the widgets and to complete the server side requests from checkout.  
 
 ### Shopper Tokens
-Shopper tokens act like customer-specific API tokens for use in the drop in widgets. They are based on a unique identifier from your ecommerce system: the `shopperId`. This is what links the customer from your system to their account in Lightrail. 
+Shopper tokens act like customer-specific API tokens for use in the drop-in widgets. They are based on a unique identifier from your ecommerce system: the `shopperId`. This is what links the customer from your system to their account in Lightrail. 
 
 You must generate them server side using one of our [client libraries](https://github.com/Giftbit/Lightrail-API-Docs/blob/docs/client-libraries.md). (If you are working in a language that we don't currently offer a client library for, please contact us to discuss creating your own tokens.) 
 
@@ -185,6 +185,6 @@ You may decide whether you'd like your customers to be signed in to purchase gif
 If you'd like to allow gift card purchase from an unauthenticated page simply generate a shopper token with `shopperId: ""`.
 
 ## Support
-Looking for an example? Check out our [sample app](https://github.com/Giftbit/stripe-integration-sample-webapp) which is a working example of the entire drop in gift card solution.
+Looking for an example? Check out our [sample app](https://github.com/Giftbit/stripe-integration-sample-webapp) which is a working example of the entire Drop-in Gift Card solution.
 
 Contact us any time at hello@lightrail.com —- we are here to help.
