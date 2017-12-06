@@ -5,7 +5,7 @@ The solution is component based, using widgets which you add using simple HTML s
 Gift cards, when redeemed, are applied to the customer's account which can be used as a payment option during checkout. 
 
 ## Getting Started
-[Sign up](https://www.lightrail.com/app/#/register) for a Lightrail account. For development, we recommend toggling your account to test mode, this is done within your account.
+[Sign up](https://www.lightrail.com/app/#/register) for a Lightrail account. For development, we recommend toggling your account to test mode.
 
 Configure your Drop-in Gift Card [template](https://www.lightrail.com/app/#/cards/template) within your Lightrail account to customize the appearance of widgets and gift card emails.
 
