@@ -168,7 +168,7 @@ Your Lightrail API key is used to generate shopper tokens which are passed into 
 ### Shopper Tokens
 Shopper tokens act like customer-specific API tokens for use in the drop-in widgets. They are based on a unique identifier from your ecommerce system: the `shopperId`. This is what links the customer from your system to their account in Lightrail. 
 
-You must generate them server side using one of our [client libraries](https://github.com/Giftbit/Lightrail-API-Docs/blob/docs/client-libraries.md). (If you are working in a language that we don't currently offer a client library for, please contact us to discuss creating your own tokens.) 
+You must generate them server side using one of our [client libraries](https://github.com/Giftbit/Lightrail-API-Docs/blob/master/docs/client-libraries.md). (If you are working in a language that we don't currently offer a client library for, please contact us to discuss creating your own tokens.) 
 
 You'll need an API key along with your shared secret key from the Integrations section of your account (see above).
 For example, using the Lightrail Javascript client the shopper token can be created as follows:
