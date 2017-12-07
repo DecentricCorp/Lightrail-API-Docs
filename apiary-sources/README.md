@@ -7,5 +7,8 @@
 4. Install pyyaml: `pip3 install pyyaml`
 
 ## Compile:
+Navigate to `/apiary-sources` and run:
+```
 python3 release.py -v metadata.yaml -i master.md -o ../apiary.apib
+```
 

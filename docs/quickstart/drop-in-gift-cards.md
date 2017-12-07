@@ -1,7 +1,7 @@
 # Drop-in Gift Cards
 Lightrail's Drop-in Gift Card solution makes it easy to offer gift cards to your customers in days.
 
-The solution is component based, using widgets which created from simple HTML snippets.
+The solution is component based, using widgets which are created from simple HTML snippets.
 Gift cards, when redeemed, are applied to the customer's account which can be used as a payment option during checkout. 
 
 ## Getting Started
@@ -14,14 +14,14 @@ This is also where you'll connect your Stripe account and provide the URL to a r
 
 Note this quickstart assumes you are using Stripe to process payments: if you are using another payment processor and want to build a custom solution, please [contact us](mailto:hello@lightrail.com).
 
-If at any point you want to see a working example of the entire Drop-in Gift Card solution, check out our sample app. 
+If at any point you want to see a working example of the entire Drop-in Gift Card solution, check out our [sample app](https://github.com/Giftbit/stripe-integration-sample-webapp). 
 
 ## Step 1: Selling Gift Cards
 The Gift Card Purchase Widget allows your customers to purchase gift cards from your site. 
 Lightrail powers the entire gift card purchase and delivery flow. 
 ![Gift card purchase widget](assets/purchase-widget.png)
 
-What you see here is our fictional brand called Rocktship. Once set up with our Drop-in solution, you will see your brand's image and branding instead.
+What you see here is our fictional brand called Rocktship. Once set up with our Drop-in solution, you will see your branding instead.
 
 Add the following snippet to your gift card purchase page: 
 
@@ -35,8 +35,7 @@ Add the following snippet to your gift card purchase page:
     <!-- See below for details.  -->
 </div>
 ```
-The gift card is automatically delivered to the recipient in a branded email. 
-The email includes a button to apply the gift card to the recipient's account.
+The gift card is automatically delivered to the recipient in a branded email. The email includes a button to apply the gift card to the recipient's account.
 
 ## Step 2: Redeeming Gift Cards
 The Gift Card Redemption Widget enables your customers to redeem gift cards to their account for later use.
@@ -86,7 +85,7 @@ This script will need to do the following:
 - Call a charge simulation method on your server (see next section)
 - Post the charge (see next section)
 
-For an example, we recommend that you take a look at the [checkout page of our sample webapp](https://github.com/Giftbit/stripe-integration-sample-webapp/blob/master/shared/views/checkout.html). The sample checkout handles the logic of splitting the transaction between the customer's account credit and Stripe, and also loads a Stripe Elements form to handle the credit card portion of the payment if needed. (Templating in the example is done with Mustache but is not required.)
+For an example, we recommend that you take a look at the [checkout page of our sample webapp](https://github.com/Giftbit/stripe-integration-sample-webapp/blob/master/shared/views/checkout.html). The sample checkout handles the logic of splitting the transaction between the customer's account credit and Stripe; it also loads a Stripe Elements form to handle the credit card portion of the payment if needed. (Templating in the example is done with Mustache but is not required.)
 
 ### Post the Transaction (server side)
 The transaction is handled by backend methods using one of our client libraries (or methods that you [write yourself](https://github.com/Giftbit/Lightrail-API-Docs/blob/drop-in-gift-cards/use-cases/stripe-split.md)). You'll need to set up two endpoints to handle submissions from the custom form you added to [accept payment](#accept-payment) to: 
