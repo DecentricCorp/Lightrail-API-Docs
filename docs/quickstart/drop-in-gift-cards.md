@@ -21,7 +21,7 @@ The Gift Card Purchase Widget allows your customers to purchase gift cards from 
 Lightrail powers the entire gift card purchase and delivery flow. 
 ![Gift card purchase widget](assets/purchase-widget.png)
 
-What you see here is our fictional brand called Rocktship. Once set up with our Drop-in solution, you will see your branding instead.
+What you see here is our fictional brand called Rocketship. Once set up with our Drop-in solution, you will see your branding instead.
 
 Add the following snippet to your gift card purchase page: 
 
