@@ -194,4 +194,4 @@ If you'd like to allow gift card purchase from an unauthenticated page simply ge
 ## Support
 Looking for an example? Check out our [sample app](https://github.com/Giftbit/stripe-integration-sample-webapp) which is a working example of the entire Drop-in Gift Card solution.
 
-Contact us anytime at hello@lightrail.com —- we are here to help.
+Contact us any time at hello@lightrail.com —- we are here to help.
