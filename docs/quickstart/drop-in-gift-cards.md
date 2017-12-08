@@ -4,7 +4,7 @@ Integrating into Lightrail is an easy process that can be completed in no more t
 
 The solution is component based, using widgets which are created from simple HTML snippets.
 When your customers receive a gift card, they can easily redeem and apply the gift card value to their account.
-Your checkout process requires a simple update to allow payment from your customer accounts.  
+Your checkout process requires a simple update to accept payment from your customer accounts.  
 
 ## Getting Started
 [Sign up](https://www.lightrail.com/app/#/register) for a Lightrail account. 
