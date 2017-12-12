@@ -281,37 +281,37 @@ In this `metadata` cart items have a `quantity`.
 }
 ```
 
-### Buy any 5 items
+#### Buy any 5 items
 
 ```javascript
 metadata.cart.items.map(item => item.quantity).sum() >= 5
 ```
 
-### Buy any 2 t-shirts
+#### Buy any 2 t-shirts
 
 ```javascript
 metadata.cart.items.filter(item => item.tags.some(tag => tag=='shirt')).map(item => item.quantity).sum() >= 2
 ```
 
-### Buy any 2 Led Zeppelin items worth at least $5
+#### Buy any 2 Led Zeppelin items worth at least $5
 
 ```javascript
 metadata.cart.items.filter(item => item.unit_price >= 500 && item.tags.some(tag => tag=='ledzeppelin')).map(item => item.quantity).sum() >= 2
 ```
 
-### Buy any 4 stickers and a shirt
+#### Buy any 4 stickers and a shirt
 
 ```javascript
 metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker')).map(item => item.quantity).sum() >= 4 && metadata.cart.some(item => item.tags.some(tag => tag=='shirt'))
 ```
 
-### Buy $10 worth of stickers
+#### Buy $10 worth of stickers
 
 ```javascript
 metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker')).map(item => item.quantity * item.unit_price).sum() >= 1000
 ```
 
-### Buy $20 worth of stickers or CDs
+#### Buy $20 worth of stickers or CDs
 
 ```javascript
 metadata.cart.items.filter(item => item.tags.some(tag => tag=='sticker' || tag=='cd')).map(item => item.quantity * item.unit_price).sum() >= 2000
