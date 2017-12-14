@@ -151,7 +151,7 @@ max(1, 2, '3') → 3
 max(null, null) → 0
 ```
 
-## Examples
+## Example Rules
 
 ### Doughnut shop examples
 
