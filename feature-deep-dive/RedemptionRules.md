@@ -24,7 +24,7 @@ metadata.cartValue >= 5000
 
 This rule evaluates to true if the value of the shopping cart is greater or equal to 5000.  In the currency `USD` this is the rule for "purchase of $50.00 or more."  In the currency `JPY` this would be "purchase of ¥5000 or more."
 
-The four variables of a transaction that can be used for a rule are:
+The three variables of a transaction that can be used for a rule are:
 - `value`: a positive number for the value of the Lightrail transaction (which may not be the value of the full cart in split-tender transactions)
 - `currency`: a string for the ISO code of the currency of the transaction
 - `metadata`: a map of arbitrary data that can be sent with the transaction
