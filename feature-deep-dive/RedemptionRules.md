@@ -188,10 +188,24 @@ In this `metadata` cart items are duplicated if more than one is bought.
       }, 
       {
         "id": "dripcoffee",
-        "quantity": 4,
         "unit_price": 315,
         "tags": ["coffee", "medium"]
-      }     
+      },
+      {
+        "id": "dripcoffee",
+        "unit_price": 315,
+        "tags": ["coffee", "medium"]
+      },
+      {
+        "id": "dripcoffee",
+        "unit_price": 315,
+        "tags": ["coffee", "medium"]
+      },
+      {
+        "id": "dripcoffee",
+        "unit_price": 315,
+        "tags": ["coffee", "medium"]
+      }
     ]
   },
   "delivery": {
@@ -209,7 +223,7 @@ metadata.cart.total >= 1000
 #### Buy any 5 items
 
 ```javascript
-metadata.cart.items.map(item => item.quantity).sum() >= 5
+metadata.cart.items.size() >= 5
 ```
 
 #### Canadian Special: discount maple glazed doughnuts
@@ -221,26 +235,26 @@ metadata.cart.items.some(item => item.id == 'mapleglazed')
 #### Buy a medium coffee and any doughnut
 
 ```javascript
-metadata.cart.items.some(item => item.tags.some(tag=> tag=='coffee') && item.tags.some(tag=> tag=='medium'))&& metadata.cart.items.some(item => item.tags.some(tag=> tag=='doughnut'))
+metadata.cart.items.some(item => item.tags.some(tag=> tag=='coffee') && item.tags.some(tag=> tag=='medium')) && metadata.cart.items.some(item => item.tags.some(tag=> tag=='doughnut'))
 ```
 
 #### Buy 4 coffees
 
 ```javascript
-metadata.cart.items.filter(item => item.tags.some(tag => tag == 'coffee')).map(item => item.quantity).sum() >= 4
+metadata.cart.items.filter(item => item.tags.some(tag => tag == 'coffee')).size() >= 4
 ```
 
 #### Buy 4 coffees and pickup in store
 
 ```javascript
-metadata.delivery.id=='store-pickup' && metadata.cart.items.filter(item => item.tags.some(tag => tag == 'coffee')).map(item => item.quantity).sum() >= 4
+metadata.delivery.id=='store-pickup' && metadata.cart.items.filter(item => item.tags.some(tag => tag == 'coffee')).size() >= 4
 
 ```
 
 #### Buy any 4 items of value > $1.00
 
 ```javascript
-metadata.cart.items.filter(item => item.unit_price > 100).map(item => item.quantity).sum() >= 4
+metadata.cart.items.filter(item => item.unit_price > 100).size() >= 4
 ```
 
 ### Concert tees examples
