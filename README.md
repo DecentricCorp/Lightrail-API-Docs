@@ -1,5 +1,3 @@
-# Giftbit currency API
+# Lightrail API Resources
 
-This repository hosts the API Blueprint file for https://www.giftbit.com/currencyapi/
-
-We love customer feedback and contributions, so please report any errors or suggestions via a pull request.
+This is Lightrail's API documentation sources. Please visit our [interactive API docs](https://www.lightrail.com/docs).
